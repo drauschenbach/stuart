@@ -1,17 +1,8 @@
 local _ = require 'lodash'
+local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
-assert:register('assertion', 'contains', function(state, arguments)
-  local collection = arguments[1]
-  local searchFor = arguments[2]
-  return _.findIndex(collection, function(v) return v == searchFor end) > -1
-end)
-
-assert:register('assertion', 'not_contains', function(state, arguments)
-  local collection = arguments[1]
-  local searchFor = arguments[2]
-  return _.findIndex(collection, function(v) return v == searchFor end) == -1
-end)
+registerAsserts(assert)
 
 describe('RDD', function()
 

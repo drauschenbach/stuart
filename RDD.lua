@@ -330,11 +330,12 @@ function RDD:stats()
     r.sum = r.sum + v
     return r
   end, {count=0, sum=0})
-  local mean = r.sum / r.count
+  r.mean = r.sum / r.count
   
   local sumOfSquares = _.reduce(x, function(r, v) return r + v*v end, 0)
-  local stdev = math.sqrt((r.count * sumOfSquares - r.sum * r.sum) / (r.count * (r.count-1)))
-  return {count=r.count, mean=r.sum/r.count, stdev=stdev}
+  r.stdev = math.sqrt((r.count * sumOfSquares - r.sum * r.sum) / (r.count * (r.count-1)))
+  r.sum = nil
+  return r
 end
 
 function RDD:take(n)

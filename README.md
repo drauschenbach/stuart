@@ -20,6 +20,25 @@ print(rdd:count())
 41
 ```
 
+### Streaming
+
+Per Lua conventions, all durations are specified in seconds.
+
+```lua
+sc = require 'stuart'.NewContext()
+ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
+
+rdd1 = sc:parallelize({'dog', 'cat'})
+rdd2 = sc:parallelize{{'mouse', 'rabbit'})
+rdds = {rdd1,rdd2}
+dstream = ssc:queueStream(rdds)
+dstream:foreachRDD(function(rdd)
+	print('Received RDD: ' .. rdd)
+end)
+
+ssc:awaitTerminationOrTimeout(1.5)
+```
+
 ### Working with lists of values
 
 ```lua
@@ -49,6 +68,13 @@ Stuart is designed for embedding, and so follows some rules:
 * It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be interpreted by a JIT or cross-compiler. Any potential C code optimizations are externally sourced through the Lua module loader.
 * It does not execute programs (like `ls` or `dir` to list files); there may not even be an OS.
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
+
+## Some Interesting Goals for the Project
+
+* Local in-memory RDDs and [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
+* [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) capabilities.
+* [MLlib](https://spark.apache.org/mllib/) support. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
+* A Redis scheduler. RDDs partitioned across Redis servers. Lua closures sent into Redis to run.
 
 ## Testing
 
