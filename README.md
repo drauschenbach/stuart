@@ -59,7 +59,7 @@ assert.equals(1, countsByKey[5])
 ## Requirements
 
 * [lodash](https://luarocks.org/modules/axmat/lodash), which for the moment requires Lua >= 5.2.
-* [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required (Spark Streaming)
+* [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
 
 ## Design
 
