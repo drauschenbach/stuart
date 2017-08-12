@@ -23,6 +23,7 @@ describe('Context', function()
     
     rdd = sc:parallelize({'12','23','','345'}, 2)
     assert.equals(2, _.size(rdd:partitions()))
+    assert.equals(2, #rdd:partitions())
   end)
 
 end)

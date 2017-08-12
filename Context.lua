@@ -18,7 +18,7 @@ function Context:parallelize(x, numPartitions)
     return RDD:new(nil, {p}, self)
   end
   
-  local chunks = _.chunk(x, #x / numPartitions)
+  local chunks = _.chunk(x, math.ceil(#x / numPartitions))
   local partitions = _.map(chunks, function(chunk, i)
     return Partition:new({}, chunk, i)
   end)

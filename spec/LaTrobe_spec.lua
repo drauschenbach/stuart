@@ -369,6 +369,13 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_keyed_pair(actual, 5, 'tigereagle')
   end)
 
+  it('repartition()', function()
+    local rdd = sc:parallelize({1,2,10,4,5,2,1,1,1}, 3)
+    assert.equals(3, #rdd:partitions())
+    local rdd2 = rdd:repartition(5)
+    assert.equals(5, #rdd2:partitions())
+  end)
+
   it('stats()', function()
     local x = sc:parallelize({1.0, 2.0, 3.0, 5.0, 20.0, 19.02, 19.29, 11.09, 21.0}, 2)
     local stats = x:stats() 

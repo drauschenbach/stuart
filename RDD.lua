@@ -313,6 +313,10 @@ function RDD:reduceByKey(f)
   return self:groupByKey():mapValues(function(e) return _.reduce(e, f) end)
 end
 
+function RDD:repartition(numPartitions)
+  return self.ctx:parallelize(self:collect(), numPartitions)
+end
+
 function RDD:rightOuterJoin(other)
   local d1 = self:_dict()
   local d2 = other:_dict()
