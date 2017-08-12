@@ -82,7 +82,7 @@ describe('Apach Spark examples', function()
   --     (0)--->(1)
   --     /|\   /
   --      |  /
-  --     \|/ 
+  --     \|/_
   --     (2)--->(3)
   it('computes transitive closure on graph #2', function()
     local edges = {

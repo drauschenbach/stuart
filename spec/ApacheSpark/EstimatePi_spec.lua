@@ -18,7 +18,6 @@ describe('Apach Spark examples', function()
       return x*x + y*y < 1
     end):count()
     local pi = 4 * count / NUM_SAMPLES
-    print('Pi is roughly ' .. pi)
     assert.is_in_range(pi, 3, 3.5)
   end)
   

@@ -32,7 +32,7 @@ end
 
 function _iterToArray(iter)
   local r = {}
-  for e in iter do table.insert(r, e) end
+  for e in iter do r[#r+1] = e end
   return r
 end
 
@@ -51,7 +51,7 @@ function RDD:cartesian(other)
   local t = {}
   _.forEach(self:collect(), function(x)
     _.forEach(other:collect(), function(y)
-      table.insert(t, {x, y})
+      t[#t+1] = {x, y}
     end)
   end)
   return self.ctx:parallelize(t)
@@ -155,7 +155,7 @@ function RDD:groupBy(f)
   local keys = _.uniq(_.map(x, f))
   local t = _.map(keys, function(k)
     v = _.reduce(x, function(r, e)
-      if f(e) == k then table.insert(r, e) end
+      if f(e) == k then r[#r+1] = e end
       return r
     end, {})
     return {k, v}
@@ -167,7 +167,7 @@ function RDD:groupByKey()
   local keys = _.keys(self:_dict())
   local t = _.map(keys, function(k)
     v = _.reduce(self:collect(), function(r, e)
-      if e[1] == k then table.insert(r, e[2]) end
+      if e[1] == k then r[#r+1] = e[2] end
       return r
     end, {})
     return {k, v}
@@ -227,7 +227,7 @@ function RDD:join(other)
       if x[1] == key then
         _.forEach(other:collect(), function(y)
           if y[1] == key then
-            table.insert(r, {key, {x[2], y[2]}})
+            r[#r+1] = {key, {x[2], y[2]}}
           end
         end)
       end
@@ -253,13 +253,13 @@ function RDD:leftOuterJoin(other)
   local t = _.reduce(self:collect(), function(r, e)
       local right = {}
       _.forEach(other:collect(), function(y)
-        if y[1] == e[1] then table.insert(right, y[2]) end
+        if y[1] == e[1] then right[#right+1] = y[2] end
       end)
       if _.size(right) == 0 then
-        table.insert(r, {e[1], {e[2], nil}})
+        r[#r+1] = {e[1], {e[2], nil}}
       else
         _.forEach(right, function(z)
-          table.insert(r, {e[1], {e[2], z}})
+          r[#r+1] = {e[1], {e[2], z}}
         end)
       end
     return r
@@ -269,14 +269,14 @@ end
 
 function RDD:lookup(key)
   return _.reduce(self:collect(), function(r, e)
-    if e[1] == key then table.insert(r, e[2]) end
+    if e[1] == key then r[#r+1] = e[2] end
     return r
   end, {})
 end
 
 function RDD:map(f)
   local t = {}
-  for e in self:toLocalIterator() do table.insert(t, f(e)) end
+  for e in self:toLocalIterator() do t[#t+1] = f(e) end
   return self.ctx:parallelize(t)
 end
 
@@ -349,7 +349,7 @@ function RDD:subtractByKey(other)
   local otherKeys = other:keys():collect()
   local keys = _.without(selfKeys, unpack(otherKeys))
   local t = _.reduce(self:collect(), function(r, e)
-    if _.find(keys, function(x) return x == e[1] end) then table.insert(r,e) end
+    if _.find(keys, function(x) return x == e[1] end) then r[#r+1] = e end
     return r 
   end, {})
   return self.ctx:parallelize(t)
@@ -359,7 +359,7 @@ function RDD:take(n)
   local iter = self:toLocalIterator()
   t = {}
   for i = 1, n, 1 do
-    table.insert(t, iter())
+    t[#t+1] = iter()
   end
   return t
 end

@@ -83,5 +83,5 @@ Stuart is designed for embedding, and so follows some rules:
 $ luarocks install busted
 $ busted
 ●●●●●●●●●●●●●●●✱●●●●●●●✱●●◼●✱●✱●●●●●●●●
-34 successes / 1 failure / 4 errors / 0 pending : 0.025822 seconds
+53 successes / 0 failures / 0 errors / 0 pending : 0.650914 seconds
 ```

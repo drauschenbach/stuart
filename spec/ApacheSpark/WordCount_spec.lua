@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -20,7 +19,6 @@ describe('Apach Spark examples', function()
     end):reduceByKey(function(r, x)
       return r + x
     end):collect()
-    _.print(counts)
     assert.contains_pair(counts, {'in',2})
     assert.contains_pair(counts, {'job',1})
     assert.contains_pair(counts, {'perfection',1})

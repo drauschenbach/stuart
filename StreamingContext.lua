@@ -34,7 +34,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
     end
     sleep(.1)
   end
-  _.print('Ending run loop')
+  --_.print('Ending run loop')
 end
 
 function StreamingContext:queueStream(rdds, oneAtATime)

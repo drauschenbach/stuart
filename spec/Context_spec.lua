@@ -1,21 +1,19 @@
 local _ = require 'lodash'
-local inspect = require 'inspect'
 local stuart = require 'stuart'
 
 describe('Context', function()
 
   local sc = stuart.NewContext()
   
-  it('can parallelize() and return an RDD', function()
+  it('can parallelize()', function()
     local rdd = sc:parallelize({'Gnu', 'Cat'})
     assert.is_not_nil(rdd)
     assert.is_function(rdd['count'])
   end)
 
-  it('can parallelize() pairs and return an RDD with PairRDDFunctions mixin', function()
+  it('can parallelize() pairs', function()
     local rdd = sc:parallelize({{3,'Gnu'}, {3,'Yak'}})
     assert.is_not_nil(rdd)
-    assert.is_function(rdd['count'])
     assert.is_function(rdd['countByKey'])
   end)
 
