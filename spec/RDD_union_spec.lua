@@ -18,5 +18,13 @@ describe('RDD', function()
     assert.contains_pair(actual, {2,1})
     assert.contains_pair(actual, {2,2})
   end)
+  
+  it('union() allows duplicate pairs', function()
+    local a = sc:parallelize({{0,1}, {0,1}})
+    local b = sc:parallelize({})
+    local actual = a:union(b):collect()
+    local expected = {{0,1}, {0,1}}
+    assert.same(expected, actual)
+  end)
 
 end)

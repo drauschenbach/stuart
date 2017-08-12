@@ -1,6 +1,6 @@
 local _ = require 'lodash'
 _.groupBy = require 'lodashPatchedGroupBy'
-local inspect = require 'inspect'
+local moses = require 'moses'
 
 RDD = {}
 
@@ -44,7 +44,7 @@ function RDD:aggregate(zeroValue, seqOp, combOp)
 end
 
 function RDD:cache()
-  error('NIY')
+  return self
 end
 
 function RDD:cartesian(other)
@@ -101,7 +101,8 @@ function RDD:countByValue()
 end
 
 function RDD:distinct(numPartitions)
-  return self.ctx:parallelize(_.uniq(self:collect()), numPartitions)
+  local t = moses.uniq(self:collect())
+  return self.ctx:parallelize(t, numPartitions)
 end
 
 function RDD:filter(f)

@@ -60,6 +60,7 @@ assert.equals(1, countsByKey[5])
 
 * [lodash](https://luarocks.org/modules/axmat/lodash), which for the moment requires Lua >= 5.2.
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
+* [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
 
 ## Design
 
