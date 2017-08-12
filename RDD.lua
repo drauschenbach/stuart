@@ -241,7 +241,7 @@ function RDD:keyBy(f)
   return self.ctx:parallelize(t)
 end
 
-function RDD:keys(f)
+function RDD:keys()
   local t = _.map(self:collect(), function(e) return e[1] end)
   return self.ctx:parallelize(t)
 end
@@ -338,8 +338,29 @@ function RDD:stats()
   return r
 end
 
+function RDD:subtract(other)
+  local t = _.without(self:collect(), unpack(other:collect()))
+  return self.ctx:parallelize(t)
+end
+
+function RDD:subtractByKey(other)
+  local selfKeys = self:keys():collect()
+  local otherKeys = other:keys():collect()
+  local keys = _.without(selfKeys, unpack(otherKeys))
+  local t = _.reduce(self:collect(), function(r, e)
+    if _.find(keys, function(x) return x == e[1] end) then table.insert(r,e) end
+    return r 
+  end, {})
+  return self.ctx:parallelize(t)
+end
+
 function RDD:take(n)
-  return _.slice(self:collect(), n)
+  local iter = self:toLocalIterator()
+  t = {}
+  for i = 1, n, 1 do
+    table.insert(t, iter())
+  end
+  return t
 end
 
 function RDD:takeSample(n)
@@ -365,6 +386,11 @@ function RDD:toLocalIterator()
       return partitionData[i]
     end
   end
+end
+
+function RDD:union(other)
+  local t = _.union(self:collect(), other:collect())
+  return self.ctx:parallelize(t)
 end
 
 function RDD:values(f)

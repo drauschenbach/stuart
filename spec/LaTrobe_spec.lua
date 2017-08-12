@@ -260,6 +260,14 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.same(expected, actual)
   end)
 
+  it('keys()', function()
+    local a = sc:parallelize({'dog', 'tiger', 'lion', 'cat', 'panther', 'eagle'}, 2)
+    local b = a:map(function(x) return {string.len(x), x} end)
+    local actual = b:keys():collect()
+    local expected = {3,5,4,3,7,5}
+    assert.same(expected, actual)
+  end)
+
   it('leftOuterJoin()', function()
     local a = sc:parallelize({'dog', 'salmon', 'salmon', 'rat', 'elephant'}, 3)
     local b = a:keyBy(function(x) return string.len(x) end)
@@ -369,6 +377,48 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.is_in_range(stats.stdev, 8, 9)
   end)
 
+  it('subtract()', function()
+    local a = sc:parallelize(_.range(1,9), 3)
+    local b = sc:parallelize(_.range(1,3), 3)
+    local c = a:subtract(b)
+    local actual = c:collect()
+    assert.not_contains(actual, 1)
+    assert.not_contains(actual, 2)
+    assert.not_contains(actual, 3)
+    assert.contains(actual, 4)
+    assert.contains(actual, 5)
+    assert.contains(actual, 6)
+    assert.contains(actual, 7)
+    assert.contains(actual, 8)
+    assert.contains(actual, 9)
+  end)
+
+  it('subtractByKey()', function()
+    local a = sc:parallelize({'dog', 'tiger', 'lion', 'cat', 'spider', 'eagle'}, 2)
+    local b = a:keyBy(function(x) return string.len(x) end)
+    local c = sc:parallelize({'ant', 'falcon', 'squid'}, 2)
+    local d = c:keyBy(function(x) return string.len(x) end)
+    local result = b:subtractByKey(d):collect()
+    assert.contains_pair(result, {4,'lion'})
+  end)
+  
+  it('take()', function()
+    local b = sc:parallelize({'dog', 'cat', 'ape', 'salmon', 'gnu'}, 2)
+    local actual = b:take(2)
+    assert.same({'dog', 'cat'}, actual)
+    
+    b = sc:parallelize(_.range(1,10000), 5000)
+    actual = b:take(100)
+    expected = {
+      1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
+      21,22,23,24,25,26,27,28,29,30,31,32,33,34,35,36,37,38,39,40,
+      41,42,43,44,45,46,47,48,49,50,51,52,53,54,55,56,57,58,59,60,
+      61,62,63,64,65,66,67,68,69,70,71,72,73,74,75,76,77,78,79,80,
+      81,82,83,84,85,86,87,88,89,90,91,92,93,94,95,96,97,98,99,100
+    }
+    assert.same(expected, actual)
+  end)
+
   it('toLocalIterator()', function()
     local z = sc:parallelize({1,2,3,4,5,6}, 2)
     local iter = z:toLocalIterator()
@@ -378,6 +428,13 @@ describe('La Trobe University Spark 1.4 Examples', function()
     end
     assert.contains(actual, 1)
     assert.contains(actual, 2)
+  end)
+
+  it('union()', function()
+    local a = sc:parallelize(_.range(1,3), 1)
+    local b = sc:parallelize(_.range(5,7), 1)
+    local actual = a:union(b):collect() 
+    assert.same({1,2,3,5,6,7}, actual)
   end)
 
   it('values()', function()
