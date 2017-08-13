@@ -16,7 +16,7 @@ describe('Apache Spark 2.2.0 Unit Tests', function()
     assert.same({1,2,3,4}, moses.array(nums:toLocalIterator()))
     local dups = sc:makeRDD({1,1,2,2,3,3,4,4}, 2)
     assert.equals(4, dups:distinct():count())
-    assert.equals(4, dups:distinct():count())  -- Can distinct and count be called without parentheses?
+    assert.equals(4, dups:distinct():count())
     assert.same(dups:distinct():collect(), dups:distinct():collect())
     assert.same(dups:distinct():collect(), dups:distinct(2):collect())
     assert.equals(10, nums:reduce(function(r, x) return r+x end))
@@ -31,6 +31,7 @@ describe('Apache Spark 2.2.0 Unit Tests', function()
     assert.is_false(nums:isEmpty())
     assert.equals(4, nums:max())
     assert.equals(1, nums:min())
+    
     local partitionSums = nums:mapPartitions(function(iter)
       local sum = 0
       for v in iter do sum = sum + v end
@@ -53,6 +54,14 @@ describe('Apache Spark 2.2.0 Unit Tests', function()
     end)
     assert.contains_pair(partitionSumsWithSplit:collect(), {0,3})
     assert.contains_pair(partitionSumsWithSplit:collect(), {1,7})
+  end)
+
+  it("SparkContext.union", function()
+    local nums = sc:makeRDD({1, 2, 3, 4}, 2)
+    assert.same({1, 2, 3, 4}, sc:union({nums}):collect())
+    assert.same({1, 2, 3, 4, 1, 2, 3, 4}, sc:union({nums, nums}):collect())
+    --Scala-specific: assert.same({1, 2, 3, 4}, sc:union(Seq(nums)):collect())
+    --Scala-specific: assert.same({1, 2, 3, 4, 1, 2, 3, 4}, sc:union(Seq(nums, nums)):collect())
   end)
 
 end)

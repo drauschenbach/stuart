@@ -40,4 +40,10 @@ function Context:textFile(filename)
   return self:parallelize(lines)
 end
 
+function Context:union(rdds)
+  local t = rdds[1]
+  for i = 2, #rdds do t = t:union(rdds[i]) end
+  return t
+end
+
 return Context
