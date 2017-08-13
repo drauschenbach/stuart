@@ -30,9 +30,13 @@ function RDD:_flattenValues()
   return self
 end
 
-function _iterToArray(iter)
+function _iterToArray(iter, f)
   local r = {}
-  for e in iter do r[#r+1] = e end
+  if _.isFunction(f) then
+    for e in iter do r[#r+1] = f(e) end
+  else
+    for e in iter do r[#r+1] = e end
+  end
   return r
 end
 
@@ -61,8 +65,8 @@ function RDD:coalesce()
   return self
 end
 
-function RDD:collect()
-  return _iterToArray(self:toLocalIterator())
+function RDD:collect(f)
+  return _iterToArray(self:toLocalIterator(), f)
 end
 
 function RDD:context()
@@ -150,6 +154,11 @@ function RDD:foreachPartition(f)
   end
 end
 
+function RDD:glom(f)
+  local t = _.map(self.p, function(p) return p.x end)
+  return self.ctx:parallelize(t)
+end
+
 function RDD:groupBy(f)
   local x = self:collect()
   local keys = _.uniq(_.map(x, f))
@@ -220,6 +229,10 @@ function RDD:isCheckpointed()
   return false
 end
 
+function RDD:isEmpty()
+  return self:count() <= 0
+end
+
 function RDD:join(other)
   local keys = _.intersection(_.keys(self:_dict()), _.keys(other:_dict()))
   local t = _.reduce(keys, function(r, key)
@@ -277,6 +290,28 @@ end
 function RDD:map(f)
   local t = {}
   for e in self:toLocalIterator() do t[#t+1] = f(e) end
+  return self.ctx:parallelize(t)
+end
+
+function RDD:mapPartitions(iter)
+  local t = _.reduce(self.p, function(r,p)
+    for e in iter(p:_toLocalIterator()) do
+      r[#r+1] = e
+    end
+    return r
+  end, {})
+  return self.ctx:parallelize(t)
+end
+
+function RDD:mapPartitionsWithIndex(iter)
+  local index = 0
+  local t = _.reduce(self.p, function(r,p)
+    for e in iter(index, p:_toLocalIterator()) do
+      r[#r+1] = e
+    end
+    index = index + 1
+    return r
+  end, {})
   return self.ctx:parallelize(t)
 end
 
@@ -394,7 +429,7 @@ function RDD:toLocalIterator()
 end
 
 function RDD:union(other)
-  local t = _.union(self:collect(), other:collect())
+  local t = moses.append(self:collect(), other:collect())
   return self.ctx:parallelize(t)
 end
 

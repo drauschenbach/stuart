@@ -171,6 +171,16 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.same({6,15,24}, actual)
   end)
 
+  it('glom()', function()
+    local a = sc:parallelize(_.range(1,100), 3)
+    local actual = a:glom():collect()
+    assert.equals(3, #actual)
+    local values = _.flatten(actual)
+    for i = 1, 100 do
+      assert.contains(values, i)
+    end
+  end)
+
   it('groupBy()', function()
     local a = sc:parallelize(_.range(1,9), 3)
     local actual = a:groupBy(function(x)
@@ -305,6 +315,56 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(actual, {'salmon',6})
     assert.contains_pair(actual, {'rat',3})
     assert.contains_pair(actual, {'elephant',8})
+  end)
+
+  it('mapPartitions() Example 1', function()
+    local a = sc:parallelize(_.range(1,9), 3)
+    local myfunc = function(iter)
+      local res = {}
+      local pre
+      for cur in iter do
+        if pre ~= nil then res[#res+1] = {pre, cur} end
+        pre = cur
+      end
+      local i = 0
+      return function()
+        i = i + 1
+        if i <= #res then return res[i] end
+      end
+    end
+    local actual = a:mapPartitions(myfunc):collect()
+    assert.contains_pair(actual, {2,3})
+    assert.contains_pair(actual, {1,2})
+    assert.contains_pair(actual, {5,6})
+    assert.contains_pair(actual, {4,5})
+    assert.contains_pair(actual, {8,9})
+    assert.contains_pair(actual, {7,8})
+    assert.not_contains_pair(actual, {3,4})
+    assert.not_contains_pair(actual, {6,7})
+  end)
+
+  -- value 10 removed, removing non-determinism caused by bucket splits
+  it('mapPartitionsWithIndex()', function()
+    local a = sc:parallelize({1,2,3,4,5,6,7,8,9}, 3)
+    local myfunc = function(index, iter)
+      local res = {}
+      for x in iter do res[#res+1] = index .. ',' .. x end
+      local i = 0
+      return function()
+        i = i + 1
+        if i <= #res then return res[i] end
+      end
+    end
+    local actual = a:mapPartitionsWithIndex(myfunc):collect()
+    assert.contains(actual, '0,1')
+    assert.contains(actual, '0,2')
+    assert.contains(actual, '0,3')
+    assert.contains(actual, '1,4')
+    assert.contains(actual, '1,5')
+    assert.contains(actual, '1,6')
+    assert.contains(actual, '2,7')
+    assert.contains(actual, '2,8')
+    assert.contains(actual, '2,9')
   end)
 
   it('mapValues()', function()

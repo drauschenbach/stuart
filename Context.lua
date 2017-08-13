@@ -12,6 +12,10 @@ function Context:new(o)
   return o
 end
 
+function Context:makeRDD(x, numPartitions)
+  return self:parallelize(x, numPartitions)
+end
+
 function Context:parallelize(x, numPartitions)
   if numPartitions == 1 or not _.isNumber(numPartitions) then
     local p = Partition:new({}, x, 0)
