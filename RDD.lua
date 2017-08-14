@@ -42,9 +42,9 @@ end
 
 function RDD:aggregate(zeroValue, seqOp, combOp)
   return _.reduce(self.p, function(r, p)
-    local y = _.reduce(p.x, seqOp, zeroValue)
+    local y = _.reduce(p.x, seqOp, moses.clone(zeroValue))
     return combOp(r, y)
-  end, zeroValue)
+  end, moses.clone(zeroValue))
 end
 
 function RDD:cache()

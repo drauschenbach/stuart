@@ -56,12 +56,32 @@ describe('Apache Spark 2.2.0 Unit Tests', function()
     assert.contains_pair(partitionSumsWithSplit:collect(), {1,7})
   end)
 
-  it("SparkContext.union", function()
+  it('SparkContext.union', function()
     local nums = sc:makeRDD({1, 2, 3, 4}, 2)
     assert.same({1, 2, 3, 4}, sc:union({nums}):collect())
     assert.same({1, 2, 3, 4, 1, 2, 3, 4}, sc:union({nums, nums}):collect())
     --Scala-specific: assert.same({1, 2, 3, 4}, sc:union(Seq(nums)):collect())
     --Scala-specific: assert.same({1, 2, 3, 4, 1, 2, 3, 4}, sc:union(Seq(nums, nums)):collect())
+  end)
+
+  -- translation of this test to Lua avoids the variable name "pair"
+  it('aggregate', function()
+    local pairsrdd = sc:makeRDD({{'a',1}, {'b',2}, {'a',2}, {'c',5}, {'a',3}}, 2)
+    local mergeElement = function(map, pairrdd)
+      map[pairrdd[1]] = (map[pairrdd[1]] or 0) + pairrdd[2]
+      return map
+    end
+    local mergeMaps = function(map1, map2)
+      local r = map1
+      for key,value in pairs(map2) do
+        r[key] = (r[key] or 0) + value 
+      end
+      return r
+    end
+    local result = pairsrdd:aggregate({}, mergeElement, mergeMaps)
+    assert.equals(6, result['a'])
+    assert.equals(2, result['b'])
+    assert.equals(5, result['c'])
   end)
 
 end)
