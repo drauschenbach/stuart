@@ -8,7 +8,7 @@ local function sleep(timeout)
   socket.select(nil, nil, timeout)
 end
 
-StreamingContext = {sc=nil, batchDuration=1, dstreams={}}
+StreamingContext = {sc=nil, batchDuration=1, dstreams={}, state='initialized'}
 
 function StreamingContext:new(o)
   o = o or {}
@@ -37,11 +37,24 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   --_.print('Ending run loop')
 end
 
+function StreamingContext:getState()
+  return self.state
+end
+
 function StreamingContext:queueStream(rdds, oneAtATime)
   if not _.isBoolean(oneAtATime) then oneAtATime = true end
   dstream = QueueInputDStream:new({sc=self.sc, batchDuration=self.batchDuration, queue=rdds})
   table.insert(self.dstreams, dstream)
   return dstream
+end
+
+function StreamingContext:start()
+  if self.state == 'stopped' then error('StreamingContext has already been stopped') end
+  self.state = 'active'
+end
+
+function StreamingContext:stop()
+  self.state = 'stopped'
 end
 
 return StreamingContext

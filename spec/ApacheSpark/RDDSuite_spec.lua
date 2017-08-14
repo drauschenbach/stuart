@@ -5,7 +5,7 @@ local stuart = require 'stuart'
 
 registerAsserts(assert)
 
-describe('Apache Spark 2.2.0 Unit Tests', function()
+describe('Apache Spark 2.2.0 RDDSuite', function()
 
   local sc = stuart.NewContext()
 

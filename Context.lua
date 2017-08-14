@@ -3,7 +3,7 @@ _.groupBy = require 'lodashPatchedGroupBy'
 local Partition = require 'Partition'
 local RDD = require 'RDD'
 
-Context = {}
+Context = {master='local[1]', appName=nil}
 
 function Context:new(o)
   o = o or {}
