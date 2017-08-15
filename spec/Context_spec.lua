@@ -19,11 +19,11 @@ describe('Context', function()
 
   it('can parallelize() into expected numbers of partitions', function()
     local rdd = sc:parallelize({'Gnu', 'Cat'})
-    assert.equals(1, _.size(rdd:partitions()))
+    assert.equals(1, #rdd.partitions)
     
     rdd = sc:parallelize({'12','23','','345'}, 2)
-    assert.equals(2, _.size(rdd:partitions()))
-    assert.equals(2, #rdd:partitions())
+    assert.equals(2, #rdd.partitions)
+    assert.equals(2, #rdd.partitions)
   end)
 
 end)

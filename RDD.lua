@@ -2,11 +2,11 @@ local _ = require 'lodash'
 _.groupBy = require 'lodashPatchedGroupBy'
 local moses = require 'moses'
 
-RDD = {}
+RDD = {partitions={}}
 
 function RDD:new(o, partitions, ctx)
   o = o or {}
-  o.p = partitions
+  o.partitions = partitions
   o.ctx = ctx
   setmetatable(o, self)
   self.__index = self
@@ -21,12 +21,12 @@ function RDD:_dict()
 end
 
 function RDD:_flatten()
-  for i, p in ipairs(self.p) do p:_flatten() end
+  for i, p in ipairs(self.partitions) do p:_flatten() end
   return self
 end
 
 function RDD:_flattenValues()
-  for i, p in ipairs(self.p) do p:_flattenValues() end
+  for i, p in ipairs(self.partitions) do p:_flattenValues() end
   return self
 end
 
@@ -41,7 +41,7 @@ function _iterToArray(iter, f)
 end
 
 function RDD:aggregate(zeroValue, seqOp, combOp)
-  return _.reduce(self.p, function(r, p)
+  return _.reduce(self.partitions, function(r, p)
     local y = _.reduce(p.x, seqOp, moses.clone(zeroValue))
     return combOp(r, y)
   end, moses.clone(zeroValue))
@@ -74,7 +74,7 @@ function RDD:context()
 end
 
 function RDD:count()
-  return _.reduce(self.p, function(r, p) return r + p:_count() end, 0)
+  return _.reduce(self.partitions, function(r, p) return r + p:_count() end, 0)
 end
 
 function RDD:countApprox()
@@ -114,7 +114,7 @@ function RDD:filter(f)
 end
 
 function RDD:first()
-  return self.p[1].x[1]
+  return self.partitions[1].x[1]
 end
 
 function RDD:flatMap(f, preservesPartitioning)
@@ -141,7 +141,7 @@ function RDD:foldByKey(zeroValue, op)
 end
 
 function RDD:foreach(f)
-  for z, p in ipairs(self.p) do
+  for z, p in ipairs(self.partitions) do
     for i, x in ipairs(p.x) do
       p.x[i] = f(p.x[i])
     end
@@ -149,13 +149,13 @@ function RDD:foreach(f)
 end
 
 function RDD:foreachPartition(f)
-  for z, p in ipairs(self.p) do
+  for z, p in ipairs(self.partitions) do
     f(p.x)
   end
 end
 
 function RDD:glom(f)
-  local t = _.map(self.p, function(p) return p.x end)
+  local t = _.map(self.partitions, function(p) return p.x end)
   return self.ctx:parallelize(t)
 end
 
@@ -294,7 +294,7 @@ function RDD:map(f)
 end
 
 function RDD:mapPartitions(iter)
-  local t = _.reduce(self.p, function(r,p)
+  local t = _.reduce(self.partitions, function(r,p)
     for e in iter(p:_toLocalIterator()) do
       r[#r+1] = e
     end
@@ -305,7 +305,7 @@ end
 
 function RDD:mapPartitionsWithIndex(iter)
   local index = 0
-  local t = _.reduce(self.p, function(r,p)
+  local t = _.reduce(self.partitions, function(r,p)
     for e in iter(index, p:_toLocalIterator()) do
       r[#r+1] = e
     end
@@ -334,10 +334,6 @@ function RDD:min()
     if n < r then r = n end
   end
   return r
-end
-
-function RDD:partitions()
-  return self.p
 end
 
 function RDD:reduce(f)
@@ -411,18 +407,18 @@ function RDD:toLocalIterator()
   local pIndex = 1
   local i = 0
   return function()
-    if pIndex > #self.p then return nil end
-    local partitionData = self.p[pIndex].x
+    if pIndex > #self.partitions then return nil end
+    local partitionData = self.partitions[pIndex].x
     if not _.isTable(partitionData) then return nil end
     i = i + 1
     if i > #partitionData then
       pIndex = pIndex + 1
       i = 1
-      if pIndex > #self.p then return nil end
-      partitionData = self.p[pIndex].x
+      if pIndex > #self.partitions then return nil end
+      partitionData = self.partitions[pIndex].x
     end
     
-    if pIndex <= #self.p and i <= #partitionData then
+    if pIndex <= #self.partitions and i <= #partitionData then
       return partitionData[i]
     end
   end

@@ -392,11 +392,11 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(10, y:min())
   end)
 
-  it('partitions()', function()
+  it('partitions', function()
     local b = sc:parallelize({'gnu', 'cat', 'rat', 'dog', 'gnu', 'rat'}, 2)
-    local partitions = b:partitions()
+    local partitions = b.partitions
     assert.is_table(partitions)
-    assert.equals(2, _.size(partitions))
+    assert.equals(2, #partitions)
   end)
 
   it('reduce()', function()
@@ -431,9 +431,9 @@ describe('La Trobe University Spark 1.4 Examples', function()
 
   it('repartition()', function()
     local rdd = sc:parallelize({1,2,10,4,5,2,1,1,1}, 3)
-    assert.equals(3, #rdd:partitions())
+    assert.equals(3, #rdd.partitions)
     local rdd2 = rdd:repartition(5)
-    assert.equals(5, #rdd2:partitions())
+    assert.equals(5, #rdd2.partitions)
   end)
 
   it('stats()', function()

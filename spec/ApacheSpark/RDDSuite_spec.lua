@@ -11,7 +11,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 
   it('basic operations', function()
     local nums = sc:makeRDD({1,2,3,4}, 2)
-    assert.equals(2, #nums:partitions())
+    assert.equals(2, #nums.partitions)
     assert.same({1,2,3,4}, nums:collect())
     assert.same({1,2,3,4}, moses.array(nums:toLocalIterator()))
     local dups = sc:makeRDD({1,1,2,2,3,3,4,4}, 2)
@@ -84,4 +84,24 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     assert.equals(5, result['c'])
   end)
 
+  it('repartitioned RDDs', function()
+    local data = sc:parallelize(_.range(1, 1000), 10)
+    
+    -- Coalesce partitions
+    local repartitioned1 = data:repartition(2)
+    assert.equals(2, #repartitioned1.partitions)
+    local partitions1 = repartitioned1:glom():collect()
+    assert.is_true(#partitions1[1] > 0)
+    assert.is_true(#partitions1[2] > 0)
+    assert.same(_.range(1, 1000), repartitioned1:collect())
+    
+    -- Split partitions
+    local repartitioned2 = data:repartition(20)
+    assert(20, #repartitioned2.partitions)
+    local partitions2 = repartitioned2:glom():collect()
+    assert.is_true(#partitions2[1] > 0)
+    assert.is_true(#partitions2[20] > 0)
+    assert.same(_.range(1, 1000), repartitioned2:collect())
+  end)
+  
 end)
