@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local DStream = require 'DStream'
 
 local QueueInputDStream = DStream:new()

@@ -1,4 +1,4 @@
-local _ = require 'lodash'
+local moses = require 'moses'
 
 Stuart = {}
 Stuart.Context = require 'Context'
@@ -9,11 +9,11 @@ Stuart.NewContext = function()
 end
 
 Stuart.NewStreamingContext = function(arg1, arg2, arg3)
-  if _.isString(arg1) and _.isString(arg2) and _.isNumber(arg3) then
+  if moses.isString(arg1) and moses.isString(arg2) and moses.isNumber(arg3) then
     local sc = Stuart.Context:new{master=mastr, appName=appName}
     return Stuart.StreamingContext:new({sc=sc, batchDuration=batchDuration})
   end
-  if _.isTable(arg1) then
+  if moses.isTable(arg1) then
     local sc = arg1
     return Stuart.StreamingContext:new({sc=sc})
   end

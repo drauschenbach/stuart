@@ -1,5 +1,4 @@
-local _ = require 'lodash'
-_.groupBy = require 'lodashPatchedGroupBy'
+local moses = require 'moses'
 local Partition = require 'Partition'
 local RDD = require 'RDD'
 
@@ -17,13 +16,13 @@ function Context:makeRDD(x, numPartitions)
 end
 
 function Context:parallelize(x, numPartitions)
-  if numPartitions == 1 or not _.isNumber(numPartitions) then
+  if numPartitions == 1 or not moses.isNumber(numPartitions) then
     local p = Partition:new({}, x, 0)
     return RDD:new(nil, {p}, self)
   end
   
-  local chunks = _.chunk(x, math.ceil(#x / numPartitions))
-  local partitions = _.map(chunks, function(chunk, i)
+  local chunks = moses.array(moses.partition(x, math.ceil(#x / numPartitions)))
+  local partitions = moses.map(chunks, function(i, chunk)
     return Partition:new({}, chunk, i)
   end)
 	return RDD:new(nil, partitions, self)

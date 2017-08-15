@@ -1,4 +1,4 @@
-local _ = require 'lodash'
+local moses = require 'moses'
 
 Partition = {}
 
@@ -12,17 +12,23 @@ function Partition:new(o, x, index)
 end
 
 function Partition:_count()
-  return _.size(self.x)
+  return #self.x
 end
 
 function Partition:_flatten()
-  self.x = _.flatten(self.x)
+  self.x = moses.flatten(self.x)
   return self
 end
 
 function Partition:_flattenValues()
-  self.x = _.reduce(self.x, function(r, e)
-    _.map(e[2], function(v)
+  self.x = moses.reduce(self.x, function(r, e)
+    local x = e[2]
+    if moses.isString(x) then
+      t = {}
+      x:gsub('.', function(c) t[#t+1] = c end)
+      x = t
+    end
+    moses.map(x, function(i, v)
       table.insert(r, {e[1], v})
     end)
     return r

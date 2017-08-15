@@ -1,6 +1,5 @@
-local _ = require 'lodash'
 local DStream = require 'DStream'
-local inspect = require 'inspect'
+local moses = require 'moses'
 local QueueInputDStream = require 'QueueInputDStream'
 local socket = require 'socket'
 local SocketInputDStream = require 'SocketInputDStream'
@@ -19,7 +18,7 @@ function StreamingContext:new(o)
 end
 
 function StreamingContext:awaitTerminationOrTimeout(timeout)
-  if not _.isNumber(timeout) or timeout <= 0 then error('Invalid timeout') end
+  if not moses.isNumber(timeout) or timeout <= 0 then error('Invalid timeout') end
   
   local coroutines = {}
   for i,dstream in ipairs(self.dstreams) do
@@ -52,7 +51,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
     
     sleep(loopDurationGoal)
   end
-  --_.print('Ending run loop')
+  --moses.print('Ending run loop')
 end
 
 function StreamingContext:getState()
@@ -60,14 +59,14 @@ function StreamingContext:getState()
 end
 
 function StreamingContext:queueStream(rdds, oneAtATime)
-  if not _.isBoolean(oneAtATime) then oneAtATime = true end
+  if not moses.isBoolean(oneAtATime) then oneAtATime = true end
   dstream = QueueInputDStream:new({sc=self.sc, batchDuration=self.batchDuration, queue=rdds})
   table.insert(self.dstreams, dstream)
   return dstream
 end
 
 function StreamingContext:socketTextStream(hostname, port)
-  if not _.isBoolean(oneAtATime) then oneAtATime = true end
+  if not moses.isBoolean(oneAtATime) then oneAtATime = true end
   dstream = SocketInputDStream:new({sc=self.sc, hostname=hostname, port=port})
   self.dstreams[#self.dstreams+1] = dstream
   return dstream

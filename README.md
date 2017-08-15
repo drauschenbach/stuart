@@ -58,9 +58,20 @@ assert.equals(1, countsByKey[5])
 
 ## Requirements
 
-* [lodash](https://luarocks.org/modules/axmat/lodash), which for the moment requires Lua >= 5.2.
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
+
+## Compatibility
+
+Stuart is compatible with:
+
+* [GopherLua](https://github.com/yuin/gopher-lua)
+* [Lua 5.1+](https://www.lua.org)
+* [LuaJIT](https://www.lua.org)
+
+Stuart is incompatible with:
+
+* [Shopify/go-lua](https://github.com/Shopify/go-lua), due to its lack of `coroutine` and `debug.getinfo()` capabilities.
 
 ## Design
 
