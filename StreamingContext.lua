@@ -3,6 +3,7 @@ local DStream = require 'DStream'
 local inspect = require 'inspect'
 local QueueInputDStream = require 'QueueInputDStream'
 local socket = require 'socket'
+local SocketInputDStream = require 'SocketInputDStream'
 
 local function sleep(timeout)
   socket.select(nil, nil, timeout)
@@ -20,19 +21,36 @@ end
 function StreamingContext:awaitTerminationOrTimeout(timeout)
   if not _.isNumber(timeout) or timeout <= 0 then error('Invalid timeout') end
   
+  local coroutines = {}
+  for i,dstream in ipairs(self.dstreams) do
+    coroutines[#coroutines+1] = {coroutine.create(dstream.compute), dstream}
+  end
+  
   -- run loop
   local startTime = socket.gettime()
-  while true do
+  local loopDurationGoal = 0.05 -- 50ms
+  local individualDStreamDurationBudget = loopDurationGoal / #self.dstreams 
+  while self.state == 'active' do
+  
+    -- Decide whether to timeout
     local now = socket.gettime()
-    local elapsedTime = now - startTime
-    if elapsedTime > timeout then break end
-    for i, dstream in ipairs(self.dstreams) do
-      rdd = dstream:compute(now)
-      if not _.isNil(rdd) then
-        dstream:_notify(rdd)
+    local elapsed = now - startTime
+    if elapsed > timeout then break end
+    local loopStartTime = now
+    
+    -- Run each dstream compute() function, until it yields
+    for i,copair in ipairs(coroutines) do
+      local co = copair[1]
+      local dstream = copair[2]
+      if coroutine.status(co) == 'suspended' then
+        ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget) --, now, individualDStreamDurationBudget)
+        if ok and (rdds ~= nil) then
+          for i, rdd in ipairs(rdds) do dstream:_notify(rdd) end
+        end
       end
     end
-    sleep(.1)
+    
+    sleep(loopDurationGoal)
   end
   --_.print('Ending run loop')
 end
@@ -45,6 +63,13 @@ function StreamingContext:queueStream(rdds, oneAtATime)
   if not _.isBoolean(oneAtATime) then oneAtATime = true end
   dstream = QueueInputDStream:new({sc=self.sc, batchDuration=self.batchDuration, queue=rdds})
   table.insert(self.dstreams, dstream)
+  return dstream
+end
+
+function StreamingContext:socketTextStream(hostname, port)
+  if not _.isBoolean(oneAtATime) then oneAtATime = true end
+  dstream = SocketInputDStream:new({sc=self.sc, hostname=hostname, port=port})
+  self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 

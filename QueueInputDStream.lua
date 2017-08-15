@@ -10,8 +10,16 @@ function QueueInputDStream:new(o)
   return o
 end
 
-function QueueInputDStream:compute(time)
-  return table.remove(self.queue)
+function QueueInputDStream:compute(durationBudget)
+  while true do
+    -- one at a time
+    --local rdd = table.remove(self.queue)
+    --coroutine.yield({rdd})
+
+    local rdds = self.queue
+    self.queue = {}
+    coroutine.yield(rdds)
+  end
 end
 
 return QueueInputDStream

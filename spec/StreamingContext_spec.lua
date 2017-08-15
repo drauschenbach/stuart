@@ -14,6 +14,7 @@ describe('StreamingContext', function()
     local timeoutSecs = .1
     local ssc = stuart.NewStreamingContext(sc)
     local startTime = socket.gettime() * 1000
+    ssc:start()
     ssc:awaitTerminationOrTimeout(timeoutSecs)
     local endTime = socket.gettime() * 1000
     local elapsedTime = endTime - startTime
@@ -33,6 +34,7 @@ describe('StreamingContext', function()
       _.forEach(rdd:collect(), function(e) table.insert(r, e) end)
     end)
     
+    ssc:start()
     ssc:awaitTerminationOrTimeout(timeoutSecs)
     assert.contains(r, 'a')
     assert.contains(r, 'b')
