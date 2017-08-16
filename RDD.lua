@@ -385,7 +385,7 @@ function RDD:subtractByKey(other)
     if moses.detect(keys, e[1]) ~= nil then r[#r+1] = e end
     return r 
   end, {})
-  return self.ctx:parallelize(t)
+  return self.ctx:parallelize(t, #self.partitions)
 end
 
 function RDD:take(n)
