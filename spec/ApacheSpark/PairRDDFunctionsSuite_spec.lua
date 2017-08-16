@@ -22,45 +22,48 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    assert(valuesFor5.toList.sorted === List(1, 3))
 --  end)
 
---  it("groupByKey", function()
---    val pairs = sc.parallelize(Array((1, 1), (1, 2), (1, 3), (2, 1)))
---    val groups = pairs.groupByKey().collect()
---    assert(groups.size === 2)
---    val valuesFor1 = groups.find(_._1 == 1).get._2
---    assert(valuesFor1.toList.sorted === List(1, 2, 3))
---    val valuesFor2 = groups.find(_._1 == 2).get._2
---    assert(valuesFor2.toList.sorted === List(1))
---  end)
+  it("groupByKey", function()
+    local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {2,1}})
+    local groups = pairs:groupByKey():collect()
+    assert.equals(2, #groups)
+    local valuesFor1 = _.find(groups, function(v) return v[1] == 1 end)[2]
+    assert.same({1,2,3}, valuesFor1)
+    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    assert.same({1}, valuesFor2)
+  end)
 
---  it("groupByKey with duplicates", function()
---    val pairs = sc.parallelize(Array((1, 1), (1, 2), (1, 3), (1, 1), (2, 1)))
---    val groups = pairs.groupByKey().collect()
---    assert(groups.size === 2)
---    val valuesFor1 = groups.find(_._1 == 1).get._2
---    assert(valuesFor1.toList.sorted === List(1, 1, 2, 3))
---    val valuesFor2 = groups.find(_._1 == 2).get._2
---    assert(valuesFor2.toList.sorted === List(1))
---  end)
+  it("groupByKey with duplicates", function()
+    local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {1,1}, {2,1}})
+    local groups = pairs:groupByKey():collect()
+    assert.equals(2, #groups)
+    local valuesFor1 = _.find(groups, function(v) return v[1] == 1 end)[2]
+    table.sort(valuesFor1)
+    assert.same({1,1,2,3}, valuesFor1)
+    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    assert.same({1}, valuesFor2)
+  end)
 
---  it("groupByKey with negative key hash codes", function()
---    val pairs = sc.parallelize(Array((-1, 1), (-1, 2), (-1, 3), (2, 1)))
---    val groups = pairs.groupByKey().collect()
---    assert(groups.size === 2)
---    val valuesForMinus1 = groups.find(_._1 == -1).get._2
---    assert(valuesForMinus1.toList.sorted === List(1, 2, 3))
---    val valuesFor2 = groups.find(_._1 == 2).get._2
---    assert(valuesFor2.toList.sorted === List(1))
---  end)
+  it("groupByKey with negative key hash codes", function()
+    local pairs = sc:parallelize({{-1,1}, {-1,2}, {-1,3}, {2,1}})
+    local groups = pairs:groupByKey():collect()
+    assert.equals(2, #groups)
+    local valuesForMinus1 = _.find(groups, function(v) return v[1] == -1 end)[2]
+    table.sort(valuesForMinus1)
+    assert.same({1,2,3}, valuesForMinus1)
+    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    assert.same({1}, valuesFor2)
+  end)
 
---  it("groupByKey with many output partitions", function()
---    val pairs = sc.parallelize(Array((1, 1), (1, 2), (1, 3), (2, 1)))
---    val groups = pairs.groupByKey(10).collect()
---    assert(groups.size === 2)
---    val valuesFor1 = groups.find(_._1 == 1).get._2
---    assert(valuesFor1.toList.sorted === List(1, 2, 3))
---    val valuesFor2 = groups.find(_._1 == 2).get._2
---    assert(valuesFor2.toList.sorted === List(1))
---  end)
+  it("groupByKey with many output partitions", function()
+    local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {2,1}})
+    local groups = pairs:groupByKey(10):collect()
+    assert.equals(2, #groups)
+    local valuesFor1 = _.find(groups, function(v) return v[1] == 1 end)[2]
+    table.sort(valuesFor1)
+    assert.same({1,2,3}, valuesFor1)
+    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    assert.same({1}, valuesFor2)
+  end)
 
 --  it("sampleByKey", function()
 --
@@ -141,25 +144,27 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    }
 --  end)
 
---  it("reduceByKey", function()
---    val pairs = sc.parallelize(Array((1, 1), (1, 2), (1, 3), (1, 1), (2, 1)))
---    val sums = pairs.reduceByKey(_ + _).collect()
---    assert(sums.toSet === Set((1, 7), (2, 1)))
---  end)
+  it("reduceByKey", function()
+    local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {1,1}, {2,1}})
+    local sums = pairs:reduceByKey(function(r,x) return r+x end):collect()
+    assert.contains_pair(sums, {1,7})
+    assert.contains_pair(sums, {2,1})
+  end)
 
---  it("reduceByKey with collectAsMap", function()
---    val pairs = sc.parallelize(Array((1, 1), (1, 2), (1, 3), (1, 1), (2, 1)))
---    val sums = pairs.reduceByKey(_ + _).collectAsMap()
---    assert(sums.size === 2)
---    assert(sums(1) === 7)
---    assert(sums(2) === 1)
---  end)
+  it("reduceByKey with collectAsMap", function()
+    local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {1,1}, {2,1}})
+    local sums = pairs:reduceByKey(function(x,y) return x+y end):collectAsMap()
+    assert.equals(2, #sums)
+    assert.equals(7, sums[1])
+    assert.equals(1, sums[2])
+  end)
 
---  it("reduceByKey with many output partitions", function()
---    val pairs = sc.parallelize(Array((1, 1), (1, 2), (1, 3), (1, 1), (2, 1)))
---    val sums = pairs.reduceByKey(_ + _, 10).collect()
---    assert(sums.toSet === Set((1, 7), (2, 1)))
---  end)
+  it("reduceByKey with many output partitions", function()
+    local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {1,1}, {2,1}})
+    local sums = pairs:reduceByKey(function(x,y) return x+y end, 10):collect()
+    assert.contains_pair(sums, {1,7})
+    assert.contains_pair(sums, {2,1})
+  end)
 
 --  it("reduceByKey with partitioner", function()
 --    val p = new Partitioner() {
@@ -276,19 +281,17 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    assert(joined.size > 0)
 --  end)
 
---  it("rightOuterJoin", function()
---    val rdd1 = sc.parallelize(Array((1, 1), (1, 2), (2, 1), (3, 1)))
---    val rdd2 = sc.parallelize(Array((1, 'x'), (2, 'y'), (2, 'z'), (4, 'w')))
---    val joined = rdd1.rightOuterJoin(rdd2).collect()
---    assert(joined.size === 5)
---    assert(joined.toSet === Set(
---      (1, (Some(1), 'x')),
---      (1, (Some(2), 'x')),
---      (2, (Some(1), 'y')),
---      (2, (Some(1), 'z')),
---      (4, (None, 'w'))
---    ))
---  end)
+  it("rightOuterJoin", function()
+    local rdd1 = sc:parallelize({{1,1}, {1,2}, {2,1}, {3,1}})
+    local rdd2 = sc:parallelize({{1,'x'}, {2,'y'}, {2,'z'}, {4,'w'}})
+    local joined = rdd1:rightOuterJoin(rdd2):collect()
+    assert.equals(5, #joined)
+    assert.contains_keyed_pair(joined, 1, {1,'x'})
+    assert.contains_keyed_pair(joined, 1, {2,'x'})
+    assert.contains_keyed_pair(joined, 2, {1,'y'})
+    assert.contains_keyed_pair(joined, 2, {1,'z'})
+    assert.contains_keyed_pair(joined, 4, {nil,'w'})
+  end)
 
 --  it("fullOuterJoin", function()
 --    val rdd1 = sc.parallelize(Array((1, 1), (1, 2), (2, 1), (3, 1)))
@@ -305,25 +308,23 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    ))
 --  end)
 
---  it("join with no matches", function()
---    val rdd1 = sc.parallelize(Array((1, 1), (1, 2), (2, 1), (3, 1)))
---    val rdd2 = sc.parallelize(Array((4, 'x'), (5, 'y'), (5, 'z'), (6, 'w')))
---    val joined = rdd1.join(rdd2).collect()
---    assert(joined.size === 0)
---  end)
+  it("join with no matches", function()
+    local rdd1 = sc:parallelize({{1,1}, {1,2}, {2,1}, {3,1}})
+    local rdd2 = sc:parallelize({{4,'x'}, {5,'y'}, {5,'z'}, {6,'w'}})
+    local joined = rdd1:join(rdd2):collect()
+    assert.equals(0, #joined)
+  end)
 
---  it("join with many output partitions", function()
---    val rdd1 = sc.parallelize(Array((1, 1), (1, 2), (2, 1), (3, 1)))
---    val rdd2 = sc.parallelize(Array((1, 'x'), (2, 'y'), (2, 'z'), (4, 'w')))
---    val joined = rdd1.join(rdd2, 10).collect()
---    assert(joined.size === 4)
---    assert(joined.toSet === Set(
---      (1, (1, 'x')),
---      (1, (2, 'x')),
---      (2, (1, 'y')),
---      (2, (1, 'z'))
---    ))
---  end)
+  it("join with many output partitions", function()
+    local rdd1 = sc:parallelize({{1,1}, {1,2}, {2,1}, {3,1}})
+    local rdd2 = sc:parallelize({{1,'x'}, {2,'y'}, {2,'z'}, {4,'w'}})
+    local joined = rdd1:join(rdd2, 10):collect()
+    assert.equals(4, #joined)
+    assert.contains_keyed_pair(joined, 1, {1,'x'})
+    assert.contains_keyed_pair(joined, 1, {2,'x'})
+    assert.contains_keyed_pair(joined, 2, {1,'y'})
+    assert.contains_keyed_pair(joined, 2, {1,'z'})
+  end)
 
 --  it("groupWith", function()
 --    val rdd1 = sc.parallelize(Array((1, 1), (1, 2), (2, 1), (3, 1)))
@@ -385,11 +386,11 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    }
 --  end)
 
---  it("keys and values", function()
---    val rdd = sc.parallelize(Array((1, "a"), (2, "b")))
---    assert(rdd.keys.collect().toList === List(1, 2))
---    assert(rdd.values.collect().toList === List("a", "b"))
---  end)
+  it("keys and values", function()
+    local rdd = sc:parallelize({{1,'a'}, {2,'b'}})
+    assert.same({1,2}, rdd:keys():collect())
+    assert.same({'a','b'}, rdd:values():collect())
+  end)
 
 --  it("default partitioner uses partition size", function()
 --    // specify 2000 partitions
@@ -408,13 +409,13 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    assert(c.partitions.size === 2000)
 --  end)
 
---  it("subtract", function()
---    val a = sc.parallelize(Array(1, 2, 3), 2)
---    val b = sc.parallelize(Array(2, 3, 4), 4)
---    val c = a.subtract(b)
---    assert(c.collect().toSet === Set(1))
---    assert(c.partitions.size === a.partitions.size)
---  end)
+  it("subtract", function()
+    local a = sc:parallelize({1,2,3}, 2)
+    local b = sc:parallelize({2,3,4}, 4)
+    local c = a:subtract(b)
+    assert.same({1}, c:collect())
+    assert.equals(#a.partitions, #c.partitions)
+  end)
 
 --  it("subtract with narrow dependency", function()
 --    // use a deterministic partitioner

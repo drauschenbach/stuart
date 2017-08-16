@@ -66,6 +66,16 @@ function RDD:collect(f)
   return t
 end
 
+function RDD:collectAsMap()
+  local t = moses.array(self:toLocalIterator())
+  -- now ensure keys are unique, since we are observing the Java Map (non-multimap) contract
+  t = moses.reduce(t, function(r, v)
+    r[v[1]] = v[2]
+    return r
+  end, {})
+  return t
+end
+
 function RDD:context()
   return self.ctx
 end
@@ -347,11 +357,18 @@ function RDD:repartition(numPartitions)
 end
 
 function RDD:rightOuterJoin(other)
-  local d1 = self:_dict()
-  local d2 = other:_dict()
-  local t = moses.reduce(moses.keys(d1), function(r, k)
-    if d1[k] then v = d1[k] else v = nil end
-    r[k] = {v, d2[k]}
+  local t = moses.reduce(other:collect(), function(r, e)
+      local left = {}
+      moses.forEach(self:collect(), function(i,y)
+        if y[1] == e[1] then left[#left+1] = y[2] end
+      end)
+      if #left == 0 then
+        r[#r+1] = {e[1], {nil, e[2]}}
+      else
+        moses.forEach(left, function(i,z)
+          r[#r+1] = {e[1], {z, e[2]}}
+        end)
+      end
     return r
   end, {})
   return self.ctx:parallelize(t)
@@ -374,7 +391,7 @@ end
 
 function RDD:subtract(other)
   local t = moses.without(self:collect(), other:collect())
-  return self.ctx:parallelize(t)
+  return self.ctx:parallelize(t, #self.partitions)
 end
 
 function RDD:subtractByKey(other)
