@@ -198,12 +198,12 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --    }
 --  }
 
---  test("basic caching") {
---    val rdd = sc.makeRDD(Array(1, 2, 3, 4), 2).cache()
---    assert(rdd.collect().toList === List(1, 2, 3, 4))
---    assert(rdd.collect().toList === List(1, 2, 3, 4))
---    assert(rdd.collect().toList === List(1, 2, 3, 4))
---  }
+  it('basic caching', function()
+    local rdd = sc:makeRDD({1,2,3,4}, 2):cache()
+    assert.same({1,2,3,4}, rdd:collect())
+    assert.same({1,2,3,4}, rdd:collect())
+    assert.same({1,2,3,4}, rdd:collect())
+  end)
 
 --  test("caching with failures") {
 --    val onlySplit = new Partition { override def index: Int = 0 }
@@ -516,51 +516,52 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --  }
 
   -- Regression test for SPARK-4019
---  test("collect large number of empty partitions") {
---    assert(sc.makeRDD(0 until 10, 1000).repartition(2001).collect().toSet === (0 until 10).toSet)
---  }
+  it('collect large number of empty partitions', function()
+    local expected = _.range(0,10)
+    assert.same(expected, sc:makeRDD(_.range(0,10), 1000):repartition(2001):collect())
+  end)
 
---  test("take") {
---    var nums = sc.makeRDD(Range(1, 1000), 1)
---    assert(nums.take(0).size === 0)
---    assert(nums.take(1) === Array(1))
---    assert(nums.take(3) === Array(1, 2, 3))
---    assert(nums.take(500) === (1 to 500).toArray)
---    assert(nums.take(501) === (1 to 501).toArray)
---    assert(nums.take(999) === (1 to 999).toArray)
---    assert(nums.take(1000) === (1 to 999).toArray)
---
---    nums = sc.makeRDD(Range(1, 1000), 2)
---    assert(nums.take(0).size === 0)
---    assert(nums.take(1) === Array(1))
---    assert(nums.take(3) === Array(1, 2, 3))
---    assert(nums.take(500) === (1 to 500).toArray)
---    assert(nums.take(501) === (1 to 501).toArray)
---    assert(nums.take(999) === (1 to 999).toArray)
---    assert(nums.take(1000) === (1 to 999).toArray)
---
---    nums = sc.makeRDD(Range(1, 1000), 100)
---    assert(nums.take(0).size === 0)
---    assert(nums.take(1) === Array(1))
---    assert(nums.take(3) === Array(1, 2, 3))
---    assert(nums.take(500) === (1 to 500).toArray)
---    assert(nums.take(501) === (1 to 501).toArray)
---    assert(nums.take(999) === (1 to 999).toArray)
---    assert(nums.take(1000) === (1 to 999).toArray)
---
---    nums = sc.makeRDD(Range(1, 1000), 1000)
---    assert(nums.take(0).size === 0)
---    assert(nums.take(1) === Array(1))
---    assert(nums.take(3) === Array(1, 2, 3))
---    assert(nums.take(500) === (1 to 500).toArray)
---    assert(nums.take(501) === (1 to 501).toArray)
---    assert(nums.take(999) === (1 to 999).toArray)
---    assert(nums.take(1000) === (1 to 999).toArray)
---
---    nums = sc.parallelize(1 to 2, 2)
---    assert(nums.take(2147483638).size === 2)
---    assert(nums.takeAsync(2147483638).get.size === 2)
---  }
+  it('take', function()
+    local nums = sc:makeRDD(_.range(1, 999), 1) -- Scala Range would read 1,1000
+    assert.same({}, nums:take(0))
+    assert.same({1}, nums:take(1))
+    assert.same({1,2,3}, nums:take(3))
+    assert.same(_.range(1,500), nums:take(500))
+    assert.same(_.range(1,501), nums:take(501))
+    assert.same(_.range(1,999), nums:take(999))
+    assert.same(_.range(1,999), nums:take(1000))
+
+    nums = sc:makeRDD(_.range(1, 999), 2)
+    assert.equals(0, #nums:take(0))
+    assert.same({1}, nums:take(1))
+    assert.same({1,2,3}, nums:take(3))
+    assert.same(_.range(1,500), nums:take(500))
+    assert.same(_.range(1,501), nums:take(501))
+    assert.same(_.range(1,999), nums:take(999))
+    assert.same(_.range(1,999), nums:take(1000))
+
+    nums = sc:makeRDD(_.range(1, 999), 100)
+    assert.equals(0, #nums:take(0))
+    assert.same({1}, nums:take(1))
+    assert.same({1,2,3}, nums:take(3))
+    assert.same(_.range(1,500), nums:take(500))
+    assert.same(_.range(1,501), nums:take(501))
+    assert.same(_.range(1,999), nums:take(999))
+    assert.same(_.range(1,999), nums:take(1000))
+
+    nums = sc:makeRDD(_.range(1, 999), 1000)
+    assert.equals(0, #nums:take(0))
+    assert.same({1}, nums:take(1))
+    assert.same({1,2,3}, nums:take(3))
+    assert.same(_.range(1,500), nums:take(500))
+    assert.same(_.range(1,501), nums:take(501))
+    assert.same(_.range(1,999), nums:take(999))
+    assert.same(_.range(1,999), nums:take(1000))
+
+    nums = sc:parallelize({1,2}, 2)
+    assert.equals(2, #nums:take(2147483638))
+--    assert.equals(2, nums:takeAsync(2147483638):get())
+  end)
 
 --  test("top with predefined ordering") {
 --    val nums = Array.range(1, 100000)

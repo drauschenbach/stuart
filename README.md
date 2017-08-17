@@ -69,6 +69,8 @@ Stuart is compatible with:
 * [Lua 5.1+](https://www.lua.org)
 * [LuaJIT](https://www.lua.org)
 
+Use [glua-socket](https://github.com/BixData/glua-socket) to embed Stuart Streaming in a Go binary.
+
 Stuart is incompatible with:
 
 * [Shopify/go-lua](https://github.com/Shopify/go-lua), due to its lack of `coroutine` and `debug.getinfo()` capabilities.
@@ -83,7 +85,7 @@ Stuart is designed for embedding, and so follows some rules:
 
 ## Some Interesting Goals for the Project
 
-* Local in-memory RDDs and [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
+* Local in-memory [RDDs](https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.rdd.RDD), [PairRDDs](https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.rdd.PairRDDFunctions), and [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
 * [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) capabilities.
 * [MLlib](https://spark.apache.org/mllib/) support. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
 * A Redis scheduler. RDDs partitioned across Redis servers. Lua closures sent into Redis to run.
@@ -93,6 +95,6 @@ Stuart is designed for embedding, and so follows some rules:
 ```
 $ luarocks install busted
 $ busted
-●●●●●●●●●●●●●●●✱●●●●●●●✱●●◼●✱●✱●●●●●●●●
-53 successes / 0 failures / 0 errors / 0 pending : 0.650914 seconds
+●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
+88 successes / 0 failures / 0 errors / 0 pending : 6.965136 seconds
 ```

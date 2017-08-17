@@ -407,7 +407,9 @@ function RDD:take(n)
   local iter = self:toLocalIterator()
   t = {}
   for i = 1, n, 1 do
-    t[#t+1] = iter()
+    local x = iter()
+    if x == nil then break end
+    t[#t+1] = x
   end
   return t
 end
