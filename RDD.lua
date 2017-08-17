@@ -372,6 +372,19 @@ function RDD:rightOuterJoin(other)
   return self.ctx:parallelize(t)
 end
 
+function RDD:sortBy(f, ascending, numPartitions)
+  if not moses.isBoolean(ascending) then ascending = true end
+  local t = self:collect()
+  local comp
+  if ascending then
+    comp = function(a,b) return a<b end
+  else
+    comp = function(a,b) return a>b end
+  end
+  t = moses.sortBy(t, f, comp)
+  return self.ctx:parallelize(t, numPartitions)
+end
+
 function RDD:stats()
   local x = self:collect()
   local r = moses.reduce(x, function(r, v)
@@ -451,6 +464,13 @@ end
 
 function RDD:zip(other)
   local t = moses.zip(self:collect(), other:collect())
+  return self.ctx:parallelize(t)
+end
+
+function RDD:zipWithIndex()
+  local t = moses.map(self:collect(), function(i,x)
+    return {x,i-1}
+  end)
   return self.ctx:parallelize(t)
 end
 

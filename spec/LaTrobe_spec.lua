@@ -436,6 +436,23 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(5, #rdd2.partitions)
   end)
 
+  it('sortBy()', function()
+    local y = sc:parallelize({5, 7, 1, 3, 2, 1})
+    
+    local rdd = y:sortBy(_.identity, true)
+    assert.same({1, 1, 2, 3, 5, 7}, rdd:collect())
+    
+    rdd = y:sortBy(_.identity, false)
+    assert.same({7, 5, 3, 2, 1, 1}, rdd:collect())
+    
+    local z = sc:parallelize({{'H',10}, {'A',26}, {'Z',1}, {'L',5}})
+    rdd = z:sortBy(function(e) return e[1] end, true)
+    assert.same({{'A',26}, {'H',10}, {'L',5}, {'Z',1}}, rdd:collect())
+    
+    rdd = z:sortBy(function(e) return e[2] end, true)
+    assert.same({{'Z',1}, {'L',5}, {'H',10}, {'A',26}}, rdd:collect())
+  end)
+
   it('stats()', function()
     local x = sc:parallelize({1.0, 2.0, 3.0, 5.0, 20.0, 19.02, 19.29, 11.09, 21.0}, 2)
     local stats = x:stats() 
@@ -519,6 +536,23 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(actual, {2,102})
     assert.contains_pair(actual, {99,199})
     assert.contains_pair(actual, {100,200})
+  end)
+
+  it('zipWithIndex()', function()
+    local z = sc:parallelize({'A','B','C','D'})
+    local r = z:zipWithIndex():collect() 
+    assert.contains_pair(r, {'A',0})
+    assert.contains_pair(r, {'B',1})
+    assert.contains_pair(r, {'C',2})
+    assert.contains_pair(r, {'D',3})
+    
+    z = sc:parallelize(_.range(100,120), 5)
+    r = z:zipWithIndex():collect() 
+    assert.contains_pair(r, {100,0})
+    assert.contains_pair(r, {101,1})
+    assert.contains_pair(r, {102,2})
+    assert.contains_pair(r, {119,19})
+    assert.contains_pair(r, {120,20})
   end)
 
 end)

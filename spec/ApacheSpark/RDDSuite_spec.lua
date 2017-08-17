@@ -9,6 +9,13 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 
   local sc = stuart.NewContext()
 
+  local split = function(str, sep)
+    local fields = {}
+    local pattern = string.format('([^%s]+)', sep)
+    str:gsub(pattern, function(c) fields[#fields+1] = c end)
+    return fields
+  end
+
   it('basic operations', function()
     local nums = sc:makeRDD({1,2,3,4}, 2)
     assert.equals(2, #nums.partitions)
@@ -702,58 +709,35 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --    }
 --  }
 
---  test("sort an empty RDD") {
---    val data = sc.emptyRDD[Int]
---    assert(data.sortBy(x => x).collect() === Array.empty)
---  }
+  it('sort an empty RDD', function()
+    local data = sc:emptyRDD()
+    assert.same({}, data:sortBy(_.identity):collect())
+  end)
 
---  test("sortByKey") {
---    val data = sc.parallelize(Seq("5|50|A", "4|60|C", "6|40|B"))
---
---    val col1 = Array("4|60|C", "5|50|A", "6|40|B")
---    val col2 = Array("6|40|B", "5|50|A", "4|60|C")
---    val col3 = Array("5|50|A", "6|40|B", "4|60|C")
---
---    assert(data.sortBy(_.split("\\|")(0)).collect() === col1)
---    assert(data.sortBy(_.split("\\|")(1)).collect() === col2)
---    assert(data.sortBy(_.split("\\|")(2)).collect() === col3)
---  }
+  it('sortByKey', function()
+    local data = sc:parallelize({'5|50|A', '4|60|C', '6|40|B'})
 
---  test("sortByKey ascending parameter") {
---    val data = sc.parallelize(Seq("5|50|A", "4|60|C", "6|40|B"))
---
---    val asc = Array("4|60|C", "5|50|A", "6|40|B")
---    val desc = Array("6|40|B", "5|50|A", "4|60|C")
---
---    assert(data.sortBy(_.split("\\|")(0), true).collect() === asc)
---    assert(data.sortBy(_.split("\\|")(0), false).collect() === desc)
---  }
+    local col1 = {'4|60|C', '5|50|A', '6|40|B'}
+    local col2 = {'6|40|B', '5|50|A', '4|60|C'}
+    local col3 = {'5|50|A', '6|40|B', '4|60|C'}
 
+    assert.same(col1, data:sortBy(function(x) return split(x, '|')[1] end):collect())
+    assert.same(col2, data:sortBy(function(x) return split(x, '|')[2] end):collect())
+    assert.same(col3, data:sortBy(function(x) return split(x, '|')[3] end):collect())
+  end)
+
+  it('sortByKey ascending parameter', function()
+    local data = sc:parallelize({'5|50|A', '4|60|C', '6|40|B'})
+
+    local asc = {'4|60|C', '5|50|A', '6|40|B'}
+    local desc = {'6|40|B', '5|50|A', '4|60|C'}
+
+    assert.same(asc, data:sortBy(function(x) return split(x, '|')[1] end, true):collect())
+    assert.same(desc, data:sortBy(function(x) return split(x, '|')[1] end, false):collect())
+  end)
+
+--  This test is Scala-specific and not applicable to Lua or other weakly-typed language 
 --  test("sortByKey with explicit ordering") {
---    val data = sc.parallelize(Seq("Bob|Smith|50",
---                                  "Jane|Smith|40",
---                                  "Thomas|Williams|30",
---                                  "Karen|Williams|60"))
---
---    val ageOrdered = Array("Thomas|Williams|30",
---                           "Jane|Smith|40",
---                           "Bob|Smith|50",
---                           "Karen|Williams|60")
---
---    // last name, then first name
---    val nameOrdered = Array("Bob|Smith|50",
---                            "Jane|Smith|40",
---                            "Karen|Williams|60",
---                            "Thomas|Williams|30")
---
---    val parse = (s: String) => {
---      val split = s.split("\\|")
---      Person(split(0), split(1), split(2).toInt)
---    }
---
---    import scala.reflect.classTag
---    assert(data.sortBy(parse, true, 2)(AgeOrdering, classTag[Person]).collect() === ageOrdered)
---    assert(data.sortBy(parse, true, 2)(NameOrdering, classTag[Person]).collect() === nameOrdered)
 --  }
 
 --  test("repartitionAndSortWithinPartitions") {
@@ -789,28 +773,28 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     assert.same(intersection, _.sortBy(b:intersection(a):collect(), _.identity))
   end)
 
---  test("zipWithIndex") {
---    val n = 10
---    val data = sc.parallelize(0 until n, 3)
---    val ranked = data.zipWithIndex()
---    ranked.collect().foreach { x =>
---      assert(x._1 === x._2)
---    }
---  }
+  it('zipWithIndex', function()
+    local n = 10
+    local data = sc:parallelize(_.range(0,n), 3)
+    local ranked = data:zipWithIndex()
+    _.forEach(ranked:collect(), function(x)
+      assert.equals(x[2], x[1])
+    end)
+  end)
 
---  test("zipWithIndex with a single partition") {
---    val n = 10
---    val data = sc.parallelize(0 until n, 1)
---    val ranked = data.zipWithIndex()
---    ranked.collect().foreach { x =>
---      assert(x._1 === x._2)
---    }
---  }
+  it('zipWithIndex with a single partition', function()
+    local n = 10
+    local data = sc:parallelize(_.range(0,n), 1)
+    local ranked = data:zipWithIndex()
+    _.forEach(ranked:collect(), function(x)
+      assert.equals(x[2], x[1])
+    end)
+  end)
 
---  test("zipWithIndex chained with other RDDs (SPARK-4433)") {
---    val count = sc.parallelize(0 until 10, 2).zipWithIndex().repartition(4).count()
---    assert(count === 10)
---  }
+  it('zipWithIndex chained with other RDDs (SPARK-4433)', function()
+    local count = sc:parallelize(_.range(0,9), 2):zipWithIndex():repartition(4):count() -- Range 0,10 in Scala
+    assert.equals(10, count)
+  end)
 
 --  test("zipWithUniqueId") {
 --    val n = 10
