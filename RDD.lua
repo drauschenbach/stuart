@@ -1,11 +1,9 @@
 local moses = require 'moses'
 
-RDD = {partitions={}}
+RDD = {partitions={}, ctx=nil}
 
-function RDD:new(o, partitions, ctx)
+function RDD:new(o)
   o = o or {}
-  o.partitions = partitions
-  o.ctx = ctx
   setmetatable(o, self)
   self.__index = self
   return o
@@ -230,7 +228,7 @@ function RDD:id()
 end
 
 function RDD:intersection(other)
-  return self.ctx:parallelize(moses.intersection(self:collect(), other:collect()))
+  return self.ctx:parallelize(moses.intersection(moses.unique(self:collect()), moses.unique(other:collect())))
 end
 
 function RDD:isCheckpointed()
@@ -414,8 +412,8 @@ function RDD:take(n)
   return t
 end
 
-function RDD:takeSample(n)
-  return moses.sample(self:collect(), n)
+function RDD:takeSample(withReplacement, num, seed)
+  return moses.sample(self:collect(), num)
 end
 
 function RDD:toLocalIterator()

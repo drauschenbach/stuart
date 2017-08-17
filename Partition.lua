@@ -2,10 +2,8 @@ local moses = require 'moses'
 
 Partition = {}
 
-function Partition:new(o, x, index)
+function Partition:new(o)
   o = o or {}
-  o.x = x
-  o.index = index
   setmetatable(o, self)
   self.__index = self
   return o
