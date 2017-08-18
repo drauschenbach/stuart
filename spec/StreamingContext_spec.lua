@@ -40,5 +40,21 @@ describe('StreamingContext', function()
     assert.contains(r, 'b')
     assert.contains(r, 'c')
   end)
+  
+  it('transform', function()
+    local ssc = stuart.NewStreamingContext(sc, 0.1)
 
+    local result = {}
+    local dstream = ssc:queueStream({sc:makeRDD({1,2,3}), sc:makeRDD({20,21})})
+    local x = dstream:transform(function(rdd)
+      return rdd:map(function(x) return x+1 end)
+    end)
+    x:foreachRDD(function(rdd) result[#result+1] = {rdd:min(), rdd:max()} end)
+
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(0.25)
+    assert.contains_pair(result, {2,4})
+    assert.contains_pair(result, {21,22})
+  end)
+  
 end)
