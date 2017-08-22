@@ -41,7 +41,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
       local co = copair[1]
       local dstream = copair[2]
       if coroutine.status(co) == 'suspended' then
-        ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget) --, now, individualDStreamDurationBudget)
+        local ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget) --, now, individualDStreamDurationBudget)
         if ok and (rdds ~= nil) and (#rdds > 0) then
           for i, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
         end
@@ -59,14 +59,14 @@ end
 
 function StreamingContext:queueStream(rdds, oneAtATime)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  dstream = QueueInputDStream:new{ctx=self.sc, batchDuration=self.batchDuration, queue=rdds}
-  table.insert(self.dstreams, dstream)
+  local dstream = QueueInputDStream:new({ctx=self.sc, batchDuration=self.batchDuration, queue=rdds})
+  self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:socketTextStream(hostname, port)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  dstream = SocketInputDStream:new{ctx=self.sc, hostname=hostname, port=port}
+  local dstream = SocketInputDStream:new{ctx=self.sc, hostname=hostname, port=port}
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
