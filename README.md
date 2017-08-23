@@ -70,7 +70,7 @@ Stuart is compatible with:
 * [Lua 5.1+](https://www.lua.org)
 * [LuaJIT](https://www.lua.org)
 
-Use [glua-socket](https://github.com/BixData/glua-socket) to embed Stuart Streaming in a Go binary.
+Use [gluasocket](https://github.com/BixData/gluasocket) to embed Stuart Streaming in a Go binary.
 
 Stuart is incompatible with:
 
