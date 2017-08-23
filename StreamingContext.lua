@@ -1,3 +1,4 @@
+local class = require 'middleclass'
 local moses = require 'moses'
 local QueueInputDStream = require 'QueueInputDStream'
 local socket = require 'socket'
@@ -7,13 +8,13 @@ local function sleep(timeout)
   socket.select(nil, nil, timeout)
 end
 
-StreamingContext = {sc=nil, batchDuration=1, dstreams={}, state='initialized'}
+local StreamingContext = class('StreamingContext')
 
-function StreamingContext:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function StreamingContext:initialize(sc, batchDuration)
+  self.sc = sc
+  self.batchDuration = batchDuration or 1
+  self.dstreams={}
+  self.state='initialized'
 end
 
 function StreamingContext:awaitTerminationOrTimeout(timeout)

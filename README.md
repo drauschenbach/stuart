@@ -60,6 +60,7 @@ assert.equals(1, countsByKey[5])
 
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
+* [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for maximal 1-1 translation of Apache Spark APIs.
 
 ## Compatibility
 
