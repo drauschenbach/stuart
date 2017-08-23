@@ -8,28 +8,6 @@ function DStream:initialize(ctx)
   self.outputs = {}
 end
 
---------------------------------------------------------------------------------
-
-local TransformedDStream = class('TransformedDStream', DStream)
-
-function TransformedDStream:initialize(ctx, transformFunc)
-  DStream.initialize(self, ctx)
-  self.transformFunc = transformFunc
-end
-
-function TransformedDStream:_notify(validTime, rdd)
-  rdd = self.transformFunc(rdd)
-  for i, dstream in ipairs(self.inputs) do
-    rdd = dstream:_notify(validTime, rdd)
-  end
-  for i, dstream in ipairs(self.outputs) do
-    dstream:_notify(validTime, rdd)
-  end
-  return rdd
-end
-
---------------------------------------------------------------------------------
-
 function DStream:_notify(validTime, rdd)
   for i, dstream in ipairs(self.inputs) do
     rdd = dstream:_notify(validTime, rdd)
@@ -47,12 +25,14 @@ function DStream:count()
 end
 
 function DStream:foreachRDD(foreachFunc)
+  local TransformedDStream = require 'TransformedDStream'
   local dstream = TransformedDStream:new(self.ctx, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
   return self
 end
 
 function DStream:transform(transformFunc)
+  local TransformedDStream = require 'TransformedDStream'
   local dstream = TransformedDStream:new(self.ctx, transformFunc)
   self.inputs[#self.inputs+1] = dstream
   return dstream
