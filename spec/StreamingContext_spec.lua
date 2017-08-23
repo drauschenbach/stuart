@@ -1,5 +1,4 @@
 local _ = require 'lodash'
-local inspect = require 'inspect'
 local registerAsserts = require 'registerAsserts'
 local socket = require 'socket'
 local stuart = require 'stuart'
@@ -9,6 +8,18 @@ registerAsserts(assert)
 describe('StreamingContext', function()
 
   local sc = stuart.NewContext()
+
+  it('can create multiple independent StreamingContext objects', function()
+    local ssc1 = stuart.StreamingContext:new{sc=sc}
+    assert.equals(0, #ssc1.dstreams)
+    ssc1:queueStream({sc:makeRDD(_.range(3))})
+    assert.equals(1, #ssc1.dstreams)
+
+    local ssc2 = stuart.StreamingContext:new{sc=sc}
+    assert.equals(0, #ssc2.dstreams)
+    ssc2:queueStream({sc:makeRDD(_.range(4,6))})
+    assert.equals(1, #ssc2.dstreams)
+  end)
   
   it('can timeout from awaitTerminationOrTimeout()', function()
     local timeoutSecs = .1
