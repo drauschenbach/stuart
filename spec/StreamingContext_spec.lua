@@ -52,9 +52,27 @@ describe('StreamingContext', function()
     assert.contains(r, 'c')
   end)
   
-  it('transform', function()
+  it('transform 1', function()
     local ssc = stuart.NewStreamingContext(sc, 0.1)
+    local result = {}
+    local dstream = ssc:queueStream({sc:makeRDD({1,2,3})})
+    local x = dstream:transform(function(rdd)
+      assert.same({1,2,3}, rdd:collect())
+      return rdd:map(function(x) return x+1 end)
+    end)
+    x:foreachRDD(function(rdd)
+      assert.same({2,3,4}, rdd:collect())
+      result[#result+1] = {rdd:min(), rdd:max()}
+    end)
 
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(0.15)
+    
+    assert.contains_pair(result, {2,4})
+  end)
+  
+  it('transform 2', function()
+    local ssc = stuart.NewStreamingContext(sc, 0.1)
     local result = {}
     local dstream = ssc:queueStream({sc:makeRDD({1,2,3}), sc:makeRDD({20,21})})
     local x = dstream:transform(function(rdd)
@@ -64,8 +82,27 @@ describe('StreamingContext', function()
 
     ssc:start()
     ssc:awaitTerminationOrTimeout(0.25)
+    
     assert.contains_pair(result, {2,4})
     assert.contains_pair(result, {21,22})
+  end)
+  
+  it('transform 3', function()
+    local ssc = stuart.NewStreamingContext(sc, 0.1)
+    local result = {}
+    ssc:queueStream({sc:makeRDD({1,2,3}), sc:makeRDD({5,6,7})})
+      :transform(function(rdd)
+        return rdd:map(function(x) return x+1 end) end)
+      :transform(function(rdd)
+        return rdd:map(function(x) return x*2 end) end)
+      :foreachRDD(function(rdd)
+        result[#result+1] = rdd:collect() end)
+
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(0.25)
+    
+    assert.contains_pair(result, {4,6,8})
+    assert.contains_pair(result, {12,14,16})
   end)
   
 end)

@@ -60,14 +60,14 @@ end
 
 function StreamingContext:queueStream(rdds, oneAtATime)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  local dstream = QueueInputDStream:new({ctx=self.sc, batchDuration=self.batchDuration, queue=rdds})
+  local dstream = QueueInputDStream:new(self.sc, rdds)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:socketTextStream(hostname, port)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  local dstream = SocketInputDStream:new{ctx=self.sc, hostname=hostname, port=port}
+  local dstream = SocketInputDStream:new(self.sc, hostname, port)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end

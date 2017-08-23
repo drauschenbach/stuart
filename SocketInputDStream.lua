@@ -1,13 +1,13 @@
+local class = require 'middleclass'
 local DStream = require 'DStream'
 local socket = require 'socket'
 
-local SocketInputDStream = DStream:new({hostname=nil, port=0})
+local SocketInputDStream = class('SocketInputDStream', DStream)
 
-function SocketInputDStream:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function SocketInputDStream:initialize(ctx, hostname, port)
+  DStream.initialize(self, ctx)
+  self.hostname = hostname
+  self.port = port or 0
 end
 
 function SocketInputDStream:compute(durationBudget)

@@ -1,47 +1,52 @@
-DStream = {ctx=nil, inputs={}, outputs={}}
+local class = require 'middleclass'
 
-function DStream:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+local DStream = class('DStream')
+
+function DStream:initialize(ctx)
+  self.ctx = ctx
+  self.inputs = {}
+  self.outputs = {}
 end
 
 --------------------------------------------------------------------------------
 
-local TransformedDStream = DStream:new()
+local TransformedDStream = class('TransformedDStream', DStream)
 
-function TransformedDStream:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function TransformedDStream:initialize(ctx, transformFunc)
+  DStream.initialize(self, ctx)
+  self.transformFunc = transformFunc
 end
 
 function TransformedDStream:_notify(validTime, rdd)
-  local t = self.transformFunc(rdd)
-  return t
+  rdd = self.transformFunc(rdd)
+  for i, dstream in ipairs(self.inputs) do
+    rdd = dstream:_notify(validTime, rdd)
+  end
+  for i, dstream in ipairs(self.outputs) do
+    dstream:_notify(validTime, rdd)
+  end
+  return rdd
 end
 
 --------------------------------------------------------------------------------
 
 function DStream:_notify(validTime, rdd)
-  for i, dstream in ipairs(self.inputs or {}) do
+  for i, dstream in ipairs(self.inputs) do
     rdd = dstream:_notify(validTime, rdd)
   end
-  for i, dstream in ipairs(self.outputs or {}) do
+  for i, dstream in ipairs(self.outputs) do
     dstream:_notify(validTime, rdd)
   end
 end
 
 function DStream:foreachRDD(foreachFunc)
-  local dstream = TransformedDStream:new{ctx=self.ctx, transformFunc=foreachFunc}
+  local dstream = TransformedDStream:new(self.ctx, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
   return self
 end
 
 function DStream:transform(transformFunc)
-  local dstream = TransformedDStream:new{ctx=self.ctx, transformFunc=transformFunc}
+  local dstream = TransformedDStream:new(self.ctx, transformFunc)
   self.inputs[#self.inputs+1] = dstream
   return dstream
 end

@@ -1,12 +1,11 @@
+local class = require 'middleclass'
 local DStream = require 'DStream'
 
-local QueueInputDStream = DStream:new()
+local QueueInputDStream = class('QueueInputDStream', DStream)
 
-function QueueInputDStream:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function QueueInputDStream:initialize(ctx, rdds)
+  DStream.initialize(self, ctx)
+  self.queue = rdds
 end
 
 function QueueInputDStream:compute(durationBudget)
