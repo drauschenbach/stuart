@@ -52,6 +52,22 @@ describe('StreamingContext', function()
     assert.contains(r, 'c')
   end)
   
+  it('count()', function()
+    local ssc = stuart.NewStreamingContext(sc, 0.1)
+    local result = {}
+    local dstream = ssc:queueStream({sc:makeRDD(_.range(10)), sc:makeRDD({20,21})})
+    dstream = dstream:count()
+    dstream:foreachRDD(function(rdd)
+      _.forEach(rdd:collect(), function(e) result[#result+1] = e end)
+    end)
+
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(0.25)
+    
+    local count = _.reduce(result, function(r,e) return r+e end, 0)
+    assert.equals(12, count)
+  end)
+  
   it('transform 1', function()
     local ssc = stuart.NewStreamingContext(sc, 0.1)
     local result = {}

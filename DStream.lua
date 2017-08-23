@@ -39,6 +39,13 @@ function DStream:_notify(validTime, rdd)
   end
 end
 
+function DStream:count()
+  local transformFunc = function(rdd)
+    return self.ctx:makeRDD({rdd:count()})
+  end
+  return self:transform(transformFunc)
+end
+
 function DStream:foreachRDD(foreachFunc)
   local dstream = TransformedDStream:new(self.ctx, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
