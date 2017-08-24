@@ -1,12 +1,20 @@
 local class = require 'middleclass'
 local moses = require 'moses'
 local QueueInputDStream = require 'QueueInputDStream'
+local RDD = require 'RDD'
 local socket = require 'socket'
 local SocketInputDStream = require 'SocketInputDStream'
 
 local function sleep(timeout)
   socket.select(nil, nil, timeout)
 end
+
+local function isInstanceOf(x, aClass)
+  if not moses.has(x, 'isInstanceOf') then return false end
+  return x:isInstanceOf(aClass)
+end
+
+-------------------------------------------------------------------------------
 
 local StreamingContext = class('StreamingContext')
 
@@ -60,6 +68,10 @@ end
 
 function StreamingContext:queueStream(rdds, oneAtATime)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
+  rdds = moses.map(rdds, function(i,rdd)
+    if not isInstanceOf(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
+    return rdd
+  end)
   local dstream = QueueInputDStream:new(self.sc, rdds)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
