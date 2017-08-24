@@ -1,25 +1,24 @@
+local class = require 'middleclass'
 local moses = require 'moses'
 
-Partition = {}
+local Partition = class('Partition')
 
-function Partition:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function Partition:initialize(data, index)
+  self.data = data or {}
+  self.index = index or 0
 end
 
 function Partition:_count()
-  return #self.x
+  return #self.data
 end
 
 function Partition:_flatten()
-  self.x = moses.flatten(self.x)
+  self.data = moses.flatten(self.data)
   return self
 end
 
 function Partition:_flattenValues()
-  self.x = moses.reduce(self.x, function(r, e)
+  self.data = moses.reduce(self.data, function(r, e)
     local x = e[2]
     if moses.isString(x) then
       t = {}
@@ -38,8 +37,8 @@ function Partition:_toLocalIterator()
   local i = 0
   return function()
     i = i + 1
-    if i <= #self.x then
-      return self.x[i]
+    if i <= #self.data then
+      return self.data[i]
     end
   end
 end

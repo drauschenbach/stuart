@@ -1,12 +1,11 @@
+local class = require 'middleclass'
 local moses = require 'moses'
 
-RDD = {partitions={}, ctx=nil}
+local RDD = class('RDD')
 
-function RDD:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function RDD:initialize(ctx, partitions)
+  self.ctx = ctx
+  self.partitions = partitions
 end
 
 function RDD:_dict()
@@ -28,7 +27,7 @@ end
 
 function RDD:aggregate(zeroValue, seqOp, combOp)
   return moses.reduce(self.partitions, function(r, p)
-    local y = moses.reduce(p.x, seqOp, moses.clone(zeroValue))
+    local y = moses.reduce(p.data, seqOp, moses.clone(zeroValue))
     return combOp(r, y)
   end, moses.clone(zeroValue))
 end
@@ -120,7 +119,7 @@ function RDD:filter(f)
 end
 
 function RDD:first()
-  return self.partitions[1].x[1]
+  return self.partitions[1].data[1]
 end
 
 function RDD:flatMap(f, preservesPartitioning)
@@ -148,20 +147,20 @@ end
 
 function RDD:foreach(f)
   for z, p in ipairs(self.partitions) do
-    for i, x in ipairs(p.x) do
-      p.x[i] = f(p.x[i])
+    for i, x in ipairs(p.data) do
+      p.data[i] = f(p.data[i])
     end
   end
 end
 
 function RDD:foreachPartition(f)
   for z, p in ipairs(self.partitions) do
-    f(p.x)
+    f(p.data)
   end
 end
 
 function RDD:glom(f)
-  local t = moses.map(self.partitions, function(k,p) return p.x end)
+  local t = moses.map(self.partitions, function(k,p) return p.data end)
   return self.ctx:parallelize(t)
 end
 
@@ -436,14 +435,14 @@ function RDD:toLocalIterator()
   local i = 0
   return function()
     if pIndex > #self.partitions then return nil end
-    local partitionData = self.partitions[pIndex].x
+    local partitionData = self.partitions[pIndex].data
     if not moses.isTable(partitionData) then return nil end
     i = i + 1
     if i > #partitionData then
       pIndex = pIndex + 1
       i = 1
       if pIndex > #self.partitions then return nil end
-      partitionData = self.partitions[pIndex].x
+      partitionData = self.partitions[pIndex].data
     end
     
     if pIndex <= #self.partitions and i <= #partitionData then

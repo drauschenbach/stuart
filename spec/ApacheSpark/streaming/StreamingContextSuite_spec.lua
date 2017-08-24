@@ -11,8 +11,8 @@ describe('Apache Spark 2.2.0 StreamingContextSuite', function()
   local batchDuration = 0.5 -- 500 milliseconds
 
   it('from existing SparkContext', function()
-    local sc = stuart.Context:new{master=master, appName=appName}
-    local ssc = stuart.StreamingContext:new{sc=sc, batchDuration=batchDuration}
+    local sc = stuart.Context:new(master, appName)
+    local ssc = stuart.StreamingContext:new(sc, batchDuration)
   end)
 
   it('start and stop state check', function()

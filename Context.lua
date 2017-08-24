@@ -1,14 +1,13 @@
+local class = require 'middleclass'
 local moses = require 'moses'
 local Partition = require 'Partition'
 local RDD = require 'RDD'
 
-Context = {master='local[1]', appName=nil}
+local Context = class('Context')
 
-function Context:new(o)
-  o = o or {}
-  setmetatable(o, self)
-  self.__index = self
-  return o
+function Context:initialize(master, appName)
+  self.master = master or 'local[1]'
+  self.appName = appName
 end
 
 function Context:emptyRDD()
@@ -22,8 +21,8 @@ end
 
 function Context:parallelize(x, numPartitions)
   if numPartitions == 1 or not moses.isNumber(numPartitions) then
-    local p = Partition:new{x=x, index=0}
-    return RDD:new{ctx=self, partitions={p}}
+    local p = Partition:new(x, 0)
+    return RDD:new(self, {p})
   end
   
   local chunks = {}
@@ -33,9 +32,9 @@ function Context:parallelize(x, numPartitions)
   end
   while #chunks < numPartitions do chunks[#chunks+1] = {} end -- pad-right empty partitions
   local partitions = moses.map(chunks, function(i, chunk)
-    return Partition:new{x=chunk, index=i}
+    return Partition:new(chunk, i)
   end)
-	return RDD:new{ctx=self, partitions=partitions}
+	return RDD:new(self, partitions)
 end
 
 function Context:textFile(filename)

@@ -10,12 +10,12 @@ describe('StreamingContext', function()
   local sc = stuart.NewContext()
 
   it('can create multiple independent StreamingContext objects', function()
-    local ssc1 = stuart.StreamingContext:new{sc=sc}
+    local ssc1 = stuart.StreamingContext:new(sc)
     assert.equals(0, #ssc1.dstreams)
     ssc1:queueStream({sc:makeRDD(_.range(3))})
     assert.equals(1, #ssc1.dstreams)
 
-    local ssc2 = stuart.StreamingContext:new{sc=sc}
+    local ssc2 = stuart.StreamingContext:new(sc)
     assert.equals(0, #ssc2.dstreams)
     ssc2:queueStream({sc:makeRDD(_.range(4,6))})
     assert.equals(1, #ssc2.dstreams)
