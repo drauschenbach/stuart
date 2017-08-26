@@ -3,8 +3,9 @@ local moses = require 'moses'
 
 local RDD = class('RDD')
 
-function RDD:initialize(ctx, partitions)
-  self.ctx = ctx
+function RDD:initialize(context, partitions)
+  self.context = context
+  getmetatable(self).sparkContext = context
   self.partitions = partitions
 end
 
@@ -43,7 +44,7 @@ function RDD:cartesian(other)
       t[#t+1] = {x, y}
     end)
   end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:coalesce()
@@ -71,10 +72,6 @@ function RDD:collectAsMap()
     return r
   end, {})
   return t
-end
-
-function RDD:context()
-  return self.ctx
 end
 
 function RDD:count()
@@ -110,12 +107,12 @@ end
 
 function RDD:distinct(numPartitions)
   local t = moses.uniq(self:collect())
-  return self.ctx:parallelize(t, numPartitions)
+  return self.context:parallelize(t, numPartitions)
 end
 
 function RDD:filter(f)
   local t = moses.filter(self:collect(), function(k,v) return f(v) end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:first()
@@ -142,7 +139,7 @@ function RDD:foldByKey(zeroValue, op)
     end)
     return {k, moses.reduce(c, op, zeroValue)}
   end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:foreach(f)
@@ -161,7 +158,7 @@ end
 
 function RDD:glom(f)
   local t = moses.map(self.partitions, function(k,p) return p.data end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:groupBy(f)
@@ -174,7 +171,7 @@ function RDD:groupBy(f)
     end, {})
     return {k, v}
   end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:groupByKey()
@@ -186,7 +183,7 @@ function RDD:groupByKey()
     end, {})
     return {k, v}
   end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:histogram(buckets)
@@ -227,7 +224,7 @@ function RDD:id()
 end
 
 function RDD:intersection(other)
-  return self.ctx:parallelize(moses.intersection(moses.unique(self:collect()), moses.unique(other:collect())))
+  return self.context:parallelize(moses.intersection(moses.unique(self:collect()), moses.unique(other:collect())))
 end
 
 function RDD:isCheckpointed()
@@ -252,17 +249,17 @@ function RDD:join(other)
     end)
     return r
   end, {})
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:keyBy(f)
   local t = moses.map(self:collect(), function(i,e) return {f(e), e} end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:keys()
   local t = moses.map(self:collect(), function(i,e) return e[1] end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:leftOuterJoin(other)
@@ -282,7 +279,7 @@ function RDD:leftOuterJoin(other)
       end
     return r
   end, {})
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:lookup(key)
@@ -295,7 +292,7 @@ end
 function RDD:map(f)
   local t = {}
   for e in self:toLocalIterator() do t[#t+1] = f(e) end
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:mapPartitions(iter)
@@ -305,7 +302,7 @@ function RDD:mapPartitions(iter)
     end
     return r
   end, {})
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:mapPartitionsWithIndex(iter)
@@ -317,12 +314,12 @@ function RDD:mapPartitionsWithIndex(iter)
     index = index + 1
     return r
   end, {})
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:mapValues(f)
   local t = moses.map(self:collect(), function(i,e) return {e[1], f(e[2])} end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:max()
@@ -350,7 +347,7 @@ function RDD:reduceByKey(f)
 end
 
 function RDD:repartition(numPartitions)
-  return self.ctx:parallelize(self:collect(), numPartitions)
+  return self.context:parallelize(self:collect(), numPartitions)
 end
 
 function RDD:rightOuterJoin(other)
@@ -368,7 +365,7 @@ function RDD:rightOuterJoin(other)
       end
     return r
   end, {})
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:sortBy(f, ascending, numPartitions)
@@ -381,7 +378,22 @@ function RDD:sortBy(f, ascending, numPartitions)
     comp = function(a,b) return a>b end
   end
   t = moses.sortBy(t, f, comp)
-  return self.ctx:parallelize(t, numPartitions)
+  return self.context:parallelize(t, numPartitions)
+end
+
+function RDD:sortByKey(ascending, numPartitions)
+  if not moses.isBoolean(ascending) then ascending = true end
+  if not moses.isNumber(numPartitions) then numPartitions = #self.partitions end
+  local f = function(a,b)
+    if not moses.isTable(a) or not moses.isTable(b) then return 0 end
+    if ascending then
+      return a[1] < b[1]
+    else
+      return a[1] > b[1]
+    end
+  end
+  local t = moses.sort(self:collect(), f)
+  return self.context:parallelize(t, numPartitions)
 end
 
 function RDD:stats()
@@ -401,7 +413,7 @@ end
 
 function RDD:subtract(other)
   local t = moses.without(self:collect(), other:collect())
-  return self.ctx:parallelize(t, #self.partitions)
+  return self.context:parallelize(t, #self.partitions)
 end
 
 function RDD:subtractByKey(other)
@@ -412,7 +424,7 @@ function RDD:subtractByKey(other)
     if moses.detect(keys, e[1]) ~= nil then r[#r+1] = e end
     return r 
   end, {})
-  return self.ctx:parallelize(t, #self.partitions)
+  return self.context:parallelize(t, #self.partitions)
 end
 
 function RDD:take(n)
@@ -453,24 +465,24 @@ end
 
 function RDD:union(other)
   local t = moses.append(self:collect(), other:collect())
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:values(f)
   local t = moses.map(self:collect(), function(k,e) return e[2] end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:zip(other)
   local t = moses.zip(self:collect(), other:collect())
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 function RDD:zipWithIndex()
   local t = moses.map(self:collect(), function(i,x)
     return {x,i-1}
   end)
-  return self.ctx:parallelize(t)
+  return self.context:parallelize(t)
 end
 
 return RDD
