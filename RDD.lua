@@ -115,6 +115,14 @@ function RDD:filter(f)
   return self.context:parallelize(t)
 end
 
+function RDD:filterByRange(lower, upper)
+  local f = function(x)
+    if moses.isTable(x) then return x[1] >= lower and x[1] <= upper end
+    return false
+  end
+  return self:filter(f)
+end
+
 function RDD:first()
   return self.partitions[1].data[1]
 end
