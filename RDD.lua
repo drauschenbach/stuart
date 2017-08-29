@@ -257,7 +257,7 @@ function RDD:join(other)
     end)
     return r
   end, {})
-  return self.context:parallelize(t)
+  return self.context:parallelize(t, math.max(#self.partitions, #other.partitions))
 end
 
 function RDD:keyBy(f)
