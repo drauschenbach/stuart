@@ -537,14 +537,14 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 --    assert(FakeWriterWithCallback.exception.getMessage contains "failed to write")
 --  end)
 
---  it("lookup", function()
---    val pairs = sc.parallelize(Array((1, 2), (3, 4), (5, 6), (5, 7)))
---
---    assert(pairs.partitioner === None)
---    assert(pairs.lookup(1) === Seq(2))
---    assert(pairs.lookup(5) === Seq(6, 7))
---    assert(pairs.lookup(-1) === Seq())
---  end)
+  it("lookup", function()
+    local pairs = sc:parallelize({{1,2}, {3,4}, {5,6}, {5,7}})
+
+    assert.equals(nil, pairs.partitioner)
+    assert.same({2}, pairs:lookup(1))
+    assert.same({6,7}, pairs:lookup(5))
+    assert.same({}, pairs:lookup(-1))
+  end)
 
 --  it("lookup with partitioner", function()
 --    val pairs = sc.parallelize(Array((1, 2), (3, 4), (5, 6), (5, 7)))
