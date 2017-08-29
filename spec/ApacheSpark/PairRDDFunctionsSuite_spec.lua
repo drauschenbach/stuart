@@ -392,15 +392,15 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
     assert.same({'a','b'}, rdd:values():collect())
   end)
 
---  it("default partitioner uses partition size", function()
---    // specify 2000 partitions
---    val a = sc.makeRDD(Array(1, 2, 3, 4), 2000)
---    // do a map, which loses the partitioner
---    val b = a.map(a => (a, (a * 2).toString))
---    // then a group by, and see we didn't revert to 2 partitions
---    val c = b.groupByKey()
---    assert(c.partitions.size === 2000)
---  end)
+  it("default partitioner uses partition size", function()
+    -- specify 2000 partitions
+    local a = sc:makeRDD({1,2,3,4}, 2000)
+    -- do a map, which loses the partitioner
+    local b = a:map(function(a) return {a, tostring(a*2)} end)
+    -- then a group by, and see we didn't revert to 2 partitions
+    local c = b:groupByKey()
+    assert.equals(2000, #c.partitions)
+  end)
 
 --  it("default partitioner uses largest partitioner", function()
 --    val a = sc.makeRDD(Array((1, "a"), (2, "b")), 2)

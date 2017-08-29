@@ -191,7 +191,7 @@ function RDD:groupByKey()
     end, {})
     return {k, v}
   end)
-  return self.context:parallelize(t)
+  return self.context:parallelize(t, #self.partitions)
 end
 
 function RDD:histogram(buckets)
@@ -300,7 +300,7 @@ end
 function RDD:map(f)
   local t = {}
   for e in self:toLocalIterator() do t[#t+1] = f(e) end
-  return self.context:parallelize(t)
+  return self.context:parallelize(t, #self.partitions)
 end
 
 function RDD:mapPartitions(iter)
