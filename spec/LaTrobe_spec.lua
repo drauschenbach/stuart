@@ -18,6 +18,23 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(9, actual)
   end)
   
+  it('aggregateByKey()', function()
+    local pairRDD = sc:parallelize({{'cat',2}, {'cat',5}, {'mouse',4}, {'cat',12}, {'dog',12}, {'mouse',2}}, 2)
+    
+    local seqOp = function(x,y) return math.max(x,y) end
+    local combOp = function(x,y) return x+y end
+    
+    local actual = pairRDD:aggregateByKey(0, seqOp, combOp):collect()
+    assert.contains_pair(actual, {'dog',12})
+    assert.contains_pair(actual, {'cat',17})
+    assert.contains_pair(actual, {'mouse',6})
+    
+    local actual = pairRDD:aggregateByKey(100, seqOp, combOp):collect()
+    assert.contains_pair(actual, {'dog',100})
+    assert.contains_pair(actual, {'cat',200})
+    assert.contains_pair(actual, {'mouse',200})
+  end)
+  
   it('cartesian()', function()
     local x = sc:parallelize({1,2,3,4,5})
     local y = sc:parallelize({6,7,8,9,10})
