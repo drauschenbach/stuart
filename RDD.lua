@@ -404,6 +404,10 @@ function RDD:rightOuterJoin(other)
   return self.context:parallelize(t)
 end
 
+function RDD:setName(name)
+  self.name = name
+end
+
 function RDD:sortBy(f, ascending, numPartitions)
   if not moses.isBoolean(ascending) then ascending = true end
   local t = self:collect()

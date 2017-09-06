@@ -433,6 +433,13 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(10, y:min())
   end)
 
+  it('name, setName()', function()
+    local y = sc:parallelize(_.range(1,10), 10)
+    assert.equals(nil, y.name)
+    y:setName("Fancy RDD Name")
+    assert.equals("Fancy RDD Name", y.name)
+  end)
+  
   it('partitions', function()
     local b = sc:parallelize({'gnu', 'cat', 'rat', 'dog', 'gnu', 'rat'}, 2)
     local partitions = b.partitions
