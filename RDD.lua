@@ -5,6 +5,7 @@ local RDD = class('RDD')
 
 function RDD:initialize(context, partitions)
   self.context = context
+  self.id = context:getNextId()
   getmetatable(self).sparkContext = context
   self.partitions = partitions
 end
@@ -253,10 +254,6 @@ function RDD:_histogram(buckets)
     end
   end)
   return h
-end
-
-function RDD:id()
-  error('NIY')
 end
 
 function RDD:intersection(other)

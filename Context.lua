@@ -6,6 +6,7 @@ local RDD = require 'RDD'
 local Context = class('Context')
 
 function Context:initialize(master, appName)
+  self.nextRddId = 1
   self.master = master or 'local[1]'
   self.appName = appName
 end
@@ -13,6 +14,11 @@ end
 function Context:emptyRDD()
   local rdd = self:parallelize({}, 0)
   return rdd
+end
+
+function Context:getNextId()
+  self.nextRddId = self.nextRddId + 1
+  return self.nextRddId - 1 
 end
 
 function Context:makeRDD(x, numPartitions)

@@ -267,6 +267,11 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.same({6, 8, 1}, counts)
   end)
 
+  it('id', function()
+    local y = sc:parallelize(_.range(1,10), 10)
+    assert.is_true(y.id > 0)
+  end)
+  
   it('intersection()', function()
     local x = sc:parallelize(_.range(1,20))
     local y = sc:parallelize(_.range(10,30))
