@@ -500,6 +500,11 @@ function RDD:toLocalIterator()
   end
 end
 
+function RDD:top(num)
+  local t = moses.sort(self:collect(), function(a,b) return a>b end)
+  return moses.slice(t, 1, num)
+end
+
 function RDD:union(other)
   local t = moses.append(self:collect(), other:collect())
   return self.context:parallelize(t)

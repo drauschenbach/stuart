@@ -577,6 +577,11 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains(actual, 2)
   end)
 
+  it('top()', function()
+    local c = sc:parallelize({6, 9, 4, 7, 5, 8}, 2)
+    assert.same({9,8}, c:top(2))
+  end)
+
   it('union()', function()
     local a = sc:parallelize(_.range(1,3), 1)
     local b = sc:parallelize(_.range(5,7), 1)
