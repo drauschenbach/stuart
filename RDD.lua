@@ -76,8 +76,9 @@ function RDD:cartesian(other)
   return self.context:parallelize(t)
 end
 
-function RDD:coalesce()
-  return self
+function RDD:coalesce(numPartitions, shuffle)
+  if not moses.isBoolean(shuffle) then shuffle = false end
+  return self.context:parallelize(self:collect(), numPartitions)
 end
 
 function RDD:collect(f)
@@ -380,7 +381,7 @@ function RDD:reduceByKey(f)
 end
 
 function RDD:repartition(numPartitions)
-  return self.context:parallelize(self:collect(), numPartitions)
+  return self:coalesce(numPartitions, true)
 end
 
 function RDD:rightOuterJoin(other)

@@ -66,6 +66,12 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(actual, {5,10})
   end)
 
+  it('coalesce()', function()
+    local y = sc:parallelize(_.range(1,10), 10)
+    local z = y:coalesce(2, false)
+    assert.equals(2, #z.partitions)
+  end)
+
   it('collectAsMap()', function()
     local a = sc:parallelize({1,2,1,3}, 1)
     local b = a:zip(a)

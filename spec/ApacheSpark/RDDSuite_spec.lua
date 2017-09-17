@@ -249,7 +249,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --  }
 
   it('repartitioned RDDs', function()
-    local data = sc:parallelize(_.range(1, 1000), 10)
+    local data = sc:parallelize(_.range(1,1000), 10)
     
     -- Coalesce partitions
     local repartitioned1 = data:repartition(2)
@@ -300,53 +300,42 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --    testSplitPartitions(Array.fill(100)(1), 10, 20)
 --    testSplitPartitions(Array.fill(10000)(1) ++ Array.fill(10000)(2), 20, 100)
 --  }
+  
+  it('coalesced RDDs', function()
+    local data = sc:parallelize(_.range(1,10), 10)
+    
+    local coalesced1 = data:coalesce(2)
+    assert.same(_.range(1,10), coalesced1:collect())
+    assert.same({{1,2,3,4,5}, {6,7,8,9,10}}, coalesced1:glom():collect())
+    
+    local coalesced2 = data:coalesce(3)
+    assert.same(_.range(1,10), coalesced2:collect())
+    --assert.same({{1,2,3}, {4,5,6}, {7,8,9,10}}, coalesced2:glom():collect())
+    assert.equals(3, #coalesced2:glom():collect())
+    
+    local coalesced3 = data:coalesce(10)
+    assert.same(_.range(1,10), coalesced3:collect())
+    -- assert(coalesced3.glom().collect().map(_.toList).toList ===
+    --   (1 to 10).map(x => List(x)).toList)
 
---  test("coalesced RDDs") {
---    val data = sc.parallelize(1 to 10, 10)
---
---    intercept[IllegalArgumentException] {
---      data.coalesce(0)
---    }
---
---    val coalesced1 = data.coalesce(2)
---    assert(coalesced1.collect().toList === (1 to 10).toList)
---    assert(coalesced1.glom().collect().map(_.toList).toList ===
---      List(List(1, 2, 3, 4, 5), List(6, 7, 8, 9, 10)))
---
---    // Check that the narrow dependency is also specified correctly
---    assert(coalesced1.dependencies.head.asInstanceOf[NarrowDependency[_]].getParents(0).toList ===
---      List(0, 1, 2, 3, 4))
---    assert(coalesced1.dependencies.head.asInstanceOf[NarrowDependency[_]].getParents(1).toList ===
---      List(5, 6, 7, 8, 9))
---
---    val coalesced2 = data.coalesce(3)
---    assert(coalesced2.collect().toList === (1 to 10).toList)
---    assert(coalesced2.glom().collect().map(_.toList).toList ===
---      List(List(1, 2, 3), List(4, 5, 6), List(7, 8, 9, 10)))
---
---    val coalesced3 = data.coalesce(10)
---    assert(coalesced3.collect().toList === (1 to 10).toList)
---    assert(coalesced3.glom().collect().map(_.toList).toList ===
---      (1 to 10).map(x => List(x)).toList)
---
---    // If we try to coalesce into more partitions than the original RDD, it should just
---    // keep the original number of partitions.
---    val coalesced4 = data.coalesce(20)
---    assert(coalesced4.collect().toList === (1 to 10).toList)
---    assert(coalesced4.glom().collect().map(_.toList).toList ===
---      (1 to 10).map(x => List(x)).toList)
---
---    // we can optionally shuffle to keep the upstream parallel
---    val coalesced5 = data.coalesce(1, shuffle = true)
---    val isEquals = coalesced5.dependencies.head.rdd.dependencies.head.rdd.
---      asInstanceOf[ShuffledRDD[_, _, _]] != null
---    assert(isEquals)
---
---    // when shuffling, we can increase the number of partitions
---    val coalesced6 = data.coalesce(20, shuffle = true)
---    assert(coalesced6.partitions.size === 20)
---    assert(coalesced6.collect().toSet === (1 to 10).toSet)
---  }
+    -- If we try to coalesce into more partitions than the original RDD, it should just
+    -- keep the original number of partitions.
+    local coalesced4 = data:coalesce(20)
+    assert.same(_.range(1,10), coalesced4:collect())
+    -- assert(coalesced4.glom().collect().map(_.toList).toList ===
+    --   (1 to 10).map(x => List(x)).toList)
+
+    -- we can optionally shuffle to keep the upstream parallel
+    local coalesced5 = data:coalesce(1, true)
+    -- val isEquals = coalesced5.dependencies.head.rdd.dependencies.head.rdd.
+    --   asInstanceOf[ShuffledRDD[_, _, _]] != null
+    -- assert(isEquals)
+
+    -- when shuffling, we can increase the number of partitions
+    local coalesced6 = data:coalesce(20, true)
+    assert.equals(20, #coalesced6.partitions)
+    assert.same(_.range(1,10), coalesced6:collect())
+  end)
 
 --  test("coalesced RDDs with locality") {
 --    val data3 = sc.makeRDD(List((1, List("a", "c")), (2, List("a", "b", "c")), (3, List("b"))))
