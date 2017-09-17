@@ -463,6 +463,15 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(30, y:max())
   end)
 
+  it('mean()', function()
+    local a = sc:parallelize({9.1,1.0,1.2,2.1,1.3,5.0,2.0,2.1,7.4,7.5,7.6,8.8,10.0,8.9,5.5}, 3)
+    local round = function(num, decimalPlaces)
+      local mult = 10 ^ (decimalPlaces or 0)
+      return math.floor(num * mult + 0.5) / mult
+    end
+    assert.equals(5.3, round(a:mean(), 1))
+  end)
+
   it('min()', function()
     local y = sc:parallelize(_.range(10,30))
     assert.equals(10, y:min())

@@ -395,6 +395,14 @@ function RDD:max()
   return r
 end
 
+function RDD:mean()
+  return self:stats().mean
+end
+
+function RDD:meanApprox()
+  return self:mean()
+end
+
 function RDD:min()
   local r = self:first()
   for n in self:toLocalIterator() do
