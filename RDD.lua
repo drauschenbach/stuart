@@ -449,6 +449,20 @@ function RDD:stats()
   return r
 end
 
+function RDD:stdev()
+  local m = self:stats().mean
+  local vm
+  local sum = 0
+  local count = 0
+  for k,v in pairs(self:collect()) do
+    vm = v - m
+    sum = sum + vm * vm
+    count = count + 1
+  end
+  local result = math.sqrt(sum / (count-1))
+  return result
+end
+
 function RDD:subtract(other)
   local t = moses.without(self:collect(), other:collect())
   return self.context:parallelize(t, #self.partitions)
