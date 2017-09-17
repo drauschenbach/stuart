@@ -1,5 +1,5 @@
 local _ = require 'lodash'
-local inspect = require 'inspect'
+local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -79,6 +79,30 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(2, actual[2])
     assert.equals(1, actual[1])
     assert.equals(3, actual[3])
+  end)
+
+  it('combineByKey()', function()
+    local a = sc:parallelize({'dog', 'cat', 'gnu', 'salmon', 'rabbit', 'turkey', 'wolf', 'bear', 'bee'}, 3)
+    local b = sc:parallelize({1,1,2,2,2,1,2,2,2}, 3)
+    local c = b:zip(a)
+    local createCombiner = function(v) return {v} end
+    local mergeValue = function(x, y) x[#x+1] = y; return x end
+    local mergeCombiners = function(x, y) return moses.append(x, y) end
+    local d = c:combineByKey(createCombiner, mergeValue, mergeCombiners)
+    local actual = d:collect()
+    
+    local valuesForKey1 = moses.reduce(actual, function(r,e) if e[1]==1 then r=e[2] end; return r end, {})
+    assert.contains(valuesForKey1, 'cat')
+    assert.contains(valuesForKey1, 'dog')
+    assert.contains(valuesForKey1, 'turkey')
+    
+    local valuesForKey2 = moses.reduce(actual, function(r,e) if e[1]==2 then r=e[2] end; return r end, {})
+    assert.contains(valuesForKey2, 'gnu')
+    assert.contains(valuesForKey2, 'rabbit')
+    assert.contains(valuesForKey2, 'salmon')
+    assert.contains(valuesForKey2, 'bee')
+    assert.contains(valuesForKey2, 'bear')
+    assert.contains(valuesForKey2, 'wolf')
   end)
 
   it('context, sparkContext', function()
@@ -642,5 +666,5 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(r, {119,19})
     assert.contains_pair(r, {120,20})
   end)
-
+  
 end)

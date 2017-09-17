@@ -104,6 +104,37 @@ function RDD:collectAsMap()
   return t
 end
 
+function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
+  assert(moses.isFunction(createCombiner))
+  assert(moses.isFunction(mergeValue))
+  assert(moses.isFunction(mergeCombiners))
+  local y = moses.map(self.partitions, function(i,p)
+    local keys = moses.uniq(moses.map(p.data, function(i,e) return e[1] end))
+    local z = moses.reduce(keys, function(r,key)
+      local valuesForKey = moses.reduce(p.data, function(r,e)
+        if e[1] == key then r[#r+1] = e[2] end
+        return r
+      end, {})
+      r[key] = moses.reduce(valuesForKey, mergeValue, {})
+      return r
+    end, {})
+    return z
+  end, zeroValue)
+  
+  local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
+  local t = moses.reduce(keys, function(r,key)
+    local valuesForKey = moses.reduce(y, function(r,e)
+      for k,v in pairs(e) do
+        if k == key then r[#r+1] = v end
+      end
+      return r
+    end, {})
+    r[#r+1] = {key, moses.reduce(valuesForKey, mergeCombiners, {})}
+    return r
+  end, {})
+  return self.context:parallelize(t)
+end
+
 function RDD:count()
   return moses.reduce(self.partitions, function(r, p) return r + p:_count() end, 0)
 end
