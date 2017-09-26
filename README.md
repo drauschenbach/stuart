@@ -59,8 +59,9 @@ assert.equals(1, countsByKey[5])
 ## Requirements
 
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
+* [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. Used in WebHDFS response parsing.
+* [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for literal adaptation of many Apache Spark APIs.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
-* [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for maximal 1-1 translation of Apache Spark APIs.
 
 ## Compatibility
 
@@ -76,6 +77,13 @@ Stuart is incompatible with:
 
 * [Shopify/go-lua](https://github.com/Shopify/go-lua), due to its lack of `coroutine` and `debug.getinfo()` capabilities.
 
+## Roadmap Brainstorm
+
+* Local in-memory [RDDs](https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.rdd.RDD) and [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
+* [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) capabilities.
+* [MLlib](https://spark.apache.org/mllib/) support. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
+* A Redis scheduler. RDDs partitioned across Redis servers. Lua closures sent into Redis to run.
+
 ## Design
 
 Stuart is designed for embedding, and so follows some rules:
@@ -84,12 +92,13 @@ Stuart is designed for embedding, and so follows some rules:
 * It does not execute programs (like `ls` or `dir` to list files); there may not even be an OS.
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
 
-## Some Interesting Goals for the Project
+### Contributor Guidelines
 
-* Local in-memory [RDDs](https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.rdd.RDD), [PairRDDs](https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.rdd.PairRDDFunctions), and [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
-* [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) capabilities.
-* [MLlib](https://spark.apache.org/mllib/) support. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
-* A Redis scheduler. RDDs partitioned across Redis servers. Lua closures sent into Redis to run.
+* [Busted](https://olivinelabs.com/busted/)-based [TDD](https://en.wikipedia.org/wiki/Test-driven_development)
+* Class modules begin with an uppercase letter, and end up in their own file that begins with an uppercase letter (e.g. `RDD.lua`)
+* Modules begin with a lowercase letter (e.g. `stuart.lua`, `fileSystemFactory.lua`)
+* Two spaces for indents.
+* Companion libraries such as Stuart ML (a Lua port of Spark ML) will end up in their own separate Git repo and LuaRocks module `"stuart-ml"`. This means all sources can be found in the root folder, which reserves subdirectories for specs, their fixtures, and examples.
 
 ## Testing
 

@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local fileSystemFactory = require 'FileSystemFactory'
 local moses = require 'moses'
 local Partition = require 'Partition'
 local RDD = require 'RDD'
@@ -19,6 +20,16 @@ end
 function Context:getNextId()
   self.nextRddId = self.nextRddId + 1
   return self.nextRddId - 1 
+end
+
+function Context:hadoopFile(path, minPartitions)
+  local fs, openPath = fileSystemFactory.createForOpenPath(path)
+  local content = fs:open(openPath)
+  local lines = {}
+  for line in content:gmatch('[^\r\n]+') do
+    lines[#lines+1] = line
+  end
+  return self:parallelize(lines, minPartitions)
 end
 
 function Context:makeRDD(x, numPartitions)
@@ -43,15 +54,8 @@ function Context:parallelize(x, numPartitions)
 	return RDD:new(self, partitions)
 end
 
-function Context:textFile(filename)
-  local f = assert(io.open(filename, 'r'))
-  local content = f:read '*all'
-  f:close()
-  local lines = {}
-  for line in content:gmatch('[^\r\n]+') do
-    lines[#lines+1] = line
-  end
-  return self:parallelize(lines)
+function Context:textFile(path, minPartitions)
+  return self:hadoopFile(path, minPartitions)
 end
 
 function Context:union(rdds)
