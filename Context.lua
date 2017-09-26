@@ -7,7 +7,7 @@ local RDD = require 'RDD'
 local Context = class('Context')
 
 function Context:initialize(master, appName)
-  self.nextRddId = 1
+  self.lastRddId = 0
   self.master = master or 'local[1]'
   self.appName = appName
 end
@@ -18,8 +18,8 @@ function Context:emptyRDD()
 end
 
 function Context:getNextId()
-  self.nextRddId = self.nextRddId + 1
-  return self.nextRddId - 1 
+  self.lastRddId = self.lastRddId + 1
+  return self.lastRddId
 end
 
 function Context:hadoopFile(path, minPartitions)
