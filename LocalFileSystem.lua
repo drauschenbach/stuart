@@ -8,7 +8,7 @@ function LocalFileSystem:initialize(uri)
 end
 
 function LocalFileSystem:open(path)
-  local f = assert(io.open(path, 'r'))
+  local f = assert(io.open(self.uri .. path, 'r'))
   local data = f:read '*all'
   return data
 end
