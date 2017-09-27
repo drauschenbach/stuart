@@ -3,8 +3,8 @@ local DStream = require 'DStream'
 
 local QueueInputDStream = class('QueueInputDStream', DStream)
 
-function QueueInputDStream:initialize(ctx, rdds)
-  DStream.initialize(self, ctx)
+function QueueInputDStream:initialize(ssc, rdds)
+  DStream.initialize(self, ssc)
   self.queue = rdds
 end
 

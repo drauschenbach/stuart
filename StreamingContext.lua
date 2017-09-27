@@ -72,24 +72,35 @@ function StreamingContext:queueStream(rdds, oneAtATime)
     if not isInstanceOf(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
     return rdd
   end)
-  local dstream = QueueInputDStream:new(self.sc, rdds)
+  local dstream = QueueInputDStream:new(self, rdds)
+  self.dstreams[#self.dstreams+1] = dstream
+  return dstream
+end
+
+function StreamingContext:receiverStream(receiver)
+  local dstream = ReceiverInputDStream:new(self, receiver)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:socketTextStream(hostname, port)
-  if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  local dstream = SocketInputDStream:new(self.sc, hostname, port)
+  local dstream = SocketInputDStream:new(self, hostname, port)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:start()
   if self.state == 'stopped' then error('StreamingContext has already been stopped') end
+  for i, dstream in ipairs(self.dstreams) do
+    dstream:start()
+  end
   self.state = 'active'
 end
 
 function StreamingContext:stop()
+  for i, dstream in ipairs(self.dstreams) do
+    dstream:stop()
+  end
   self.state = 'stopped'
 end
 

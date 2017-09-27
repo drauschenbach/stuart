@@ -20,31 +20,13 @@ print(rdd:count())
 41
 ```
 
-### Streaming
-
-Per Lua conventions, all durations are specified in seconds.
-
-```lua
-sc = require 'stuart'.NewContext()
-ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
-
-rdd1 = sc:parallelize({'dog', 'cat'})
-rdd2 = sc:parallelize{{'mouse', 'rabbit'})
-rdds = {rdd1,rdd2}
-dstream = ssc:queueStream(rdds)
-dstream:foreachRDD(function(rdd)
-	print('Received RDD: ' .. rdd)
-end)
-
-ssc:awaitTerminationOrTimeout(1.5)
-```
-
 ### Working with lists of values
 
 ```lua
 rdd = sc:parallelize({1,2,3,4,5,6,7,8,9,10}, 3)
 filtered = rdd:filter(function(x) return x % 2 == 0 end)
-assert.same({2,4,6,8,10}, filtered:collect())
+print(table.concat(filtered:collect(), ','))
+{2,4,6,8,10}
 ```
 
 ### Working with lists of pairs
@@ -52,11 +34,104 @@ assert.same({2,4,6,8,10}, filtered:collect())
 ```lua
 rdd = sc:parallelize({{4,'Gnu'}, {4,'Yak'}, {5,'Mouse'}, {4,'Dog'}})
 countsByKey = rdd:countByKey()
-assert.equals(3, countsByKey[4])
-assert.equals(1, countsByKey[5])
+print(countsByKey[4])
+3
+print(countsByKey[5])
+1
 ```
 
-## Requirements
+### Streaming with a socket text datasource
+
+Start a local server with netcat:
+
+```bash
+$ nc -lk 9999
+```
+
+Start a Spark Streaming job to read from the netcat server:
+
+```lua
+sc = require 'stuart'.NewContext()
+ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
+
+dstream = ssc:socketTextStream('localhost', 9999)
+dstream:foreachRDD(function(rdd)
+	print('Received RDD: ' .. rdd:collect())
+end)
+ssc:start()
+ssc:awaitTerminationOrTimeout(10)
+```
+
+Then type some input into the netcat server:
+
+```
+abc
+123
+```
+
+### Streaming with a custom receiver
+
+This custom receiver acts like a `SocketInputDStream`, and reads lines of text from a socket.
+
+```lua
+local class = require 'middleclass'
+local Receiver = require 'Receiver'
+local socket = require 'socket'
+local stuart = require 'stuart'
+
+-- MyReceiver ------------------------------
+
+local MyReceiver = class('MyReceiver', Receiver)
+
+function MyReceiver:initialize(ssc, hostname, port)
+  Receiver.initialize(self, ssc)
+  self.hostname = hostname
+  self.port = port or 0
+end
+
+function MyReceiver:onStart()
+  self.conn = socket.connect(self.hostname, self.port)
+end
+
+function MyReceiver:onStop()
+	if self.conn ~= nil then self.conn:close() end
+end
+
+function MyReceiver:run(durationBudget)
+  local timeOfLastYield = socket.gettime()
+  local rdds = {}
+  local minWait = 0.02 -- never block less than 20ms
+  while true do
+    local elapsed = socket.gettime() - timeOfLastYield
+    if elapsed > durationBudget then
+      coroutine.yield(rdds)
+      rdds = {}
+      timeOfLastYield = socket.gettime()
+    else
+      self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
+      local line, err = self.conn:receive('*l')
+      if not err then
+        rdds[#rdds+1] = self.sc:makeRDD({line})
+      end
+    end
+  end
+end
+
+-- Spark Streaming Job ------------------------------
+
+sc = stuart.NewContext()
+ssc = stuart.NewStreamingContext(sc, 0.5)
+
+local receiver = MyReceiver:new(ssc, 'localhost', 9999)
+local dstream = ssc:receiverStream(receiver)
+dstream:foreachRDD(function(rdd)
+	print('Received RDD: ' .. rdd:collect())
+end)
+ssc:start()
+ssc:awaitTerminationOrTimeout(10)
+```
+
+## Dependencies
 
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
 * [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. Used in WebHDFS response parsing.
@@ -71,7 +146,7 @@ Stuart is compatible with:
 * [Lua 5.1+](https://www.lua.org)
 * [LuaJIT](https://www.lua.org)
 
-Use [gluasocket](https://github.com/BixData/gluasocket) to embed Stuart Streaming in a Go binary.
+Use [gluasocket](https://github.com/BixData/gluasocket) to embed Stuart in a Go app.
 
 Stuart is incompatible with:
 

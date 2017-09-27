@@ -3,8 +3,8 @@ local DStream = require 'DStream'
 
 local TransformedDStream = class('TransformedDStream', DStream)
 
-function TransformedDStream:initialize(ctx, transformFunc)
-  DStream.initialize(self, ctx)
+function TransformedDStream:initialize(ssc, transformFunc)
+  DStream.initialize(self, ssc)
   self.transformFunc = transformFunc
 end
 
