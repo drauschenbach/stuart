@@ -15,6 +15,9 @@ function HttpReceiver:initialize(ssc, url, mode, requestHeaders)
   self.state = 0 -- 0=receive status line, 1=receive headers, 2=receive content
 end
 
+function HttpReceiver:onHeadersReceived(headers)
+end
+
 function HttpReceiver:onStart()
   local parsedUrl = socketUrl.parse(self.url)
   self.conn = socket.connect(parsedUrl.host, parsedUrl.port)
@@ -49,20 +52,13 @@ function HttpReceiver:run(durationBudget)
         local line, err = self.conn:receive('*l')
         if not err then
           if self.state == 0 then
-            local i = line:find(' ')
-            self.statusLine = line:sub(i+1)
-            local j = self.statusLine:find(' ')
-            self.status = self.statusLine:sub(1, j)
+            self.status, self.statusLine = self:parseStatusLine(line)
             self.state = 1
           elseif self.state == 1 then
             if line ~= '' then
-              local i = line:find(': ')
-              if i ~= nil then
-                local name = line:sub(1, i-1)
-                local value = line:sub(i+2)
-                self.responseHeaders[name] = value
-              end
+              self:parseHeaderLine(line)
             else
+              pcall(function() self:onHeadersReceived(self.responseHeaders) end)
               self.state = 2 -- blank line indicates last header received
             end
           else
@@ -75,6 +71,23 @@ function HttpReceiver:run(durationBudget)
         error('binary mode not implemented yet')
       end
     end
+  end
+end
+
+function HttpReceiver:parseStatusLine(line)
+  local i = line:find(' ')
+  local statusLine = line:sub(i+1)
+  local j = statusLine:find(' ')
+  local status = statusLine:sub(1, j-1)
+  return status, statusLine
+end
+
+function HttpReceiver:parseHeaderLine(line)
+  local i = line:find(': ')
+  if i ~= nil then
+    local name = line:sub(1, i-1)
+    local value = line:sub(i+2)
+    self.responseHeaders[name] = value
   end
 end
 
