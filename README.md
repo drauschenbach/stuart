@@ -75,16 +75,15 @@ This custom receiver acts like a `SocketInputDStream`, and reads lines of text f
 
 ```lua
 local class = require 'middleclass'
-local Receiver = require 'Receiver'
 local socket = require 'socket'
 local stuart = require 'stuart'
 
 -- MyReceiver ------------------------------
 
-local MyReceiver = class('MyReceiver', Receiver)
+local MyReceiver = class('MyReceiver', stuart.Receiver)
 
 function MyReceiver:initialize(ssc, hostname, port)
-  Receiver.initialize(self, ssc)
+  stuart.Receiver.initialize(self, ssc)
   self.hostname = hostname
   self.port = port or 0
 end
@@ -111,7 +110,7 @@ function MyReceiver:run(durationBudget)
       self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
       local line, err = self.conn:receive('*l')
       if not err then
-        rdds[#rdds+1] = self.sc:makeRDD({line})
+        rdds[#rdds+1] = self.ssc.sc:makeRDD({line})
       end
     end
   end

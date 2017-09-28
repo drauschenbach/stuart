@@ -2,6 +2,8 @@ local moses = require 'moses'
 
 Stuart = {}
 Stuart.Context = require 'Context'
+Stuart.HttpReceiver = require 'HttpReceiver'
+Stuart.Receiver = require 'Receiver'
 Stuart.StreamingContext = require 'StreamingContext'
 
 Stuart.NewContext = function()

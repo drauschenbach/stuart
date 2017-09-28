@@ -1,6 +1,7 @@
 local class = require 'middleclass'
 local moses = require 'moses'
 local QueueInputDStream = require 'QueueInputDStream'
+local ReceiverInputDStream = require 'ReceiverInputDStream'
 local RDD = require 'RDD'
 local socket = require 'socket'
 local SocketInputDStream = require 'SocketInputDStream'
