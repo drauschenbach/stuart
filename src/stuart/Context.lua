@@ -1,8 +1,9 @@
 local class = require 'middleclass'
-local fileSystemFactory = require 'FileSystemFactory'
 local moses = require 'moses'
-local Partition = require 'Partition'
-local RDD = require 'RDD'
+
+local fileSystemFactory = require 'stuart.fileSystemFactory'
+local Partition = require 'stuart.Partition'
+local RDD = require 'stuart.RDD'
 
 local Context = class('Context')
 

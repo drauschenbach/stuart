@@ -1,6 +1,6 @@
 local class = require 'middleclass'
-local Receiver = require 'Receiver'
 local socket = require 'socket'
+local Receiver = require 'stuart.streaming.Receiver'
 
 local SocketReceiver = class('SocketReceiver', Receiver)
 

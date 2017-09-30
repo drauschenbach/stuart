@@ -1,5 +1,5 @@
 local class = require 'middleclass'
-local FileSystem = require 'FileSystem'
+local FileSystem = require 'stuart.FileSystem'
 
 local LocalFileSystem = class('LocalFileSystem', FileSystem)
 

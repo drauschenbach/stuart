@@ -1,6 +1,6 @@
 local class = require 'middleclass'
-local ReceiverInputDStream = require 'ReceiverInputDStream'
-local SocketReceiver = require 'SocketReceiver' 
+local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
+local SocketReceiver = require 'stuart.streaming.SocketReceiver' 
 
 local SocketInputDStream = class('SocketInputDStream', ReceiverInputDStream)
 

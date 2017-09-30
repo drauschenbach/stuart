@@ -6,6 +6,12 @@
 
 ## Getting Started
 
+### Installing
+
+```bash
+$ luarocks install stuart
+```
+
 ### Reading a text file
 
 Create a "Stuart Context", then count the number of lines in this README:
@@ -60,6 +66,7 @@ dstream:foreachRDD(function(rdd)
 end)
 ssc:start()
 ssc:awaitTerminationOrTimeout(10)
+ssc:stop()
 ```
 
 Then type some input into the netcat server:
@@ -77,10 +84,11 @@ This custom receiver acts like a `SocketInputDStream`, and reads lines of text f
 local class = require 'middleclass'
 local socket = require 'socket'
 local stuart = require 'stuart'
+local Receiver = require 'stuart.streaming.Receiver'
 
 -- MyReceiver ------------------------------
 
-local MyReceiver = class('MyReceiver', stuart.Receiver)
+local MyReceiver = class('MyReceiver', Receiver)
 
 function MyReceiver:initialize(ssc, hostname, port)
   stuart.Receiver.initialize(self, ssc)
@@ -128,6 +136,7 @@ dstream:foreachRDD(function(rdd)
 end)
 ssc:start()
 ssc:awaitTerminationOrTimeout(10)
+ssc:stop()
 ```
 
 ## Dependencies
@@ -172,7 +181,17 @@ Stuart is designed for embedding, and so follows some rules:
 * Class modules begin with an uppercase letter, and end up in their own file that begins with an uppercase letter (e.g. `RDD.lua`)
 * Modules begin with a lowercase letter (e.g. `stuart.lua`, `fileSystemFactory.lua`)
 * Two spaces for indents.
-* Companion libraries such as Stuart ML (a Lua port of Spark ML) will end up in their own separate Git repo and LuaRocks module `"stuart-ml"`. This means all sources can be found in the root folder, which reserves subdirectories for specs, their fixtures, and examples.
+* Companion libraries such as Stuart ML (a Lua port of Spark ML) will end up in their own separate Git repo and LuaRocks module such as `"stuart-ml"`.
+
+## Building
+
+A default `make` target runs the Lua code combiner. Then a `make install` target runs the LuaRocks make system which deploys it to the local system.
+
+```bash
+$ luarocks install luacc
+$ make
+$ make install
+```
 
 ## Testing
 

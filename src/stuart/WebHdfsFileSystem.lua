@@ -1,9 +1,10 @@
 local class = require 'middleclass'
-local FileSystem = require 'FileSystem'
 local http = require 'socket.http'
 local lunajson = require 'lunajson'
 local moses = require 'moses'
 local url = require 'socket.url'
+
+local FileSystem = require 'stuart.FileSystem'
 
 local WebHdfsFileSystem = class('WebHdfsFileSystem', FileSystem)
 

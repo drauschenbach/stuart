@@ -1,5 +1,6 @@
 local class = require 'middleclass'
-local DStream = require 'DStream'
+
+local DStream = require 'stuart.streaming.DStream'
 
 local QueueInputDStream = class('QueueInputDStream', DStream)
 

@@ -25,7 +25,7 @@ function DStream:count()
 end
 
 function DStream:foreachRDD(foreachFunc)
-  local TransformedDStream = require 'TransformedDStream'
+  local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
   return self
@@ -45,7 +45,7 @@ function DStream:stop()
 end
 
 function DStream:transform(transformFunc)
-  local TransformedDStream = require 'TransformedDStream'
+  local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, transformFunc)
   self.inputs[#self.inputs+1] = dstream
   return dstream

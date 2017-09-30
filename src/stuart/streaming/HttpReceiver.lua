@@ -1,7 +1,8 @@
 local class = require 'middleclass'
-local Receiver = require 'Receiver'
 local socket = require 'socket'
 local socketUrl = require 'socket.url'
+
+local Receiver = require 'stuart.streaming.Receiver'
 
 -- Receiver capable of tailing an http chunked stream
 local HttpReceiver = class('HttpReceiver', Receiver)

@@ -1,7 +1,8 @@
-local LocalFileSystem = require 'LocalFileSystem'
 local moses = require 'moses'
 local socketUrl = require 'socket.url'
-local WebHdfsFileSystem = require 'WebHdfsFileSystem'
+
+local LocalFileSystem = require 'stuart.LocalFileSystem'
+local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
 
 local FileSystemFactory = {}
 

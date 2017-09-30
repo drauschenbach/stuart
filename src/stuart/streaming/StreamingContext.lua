@@ -1,10 +1,11 @@
 local class = require 'middleclass'
 local moses = require 'moses'
-local QueueInputDStream = require 'QueueInputDStream'
-local ReceiverInputDStream = require 'ReceiverInputDStream'
-local RDD = require 'RDD'
 local socket = require 'socket'
-local SocketInputDStream = require 'SocketInputDStream'
+
+local RDD = require 'stuart.RDD'
+local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
+local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
+local SocketInputDStream = require 'stuart.streaming.SocketInputDStream'
 
 local function sleep(timeout)
   socket.select(nil, nil, timeout)
