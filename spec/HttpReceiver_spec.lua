@@ -1,3 +1,4 @@
+local HttpReceiver = require 'stuart.streaming.HttpReceiver'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -9,14 +10,14 @@ describe('HttpReceiver', function()
   local ssc = stuart.NewStreamingContext(sc)
   
   it('parses a status line', function()
-    local receiver = stuart.HttpReceiver:new(ssc)
+    local receiver = HttpReceiver:new(ssc)
     local status, statusLine = receiver:parseStatusLine('HTTP/1.0 201 abc')
     assert.equals('201', status)
     assert.equals('201 abc', statusLine)
   end)
   
   it('parses header lines', function()
-    local receiver = stuart.HttpReceiver:new(ssc)
+    local receiver = HttpReceiver:new(ssc)
     assert.same({}, receiver.responseHeaders)
     
     receiver:parseHeaderLine('Content-Type: text/plain')

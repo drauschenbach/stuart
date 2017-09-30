@@ -1,8 +1,8 @@
 local _ = require 'lodash'
-local fileSystemFactory = require 'fileSystemFactory'
-local LocalFileSystem = require 'LocalFileSystem'
+local fileSystemFactory = require 'stuart.fileSystemFactory'
+local LocalFileSystem = require 'stuart.LocalFileSystem'
 local stuart = require 'stuart'
-local WebHdfsFileSystem = require 'WebHdfsFileSystem'
+local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
 
 describe('fileSystemFactory', function()
 

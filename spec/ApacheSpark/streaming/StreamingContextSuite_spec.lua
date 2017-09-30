@@ -1,5 +1,7 @@
 local _ = require 'lodash'
+local Context = require 'stuart.Context'
 local registerAsserts = require 'registerAsserts'
+local StreamingContext = require 'stuart.streaming.StreamingContext'
 local stuart = require 'stuart'
 
 registerAsserts(assert)
@@ -11,8 +13,8 @@ describe('Apache Spark 2.2.0 StreamingContextSuite', function()
   local batchDuration = 0.5 -- 500 milliseconds
 
   it('from existing SparkContext', function()
-    local sc = stuart.Context:new(master, appName)
-    local ssc = stuart.StreamingContext:new(sc, batchDuration)
+    local sc = Context:new(master, appName)
+    local ssc = StreamingContext:new(sc, batchDuration)
   end)
 
   it('start and stop state check', function()
