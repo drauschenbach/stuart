@@ -39,13 +39,14 @@ end
 
 function HttpReceiver:run(durationBudget)
   local timeOfLastYield = socket.gettime()
-  local rdds = {}
+  local data = {}
   local minWait = 0.02 -- never block less than 20ms
   while true do
     local elapsed = socket.gettime() - timeOfLastYield
     if elapsed > durationBudget then
-      coroutine.yield(rdds)
-      rdds = {}
+      local rdd = self.ssc.sc:makeRDD(data)
+      coroutine.yield({rdd})
+      data = {}
       timeOfLastYield = socket.gettime()
     else
       self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
@@ -64,8 +65,7 @@ function HttpReceiver:run(durationBudget)
             end
           else
             line = self:transform(line)
-            local rdd = self.ssc.sc:makeRDD({line})
-            rdds[#rdds+1] = rdd
+            data[#data+1] = line
           end
         end
       else
