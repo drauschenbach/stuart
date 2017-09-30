@@ -37,7 +37,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   
   -- run loop
   local startTime = socket.gettime()
-  local loopDurationGoal = 0.05 -- 50ms
+  local loopDurationGoal = self.batchDuration
   local individualDStreamDurationBudget = loopDurationGoal / #self.dstreams 
   while self.state == 'active' do
   
