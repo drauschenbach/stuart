@@ -185,12 +185,10 @@ Stuart is designed for embedding, and so follows some rules:
 
 ## Building
 
-A default `make` target runs the Lua code combiner. Then a `make install` target runs the LuaRocks make system which deploys it to the local system.
+The LuaRocks built-in build system is used for packaging.
 
 ```bash
-$ luarocks install luacc
-$ make
-$ make install
+$ luarocks make rockspecs/stuart-<version>.rockspec
 ```
 
 ## Testing
