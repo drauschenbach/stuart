@@ -12,11 +12,11 @@ function ReceiverInputDStream:compute(durationBudget)
   self.receiver:run(durationBudget)
 end
 
-function DStream:start()
+function ReceiverInputDStream:start()
   self.receiver:onStart()
 end
 
-function DStream:stop()
+function ReceiverInputDStream:stop()
   self.receiver:onStop()
 end
 
