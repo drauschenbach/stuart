@@ -91,7 +91,7 @@ local Receiver = require 'stuart.streaming.Receiver'
 local MyReceiver = class('MyReceiver', Receiver)
 
 function MyReceiver:initialize(ssc, hostname, port)
-  stuart.Receiver.initialize(self, ssc)
+  Receiver.initialize(self, ssc)
   self.hostname = hostname
   self.port = port or 0
 end
