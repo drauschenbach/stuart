@@ -29,7 +29,7 @@ function SocketReceiver:run(durationBudget)
     if elapsed > durationBudget then
       local rdd = self.ssc.sc:makeRDD(data)
       coroutine.yield({rdd})
-      rdds = {}
+      data = {}
       timeOfLastYield = socket.gettime()
     else
       self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
