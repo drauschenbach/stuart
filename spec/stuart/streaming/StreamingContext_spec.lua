@@ -33,11 +33,10 @@ describe('StreamingContext', function()
   end)
   
   it('can queue RDDs into a DStream', function()
-    local timeoutSecs = .3
+    local ssc = stuart.NewStreamingContext(sc, 0.1)
     local rdd1 = sc:parallelize({'a', 'b'})
     local rdd2 = sc:parallelize({'c'})
     local rdds = {rdd1, rdd2}
-    local ssc = stuart.NewStreamingContext(sc)
     local dstream = ssc:queueStream(rdds)
     
     local r = {}
@@ -46,7 +45,7 @@ describe('StreamingContext', function()
     end)
     
     ssc:start()
-    ssc:awaitTerminationOrTimeout(timeoutSecs)
+    ssc:awaitTerminationOrTimeout(0.3)
     assert.contains(r, 'a')
     assert.contains(r, 'b')
     assert.contains(r, 'c')
