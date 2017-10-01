@@ -18,6 +18,7 @@ install:
   - luarocks install lodash
   - luarocks install luacheck
   - luarocks install luasocket
+  - luarocks install lunajson
   - luarocks install middleclass
   - luarocks install moses
 
