@@ -3,7 +3,7 @@ local moses = require 'moses'
 local Context = require 'stuart.Context'
 local StreamingContext = require 'stuart.streaming.StreamingContext'
 
-Stuart = {}
+local Stuart = {}
 
 Stuart.NewContext = function(master, appName)
   return Context:new(master, appName)

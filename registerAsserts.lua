@@ -1,7 +1,7 @@
 local _ = require 'lodash'
 local say = require 'say'
 
-function registerAsserts(assert)
+local registerAsserts = function(assert)
 
   say:set('assertion.contains.positive', 'Expected %s to contain %s')
   say:set('assertion.contains.negative', 'Expected %s to not contain %s')

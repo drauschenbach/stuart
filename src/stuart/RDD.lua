@@ -203,7 +203,7 @@ end
 function RDD:foldByKey(zeroValue, op)
   local keys = moses.unique(moses.map(self:collect(), function(i,e) return e[1] end))
   local t = moses.map(keys, function(i,k)
-    c = moses.map(self:collect(), function(j,e)
+    local c = moses.map(self:collect(), function(j,e)
       if e[1] == k then return e[2] end
     end)
     return {k, moses.reduce(c, op, zeroValue)}
@@ -234,7 +234,7 @@ function RDD:groupBy(f)
   local x = self:collect()
   local keys = moses.unique(moses.map(x, function(k,v) return f(v) end))
   local t = moses.map(keys, function(i,k)
-    v = moses.reduce(x, function(r, e)
+    local v = moses.reduce(x, function(r, e)
       if f(e) == k then r[#r+1] = e end
       return r
     end, {})
@@ -246,7 +246,7 @@ end
 function RDD:groupByKey()
   local keys = moses.keys(self:_dict())
   local t = moses.map(keys, function(i,k)
-    v = moses.reduce(self:collect(), function(r, e)
+    local v = moses.reduce(self:collect(), function(r, e)
       if e[1] == k then r[#r+1] = e[2] end
       return r
     end, {})
@@ -520,7 +520,7 @@ end
 
 function RDD:take(n)
   local iter = self:toLocalIterator()
-  t = {}
+  local t = {}
   for i = 1, n, 1 do
     local x = iter()
     if x == nil then break end

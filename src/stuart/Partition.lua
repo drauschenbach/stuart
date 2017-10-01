@@ -21,7 +21,7 @@ function Partition:_flattenValues()
   self.data = moses.reduce(self.data, function(r, e)
     local x = e[2]
     if moses.isString(x) then
-      t = {}
+      local t = {}
       x:gsub('.', function(c) t[#t+1] = c end)
       x = t
     end
