@@ -276,7 +276,7 @@ function RDD:_histogram(buckets)
   moses.forEach(self:collect(), function(i,x)
     for i = 1, num_buckets, 1 do
       local shouldAdd
-      local lastBucket = i == num_buckets 
+      local lastBucket = i == num_buckets
       if lastBucket then -- last bucket is inclusive
         shouldAdd = x >= buckets[i] and x <= buckets[i+1]
       else
@@ -513,7 +513,7 @@ function RDD:subtractByKey(other)
   local keys = moses.without(selfKeys, otherKeys)
   local t = moses.reduce(self:collect(), function(r, e)
     if moses.detect(keys, e[1]) ~= nil then r[#r+1] = e end
-    return r 
+    return r
   end, {})
   return self.context:parallelize(t, #self.partitions)
 end

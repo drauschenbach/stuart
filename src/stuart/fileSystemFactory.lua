@@ -23,11 +23,11 @@ FileSystemFactory.createForOpenPath = function(path)
     local segments = socketUrl.parse_path(uriSegments.path)
     segments['is_absolute'] = nil
     if #segments > 2 and segments[1] == 'webhdfs' and segments[2] == 'v1' then
-      -- split /webhdfs/v1/path/file into constructorUri=/webhdfs/v1/ and openPath=path/file 
+      -- split /webhdfs/v1/path/file into constructorUri=/webhdfs/v1/ and openPath=path/file
       constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/' .. segments[1] .. '/' .. segments[2] .. '/'
       openPath = table.concat(moses.rest(segments, 3), '/')
     elseif #segments > 1 and segments[1] == 'v1' then
-      -- split /v1/path/file into constructorUri=/v1/ and openPath=path/file 
+      -- split /v1/path/file into constructorUri=/v1/ and openPath=path/file
       constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/' .. segments[1] .. '/'
       openPath = table.concat(moses.rest(segments, 2), '/')
     end
@@ -38,7 +38,7 @@ FileSystemFactory.createForOpenPath = function(path)
   end
   
   -- --------------------------------------------------------------------------
-  -- local path support 
+  -- local path support
   -- --------------------------------------------------------------------------
   
   local segments = socketUrl.parse_path(path)
