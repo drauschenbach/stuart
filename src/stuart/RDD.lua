@@ -36,11 +36,11 @@ end
 
 function RDD:aggregateByKey(zeroValue, seqOp, combOp)
   local y = moses.map(self.partitions, function(i,p)
-    local keys = moses.uniq(moses.map(p.data, function(i,e) return e[1] end))
+    local keys = moses.uniq(moses.map(p.data, function(j,e) return e[1] end))
     local z = moses.reduce(keys, function(r,key)
-      local valuesForKey = moses.reduce(p.data, function(r,e)
-        if e[1] == key then r[#r+1] = e[2] end
-        return r
+      local valuesForKey = moses.reduce(p.data, function(r2,e)
+        if e[1] == key then r2[#r2+1] = e[2] end
+        return r2
       end, {})
       r[key] = moses.reduce(valuesForKey, seqOp, zeroValue)
       return r
@@ -50,11 +50,11 @@ function RDD:aggregateByKey(zeroValue, seqOp, combOp)
   
   local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
   local t = moses.reduce(keys, function(r,key)
-    local valuesForKey = moses.reduce(y, function(r,e)
+    local valuesForKey = moses.reduce(y, function(r2,e)
       for k,v in pairs(e) do
-        if k == key then r[#r+1] = v end
+        if k == key then r2[#r2+1] = v end
       end
-      return r
+      return r2
     end, {})
     r[#r+1] = {key, moses.reduce(valuesForKey, combOp, 0)}
     return r
@@ -109,11 +109,11 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
   assert(moses.isFunction(mergeValue))
   assert(moses.isFunction(mergeCombiners))
   local y = moses.map(self.partitions, function(i,p)
-    local keys = moses.uniq(moses.map(p.data, function(i,e) return e[1] end))
+    local keys = moses.uniq(moses.map(p.data, function(j,e) return e[1] end))
     local z = moses.reduce(keys, function(r,key)
-      local valuesForKey = moses.reduce(p.data, function(r,e)
-        if e[1] == key then r[#r+1] = e[2] end
-        return r
+      local valuesForKey = moses.reduce(p.data, function(r2,e)
+        if e[1] == key then r2[#r2+1] = e[2] end
+        return r2
       end, {})
       r[key] = moses.reduce(valuesForKey, mergeValue, {})
       return r
@@ -123,11 +123,11 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
   
   local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
   local t = moses.reduce(keys, function(r,key)
-    local valuesForKey = moses.reduce(y, function(r,e)
+    local valuesForKey = moses.reduce(y, function(r2,e)
       for k,v in pairs(e) do
-        if k == key then r[#r+1] = v end
+        if k == key then r2[#r2+1] = v end
       end
-      return r
+      return r2
     end, {})
     r[#r+1] = {key, moses.reduce(valuesForKey, mergeCombiners, {})}
     return r
@@ -273,7 +273,7 @@ end
 function RDD:_histogram(buckets)
   local num_buckets = #buckets - 1
   local h = {}; moses.fill(h, 0, 1, num_buckets)
-  moses.forEach(self:collect(), function(i,x)
+  moses.forEach(self:collect(), function(j,x)
     for i = 1, num_buckets, 1 do
       local shouldAdd
       local lastBucket = i == num_buckets
@@ -482,7 +482,7 @@ function RDD:stats()
   end, {count=0, sum=0})
   r.mean = r.sum / r.count
   
-  local sumOfSquares = moses.reduce(x, function(r, v) return r + v*v end, 0)
+  local sumOfSquares = moses.reduce(x, function(acc, v) return acc + v*v end, 0)
   r.stdev = math.sqrt((r.count * sumOfSquares - r.sum * r.sum) / (r.count * (r.count-1)))
   r.sum = nil
   return r
