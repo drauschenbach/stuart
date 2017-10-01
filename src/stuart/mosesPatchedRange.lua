@@ -20,9 +20,9 @@ local range = function(...)
   end
   if (_step and _step==0) then return {} end
   
-  -- BEGIN patch -------------------------------------------------------------- 
+  -- BEGIN patch --------------------------------------------------------------
   if _start == 1 and _stop == 1 and _step == 1 then return {1} end
-  -- END patch ---------------------------------------------------------------- 
+  -- END patch ----------------------------------------------------------------
   
   local _ranged = {}
   local _steps = max(floor((_stop-_start)/_step),0)
