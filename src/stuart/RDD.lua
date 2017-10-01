@@ -46,7 +46,7 @@ function RDD:aggregateByKey(zeroValue, seqOp, combOp)
       return r
     end, {})
     return z
-  end, zeroValue)    
+  end, zeroValue)
   
   local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
   local t = moses.reduce(keys, function(r,key)
@@ -156,7 +156,7 @@ function RDD:countByKey()
 end
 
 function RDD:countByValue()
-  return moses.reduce(self:collect(), function(r, n, key)
+  return moses.reduce(self:collect(), function(r, n)
     if r[n] == nil then
       r[n] = 1
     else
@@ -328,8 +328,8 @@ function RDD:keys()
 end
 
 function RDD:leftOuterJoin(other)
-  local d1 = self:_dict()
-  local d2 = other:_dict()
+  --local d1 = self:_dict()
+  --local d2 = other:_dict()
   local t = moses.reduce(self:collect(), function(r, e)
       local right = {}
       moses.forEach(other:collect(), function(i,y)

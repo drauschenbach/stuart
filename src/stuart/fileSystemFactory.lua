@@ -24,11 +24,13 @@ FileSystemFactory.createForOpenPath = function(path)
     segments['is_absolute'] = nil
     if #segments > 2 and segments[1] == 'webhdfs' and segments[2] == 'v1' then
       -- split /webhdfs/v1/path/file into constructorUri=/webhdfs/v1/ and openPath=path/file
-      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/' .. segments[1] .. '/' .. segments[2] .. '/'
+      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
+        .. '/' .. segments[1] .. '/' .. segments[2] .. '/'
       openPath = table.concat(moses.rest(segments, 3), '/')
     elseif #segments > 1 and segments[1] == 'v1' then
       -- split /v1/path/file into constructorUri=/v1/ and openPath=path/file
-      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/' .. segments[1] .. '/'
+      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
+        .. '/' .. segments[1] .. '/'
       openPath = table.concat(moses.rest(segments, 2), '/')
     end
     local fs = WebHdfsFileSystem:new(constructorUri)

@@ -9,3 +9,6 @@ luac.out
 # Editors
 .buildpath
 .settings
+
+# Analyzers
+luacov.stats.out

@@ -53,7 +53,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
       if coroutine.status(co) == 'suspended' then
         local ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget) --, now, individualDStreamDurationBudget)
         if ok and (rdds ~= nil) and (#rdds > 0) then
-          for i, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
+          for j, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
         end
       end
     end
