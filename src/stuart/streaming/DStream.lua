@@ -31,6 +31,11 @@ function DStream:foreachRDD(foreachFunc)
   return self
 end
 
+function DStream:groupByKey()
+  local transformFunc = function(rdd) return rdd:groupByKey() end
+  return self:transform(transformFunc)
+end
+
 function DStream:mapValues(f)
   local transformFunc = function(rdd)
     return rdd:mapValues(f)
