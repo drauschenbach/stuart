@@ -16,7 +16,7 @@ function HttpReceiver:initialize(ssc, url, mode, requestHeaders)
   self.state = 0 -- 0=receive status line, 1=receive headers, 2=receive content
 end
 
-function HttpReceiver:onHeadersReceived(headers)
+function HttpReceiver:onHeadersReceived()
 end
 
 function HttpReceiver:onStart()

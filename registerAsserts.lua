@@ -26,7 +26,7 @@ local registerAsserts = function(assert)
     local collection = arguments[1]
     local key = arguments[2]
     local value = arguments[3]
-    for i, e in ipairs(collection) do
+    for _, e in ipairs(collection) do
       if e[1] == key then
         if lodashStr(e[2]) == lodashStr(value) then return true end
       end
@@ -39,7 +39,7 @@ local registerAsserts = function(assert)
   assert:register('assertion', 'contains_pair', function(state, arguments)
     local collection = arguments[1]
     local value = arguments[2]
-    for i, e in ipairs(collection) do
+    for _, e in ipairs(collection) do
       if lodashStr(e) == lodashStr(value) then return true end
     end
     return false

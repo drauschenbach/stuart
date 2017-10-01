@@ -10,7 +10,7 @@ function QueueInputDStream:initialize(ssc, rdds, oneAtATime)
   self.oneAtATime = oneAtATime
 end
 
-function QueueInputDStream:compute(durationBudget)
+function QueueInputDStream:compute()
   while true do
   
     if self.oneAtATime then

@@ -9,10 +9,10 @@ function DStream:initialize(ssc)
 end
 
 function DStream:_notify(validTime, rdd)
-  for i, dstream in ipairs(self.inputs) do
+  for _, dstream in ipairs(self.inputs) do
     rdd = dstream:_notify(validTime, rdd)
   end
-  for i, dstream in ipairs(self.outputs) do
+  for _, dstream in ipairs(self.outputs) do
     dstream:_notify(validTime, rdd)
   end
 end
