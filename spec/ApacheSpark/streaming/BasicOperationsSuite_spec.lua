@@ -49,7 +49,7 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 --  end)
 
   it('filter', function()
-    local input = _.range(1,12)
+    local input = {_.range(1,4), _.range(5,8), _.range(9,12)} 
     local operation = function(rdd)
       return rdd:filter(function(x) return x % 2 == 0 end)
     end
@@ -798,8 +798,8 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
     --local sc = stuart.NewContext(master, appName)
     local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
     ssc.sc:makeRDD(input)
-    local rdd = ssc.sc:makeRDD(input)
-    local inputStream = ssc:queueStream({rdd})
+    local rdds = moses.map(input, function(i,data) return ssc.sc:makeRDD(data) end)
+    local inputStream = ssc:queueStream(rdds)
     local operatedStream = inputStream:transform(operation)
     
     local output = {}

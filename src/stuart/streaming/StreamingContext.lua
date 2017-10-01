@@ -74,7 +74,7 @@ function StreamingContext:queueStream(rdds, oneAtATime)
     if not isInstanceOf(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
     return rdd
   end)
-  local dstream = QueueInputDStream:new(self, rdds)
+  local dstream = QueueInputDStream:new(self, rdds, oneAtATime)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end

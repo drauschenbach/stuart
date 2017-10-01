@@ -4,20 +4,25 @@ local DStream = require 'stuart.streaming.DStream'
 
 local QueueInputDStream = class('QueueInputDStream', DStream)
 
-function QueueInputDStream:initialize(ssc, rdds)
+function QueueInputDStream:initialize(ssc, rdds, oneAtATime)
   DStream.initialize(self, ssc)
   self.queue = rdds
+  self.oneAtATime = oneAtATime
 end
 
 function QueueInputDStream:compute(durationBudget)
   while true do
-    -- one at a time
-    --local rdd = table.remove(self.queue)
-    --coroutine.yield({rdd})
-
-    local rdds = self.queue
-    self.queue = {}
-    coroutine.yield(rdds)
+  
+    if self.oneAtATime then
+      local rdd = table.remove(self.queue, 1)
+      coroutine.yield({rdd})
+    
+    else
+      local rdds = self.queue
+      self.queue = {}
+      coroutine.yield(rdds)
+    end
+    
   end
 end
 
