@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local Context = require 'stuart.Context'
 local registerAsserts = require 'registerAsserts'
 local StreamingContext = require 'stuart.streaming.StreamingContext'

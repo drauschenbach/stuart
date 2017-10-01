@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local stuart = require 'stuart'
 
 describe('Context', function()

@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 

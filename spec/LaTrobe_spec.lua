@@ -1,7 +1,8 @@
-local _ = require 'lodash'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
+
+moses.range = require 'stuart.mosesPatchedRange'
 
 registerAsserts(assert)
 
@@ -67,7 +68,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('coalesce()', function()
-    local y = sc:parallelize(_.range(1,10), 10)
+    local y = sc:parallelize(moses.range(1,10), 10)
     local z = y:coalesce(2, false)
     assert.equals(2, #z.partitions)
   end)
@@ -151,7 +152,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('filter() with mixed data', function()
-    local b = sc:parallelize(_.range(1,8))
+    local b = sc:parallelize(moses.range(1,8))
     local actual = b:filter(function(x) return x < 4 end):collect()
     assert.same({1,2,3}, actual)
     
@@ -177,7 +178,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
 
   it('flatMap()', function()
     local a = sc:parallelize({1,2,3,4,5,6,7,8,9,10}, 5)
-    local actual = a:flatMap(function(x) return _.range(1,x) end):collect()
+    local actual = a:flatMap(function(x) return moses.range(1,x) end):collect()
     local expected = {1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
     assert.same(expected, actual)
     
@@ -236,24 +237,24 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local b = sc:parallelize({1,2,3,4,5,6,7,8,9}, 3)
     local actual = {}
     b:foreachPartition(function(x)
-      local v = _.reduce(x, function(r,a) return r+a end, 0)
+      local v = moses.reduce(x, function(r,a) return r+a end, 0)
       table.insert(actual, v)
     end)
     assert.same({6,15,24}, actual)
   end)
 
   it('glom()', function()
-    local a = sc:parallelize(_.range(1,100), 3)
+    local a = sc:parallelize(moses.range(1,100), 3)
     local actual = a:glom():collect()
     assert.equals(3, #actual)
-    local values = _.flatten(actual)
+    local values = moses.flatten(actual)
     for i = 1, 100 do
       assert.contains(values, i)
     end
   end)
 
   it('groupBy()', function()
-    local a = sc:parallelize(_.range(1,9), 3)
+    local a = sc:parallelize(moses.range(1,9), 3)
     local actual = a:groupBy(function(x)
       if x % 2 == 0 then return 'even' else return 'odd' end
     end):collect()
@@ -298,13 +299,13 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('id', function()
-    local y = sc:parallelize(_.range(1,10), 10)
+    local y = sc:parallelize(moses.range(1,10), 10)
     assert.is_true(y.id > 0)
   end)
   
   it('intersection()', function()
-    local x = sc:parallelize(_.range(1,20))
-    local y = sc:parallelize(_.range(10,30))
+    local x = sc:parallelize(moses.range(1,20))
+    local y = sc:parallelize(moses.range(10,30))
     local z = x:intersection(y)
     local actual = z:collect() 
     local expected = {16, 12, 20, 13, 17, 14, 18, 10, 19, 15, 11}
@@ -394,7 +395,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('mapPartitions() Example 1', function()
-    local a = sc:parallelize(_.range(1,9), 3)
+    local a = sc:parallelize(moses.range(1,9), 3)
     local myfunc = function(iter)
       local res = {}
       local pre
@@ -459,7 +460,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('max()', function()
-    local y = sc:parallelize(_.range(10,30))
+    local y = sc:parallelize(moses.range(10,30))
     assert.equals(30, y:max())
   end)
 
@@ -473,12 +474,12 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('min()', function()
-    local y = sc:parallelize(_.range(10,30))
+    local y = sc:parallelize(moses.range(10,30))
     assert.equals(10, y:min())
   end)
 
   it('name, setName()', function()
-    local y = sc:parallelize(_.range(1,10), 10)
+    local y = sc:parallelize(moses.range(1,10), 10)
     assert.equals(nil, y.name)
     y:setName("Fancy RDD Name")
     assert.equals("Fancy RDD Name", y.name)
@@ -492,7 +493,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('reduce()', function()
-    local a = sc:parallelize(_.range(1,100), 3)
+    local a = sc:parallelize(moses.range(1,100), 3)
     local actual = a:reduce(function(r,x) return r+x end)
     assert.equals(5050, actual)
     
@@ -531,10 +532,10 @@ describe('La Trobe University Spark 1.4 Examples', function()
   it('sortBy()', function()
     local y = sc:parallelize({5, 7, 1, 3, 2, 1})
     
-    local rdd = y:sortBy(_.identity, true)
+    local rdd = y:sortBy(moses.identity, true)
     assert.same({1, 1, 2, 3, 5, 7}, rdd:collect())
     
-    rdd = y:sortBy(_.identity, false)
+    rdd = y:sortBy(moses.identity, false)
     assert.same({7, 5, 3, 2, 1, 1}, rdd:collect())
     
     local z = sc:parallelize({{'H',10}, {'A',26}, {'Z',1}, {'L',5}})
@@ -547,7 +548,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
 
   it('sortByKey() [Ordered]', function()
     local a = sc:parallelize({'dog','cat','owl','gnu','ant'}, 2)
-    local b = sc:parallelize(_.range(1, a:count()), 2)
+    local b = sc:parallelize(moses.range(1, a:count()), 2)
     local c = a:zip(b)
     local res74 = c:sortByKey(true):collect()
     assert.same({{'ant',5}, {'cat',2}, {'dog',1}, {'gnu',4}, {'owl',3}}, res74)
@@ -578,8 +579,8 @@ describe('La Trobe University Spark 1.4 Examples', function()
 --  end)
   
   it('subtract()', function()
-    local a = sc:parallelize(_.range(1,9), 3)
-    local b = sc:parallelize(_.range(1,3), 3)
+    local a = sc:parallelize(moses.range(1,9), 3)
+    local b = sc:parallelize(moses.range(1,3), 3)
     local c = a:subtract(b)
     local actual = c:collect()
     assert.not_contains(actual, 1)
@@ -607,7 +608,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local actual = b:take(2)
     assert.same({'dog', 'cat'}, actual)
     
-    b = sc:parallelize(_.range(1,10000), 5000)
+    b = sc:parallelize(moses.range(1,10000), 5000)
     actual = b:take(100)
     expected = {
       1,2,3,4,5,6,7,8,9,10,11,12,13,14,15,16,17,18,19,20,
@@ -636,8 +637,8 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('union()', function()
-    local a = sc:parallelize(_.range(1,3), 1)
-    local b = sc:parallelize(_.range(5,7), 1)
+    local a = sc:parallelize(moses.range(1,3), 1)
+    local b = sc:parallelize(moses.range(5,7), 1)
     local actual = a:union(b):collect() 
     assert.same({1,2,3,5,6,7}, actual)
   end)
@@ -650,8 +651,8 @@ describe('La Trobe University Spark 1.4 Examples', function()
   end)
 
   it('zip()', function()
-    local a = sc:parallelize(_.range(1,100), 3)
-    local b = sc:parallelize(_.range(101,200), 3)
+    local a = sc:parallelize(moses.range(1,100), 3)
+    local b = sc:parallelize(moses.range(101,200), 3)
     local actual = a:zip(b):collect() 
     assert.contains_pair(actual, {1,101})
     assert.contains_pair(actual, {2,102})
@@ -667,7 +668,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(r, {'C',2})
     assert.contains_pair(r, {'D',3})
     
-    z = sc:parallelize(_.range(100,120), 5)
+    z = sc:parallelize(moses.range(100,120), 5)
     r = z:zipWithIndex():collect() 
     assert.contains_pair(r, {100,0})
     assert.contains_pair(r, {101,1})
