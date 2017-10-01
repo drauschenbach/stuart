@@ -14,9 +14,14 @@ before_install:
   - export PATH=$PATH:$PWD/lua_install/bin
 
 install:
-  - luarocks install luacheck
   - luarocks install busted
+  - luarocks install lodash
+  - luarocks install luacheck
+  - luarocks install luasocket
+  - luarocks install lunajson
+  - luarocks install middleclass
+  - luarocks install moses
 
 script:
-  - luacheck --std max+busted src
+  - luacheck --std max+busted --codes src --ignore 212 213 311 611 631
   - busted --verbose

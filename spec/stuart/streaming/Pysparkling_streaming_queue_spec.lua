@@ -1,5 +1,4 @@
 local _ = require 'lodash'
-local inspect = require 'inspect'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
