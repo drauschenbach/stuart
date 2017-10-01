@@ -1,6 +1,7 @@
 local _ = require 'lodash'
 local class = require 'middleclass'
 local DStream = require 'stuart.streaming.DStream'
+local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local socket = require 'socket'
 local stuart = require 'stuart'
@@ -47,15 +48,18 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 --    testOperation(input, operation, expectedOutput)
 --  end)
 
---  test("filter") {
---    val input = Seq(1 to 4, 5 to 8, 9 to 12)
---    testOperation(
---      input,
---      (r: DStream[Int]) => r.filter(x => (x % 2 == 0)),
---      input.map(_.filter(x => (x % 2 == 0)))
---    )
---  }
---
+  it('filter', function()
+    local input = _.range(1,12)
+    local operation = function(rdd)
+      return rdd:filter(function(x) return x % 2 == 0 end)
+    end
+    local expectedOutput = {2, 4, 6, 8, 10, 12}
+    testOperation(
+      input,
+      operation,
+      expectedOutput)
+  end)
+
 --  test("glom") {
 --    assert(numInputPartitions === 2, "Number of input partitions has been changed from 2")
 --    val input = Seq(1 to 4, 5 to 8, 9 to 12)
@@ -800,7 +804,7 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
     
     local output = {}
     local outputStream = operatedStream:foreachRDD(function(rdd)
-      output[#output+1] = rdd:collect()
+      output = moses.append(output, rdd:collect())
     end)
 
     ssc:start()
