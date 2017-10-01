@@ -31,7 +31,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   if not moses.isNumber(timeout) or timeout <= 0 then error('Invalid timeout') end
   
   local coroutines = {}
-  for i,dstream in ipairs(self.dstreams) do
+  for _,dstream in ipairs(self.dstreams) do
     coroutines[#coroutines+1] = {coroutine.create(dstream.compute), dstream}
   end
   
@@ -47,13 +47,13 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
     if elapsed > timeout then break end
     
     -- Run each dstream compute() function, until it yields
-    for i,copair in ipairs(coroutines) do
+    for _,copair in ipairs(coroutines) do
       local co = copair[1]
       local dstream = copair[2]
       if coroutine.status(co) == 'suspended' then
-        local ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget) --, now, individualDStreamDurationBudget)
+        local ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget)
         if ok and (rdds ~= nil) and (#rdds > 0) then
-          for j, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
+          for _, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
         end
       end
     end
@@ -69,7 +69,7 @@ end
 
 function StreamingContext:queueStream(rdds, oneAtATime)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  rdds = moses.map(rdds, function(i,rdd)
+  rdds = moses.map(rdds, function(_,rdd)
     if not isInstanceOf(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
     return rdd
   end)
@@ -92,14 +92,14 @@ end
 
 function StreamingContext:start()
   if self.state == 'stopped' then error('StreamingContext has already been stopped') end
-  for i, dstream in ipairs(self.dstreams) do
+  for _, dstream in ipairs(self.dstreams) do
     dstream:start()
   end
   self.state = 'active'
 end
 
 function StreamingContext:stop()
-  for i, dstream in ipairs(self.dstreams) do
+  for _, dstream in ipairs(self.dstreams) do
     dstream:stop()
   end
   self.state = 'stopped'

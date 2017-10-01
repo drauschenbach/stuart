@@ -12,7 +12,7 @@ end
 function Receiver:onStop()
 end
 
-function Receiver:run(durationBudget)
+function Receiver:run()
 end
 
 return Receiver
