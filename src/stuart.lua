@@ -5,8 +5,8 @@ local StreamingContext = require 'stuart.streaming.StreamingContext'
 
 Stuart = {}
 
-Stuart.NewContext = function()
-  return Context:new()
+Stuart.NewContext = function(master, appName)
+  return Context:new(master, appName)
 end
 
 Stuart.NewStreamingContext = function(arg1, arg2, arg3)
