@@ -14,8 +14,9 @@ before_install:
   - export PATH=$PATH:$PWD/lua_install/bin
 
 install:
-  - luarocks install luacheck
   - luarocks install busted
+  - luarocks install lodash
+  - luarocks install luacheck
 
 script:
   - luacheck --std max+busted src

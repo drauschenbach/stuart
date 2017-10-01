@@ -195,6 +195,7 @@ $ luarocks make rockspecs/stuart-<version>.rockspec
 
 ```
 $ luarocks install busted
+$ luarocks install lodash
 $ busted
 ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
 110 successes / 0 failures / 0 errors / 0 pending : 8.477593 seconds
