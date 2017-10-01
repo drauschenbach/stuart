@@ -17,6 +17,7 @@ install:
   - luarocks install busted
   - luarocks install lodash
   - luarocks install luacheck
+  - luarocks install luasocket
   - luarocks install middleclass
   - luarocks install moses
 
