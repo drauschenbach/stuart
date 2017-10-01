@@ -29,16 +29,16 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 
   local master = 'local[1]'
   local appName = debug.getinfo(1,'S').short_src
-  local batchDuration = 0.05 -- 50 milliseconds
+  local batchDuration = 0.05
 
---  test("map") {
---    val input = Seq(1 to 4, 5 to 8, 9 to 12)
---    testOperation(
---      input,
---      (r: DStream[Int]) => r.map(_.toString),
---      input.map(_.map(_.toString))
---    )
---  }
+  it('map', function()
+    local input = {_.range(1,4), _.range(5,8), _.range(9,12)}
+    local operation = function(rdd)
+      return rdd:map(function(x) return _.str(x) end)
+    end
+    local expectedOutput = {'1','2','3','4','5','6','7','8','9','10','11','12'}
+    testOperation(input, operation, expectedOutput)
+  end)  
   
 --  it('flatMap', function()
 --    local input = {_.range(1,4), _.range(5,8), _.range(9,12)}
