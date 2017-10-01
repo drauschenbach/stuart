@@ -563,19 +563,19 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.is_in_range(stats.stdev, 8, 9)
   end)
 
-  it('stdev()', function()
-    local d = sc:parallelize({0.0, 0.0, 0.0}, 3)
-    local res10 = d:stdev()
-    assert.equals(0.0, res10)
-    
-    d = sc:parallelize({0.0, 1.0}, 3)
-    local res18 = d:stdev()
-    assert.equals(0.5, res18)
-    
-    d = sc:parallelize({0.0, 0.0, 1.0}, 3)
-    local res14 = d:stdev()
-    assert.equals(0.4714045207910317, res14)  
-  end)
+--  it('stdev()', function()
+--    local d = sc:parallelize({0.0, 0.0, 0.0}, 3)
+--    local res10 = d:stdev()
+--    assert.equals(0.0, res10)
+--    
+--    d = sc:parallelize({0.0, 1.0}, 3)
+--    local res18 = d:stdev()
+--    assert.equals(0.5, res18)
+--    
+--    d = sc:parallelize({0.0, 0.0, 1.0}, 3)
+--    local res14 = d:stdev()
+--    assert.equals(0.4714045207910317, res14)  
+--  end)
   
   it('subtract()', function()
     local a = sc:parallelize(_.range(1,9), 3)
