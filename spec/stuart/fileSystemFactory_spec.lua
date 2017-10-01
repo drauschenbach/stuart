@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local fileSystemFactory = require 'stuart.fileSystemFactory'
 local LocalFileSystem = require 'stuart.LocalFileSystem'
 local stuart = require 'stuart'

@@ -1,4 +1,4 @@
-local _ = require 'lodash'
+local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -12,7 +12,7 @@ describe('Apach Spark examples', function()
   it('Pi Estimation', function()
     local NUM_SAMPLES = 5000
     local slices = 2
-    local count = sc:parallelize(_.range(1,NUM_SAMPLES), slices):filter(function()
+    local count = sc:parallelize(moses.range(1,NUM_SAMPLES), slices):filter(function()
       local x = math.random()
       local y = math.random()
       return x*x + y*y < 1

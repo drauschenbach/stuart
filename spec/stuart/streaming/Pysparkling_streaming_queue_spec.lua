@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
@@ -7,14 +6,14 @@ registerAsserts(assert)
 
 describe('Pysparkling test_streaming_queue.py', function()
 
-  function sum(x) return _.reduce(x, function(r,v) return r+v end) end
+  function sum(x) return moses.reduce(x, function(r,v) return r+v end) end
 
   it('count()', function()
     local sc = stuart.NewContext()
     local ssc = stuart.NewStreamingContext(sc, 0.1)
 
     local result = {}
-    ssc:queueStream({_.range(20), {'a', 'b'}, {'c'}})
+    ssc:queueStream({moses.range(1,20), {'a', 'b'}, {'c'}})
       :count()
       :foreachRDD(function(rdd) result[#result+1] = rdd:collect()[1] end)
 

@@ -1,4 +1,4 @@
-local _ = require 'lodash'
+local lodashFind = require 'stuart.lodashFind'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
@@ -8,7 +8,7 @@ registerAsserts(assert)
 describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
 
   local sc = stuart.NewContext()
-
+  
 --  it("aggregateByKey", function()
 --    val pairs = sc.parallelize(Array((1, 1), (1, 1), (3, 2), (5, 1), (5, 3)), 2)
 --
@@ -26,9 +26,9 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
     local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {2,1}})
     local groups = pairs:groupByKey():collect()
     assert.equals(2, #groups)
-    local valuesFor1 = _.find(groups, function(v) return v[1] == 1 end)[2]
+    local valuesFor1 = lodashFind(groups, function(v) return v[1] == 1 end)[2]
     assert.same({1,2,3}, valuesFor1)
-    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    local valuesFor2 = lodashFind(groups, function(v) return v[1] == 2 end)[2]
     assert.same({1}, valuesFor2)
   end)
 
@@ -36,10 +36,10 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
     local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {1,1}, {2,1}})
     local groups = pairs:groupByKey():collect()
     assert.equals(2, #groups)
-    local valuesFor1 = _.find(groups, function(v) return v[1] == 1 end)[2]
+    local valuesFor1 = lodashFind(groups, function(v) return v[1] == 1 end)[2]
     table.sort(valuesFor1)
     assert.same({1,1,2,3}, valuesFor1)
-    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    local valuesFor2 = lodashFind(groups, function(v) return v[1] == 2 end)[2]
     assert.same({1}, valuesFor2)
   end)
 
@@ -47,10 +47,10 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
     local pairs = sc:parallelize({{-1,1}, {-1,2}, {-1,3}, {2,1}})
     local groups = pairs:groupByKey():collect()
     assert.equals(2, #groups)
-    local valuesForMinus1 = _.find(groups, function(v) return v[1] == -1 end)[2]
+    local valuesForMinus1 = lodashFind(groups, function(v) return v[1] == -1 end)[2]
     table.sort(valuesForMinus1)
     assert.same({1,2,3}, valuesForMinus1)
-    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    local valuesFor2 = lodashFind(groups, function(v) return v[1] == 2 end)[2]
     assert.same({1}, valuesFor2)
   end)
 
@@ -58,10 +58,10 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
     local pairs = sc:parallelize({{1,1}, {1,2}, {1,3}, {2,1}})
     local groups = pairs:groupByKey(10):collect()
     assert.equals(2, #groups)
-    local valuesFor1 = _.find(groups, function(v) return v[1] == 1 end)[2]
+    local valuesFor1 = lodashFind(groups, function(v) return v[1] == 1 end)[2]
     table.sort(valuesFor1)
     assert.same({1,2,3}, valuesFor1)
-    local valuesFor2 = _.find(groups, function(v) return v[1] == 2 end)[2]
+    local valuesFor2 = lodashFind(groups, function(v) return v[1] == 2 end)[2]
     assert.same({1}, valuesFor2)
   end)
 

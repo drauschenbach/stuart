@@ -1,7 +1,8 @@
-local _ = require 'lodash'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
+
+moses.range = require 'stuart.mosesPatchedRange'
 
 registerAsserts(assert)
 
@@ -28,13 +29,13 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     assert.same(dups:distinct():collect(), dups:distinct(2):collect())
     assert.equals(10, nums:reduce(function(r, x) return r+x end))
     assert.equals(10, nums:fold(0, function(a,b) return a+b end))
-    assert.same({'1','2','3','4'}, nums:map(_.str):collect())
+    assert.same({'1','2','3','4'}, nums:map(tostring):collect())
     assert.same({3,4}, nums:filter(function(x) return x > 2 end):collect())
-    assert.same({1,1,2,1,2,3,1,2,3,4}, nums:flatMap(function(x) return _.range(x) end):collect())
+    assert.same({1,1,2,1,2,3,1,2,3,4}, nums:flatMap(function(x) return moses.range(1,x) end):collect())
     assert.same({1,2,3,4,1,2,3,4}, nums:union(nums):collect())
-    assert.same({{1,2},{3,4}}, nums:glom():map(_.flatten):collect())
-    assert.same({'3','4'}, nums:collect(function(i) if i >= 3 then return _.str(i) end end))
-    assert.same({{'1',1}, {'2',2}, {'3',3}, {'4',4}}, nums:keyBy(_.str):collect())
+    assert.same({{1,2},{3,4}}, nums:glom():map(moses.flatten):collect())
+    assert.same({'3','4'}, nums:collect(function(i) if i >= 3 then return tostring(i) end end))
+    assert.same({{'1',1}, {'2',2}, {'3',3}, {'4',4}}, nums:keyBy(tostring):collect())
     assert.is_false(nums:isEmpty())
     assert.equals(4, nums:max())
     assert.equals(1, nums:min())
@@ -249,7 +250,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --  }
 
   it('repartitioned RDDs', function()
-    local data = sc:parallelize(_.range(1,1000), 10)
+    local data = sc:parallelize(moses.range(1,1000), 10)
     
     -- Coalesce partitions
     local repartitioned1 = data:repartition(2)
@@ -257,7 +258,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local partitions1 = repartitioned1:glom():collect()
     assert.is_true(#partitions1[1] > 0)
     assert.is_true(#partitions1[2] > 0)
-    assert.same(_.range(1, 1000), repartitioned1:collect())
+    assert.same(moses.range(1, 1000), repartitioned1:collect())
     
     -- Split partitions
     local repartitioned2 = data:repartition(20)
@@ -265,7 +266,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local partitions2 = repartitioned2:glom():collect()
     assert.is_true(#partitions2[1] > 0)
     assert.is_true(#partitions2[20] > 0)
-    assert.same(_.range(1, 1000), repartitioned2:collect())
+    assert.same(moses.range(1, 1000), repartitioned2:collect())
   end)
 
 --  test("repartitioned RDDs perform load balancing") {
@@ -302,26 +303,26 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --  }
   
   it('coalesced RDDs', function()
-    local data = sc:parallelize(_.range(1,10), 10)
+    local data = sc:parallelize(moses.range(1,10), 10)
     
     local coalesced1 = data:coalesce(2)
-    assert.same(_.range(1,10), coalesced1:collect())
+    assert.same(moses.range(1,10), coalesced1:collect())
     assert.same({{1,2,3,4,5}, {6,7,8,9,10}}, coalesced1:glom():collect())
     
     local coalesced2 = data:coalesce(3)
-    assert.same(_.range(1,10), coalesced2:collect())
+    assert.same(moses.range(1,10), coalesced2:collect())
     --assert.same({{1,2,3}, {4,5,6}, {7,8,9,10}}, coalesced2:glom():collect())
     assert.equals(3, #coalesced2:glom():collect())
     
     local coalesced3 = data:coalesce(10)
-    assert.same(_.range(1,10), coalesced3:collect())
+    assert.same(moses.range(1,10), coalesced3:collect())
     -- assert(coalesced3.glom().collect().map(_.toList).toList ===
     --   (1 to 10).map(x => List(x)).toList)
 
     -- If we try to coalesce into more partitions than the original RDD, it should just
     -- keep the original number of partitions.
     local coalesced4 = data:coalesce(20)
-    assert.same(_.range(1,10), coalesced4:collect())
+    assert.same(moses.range(1,10), coalesced4:collect())
     -- assert(coalesced4.glom().collect().map(_.toList).toList ===
     --   (1 to 10).map(x => List(x)).toList)
 
@@ -334,7 +335,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     -- when shuffling, we can increase the number of partitions
     local coalesced6 = data:coalesce(20, true)
     assert.equals(20, #coalesced6.partitions)
-    assert.same(_.range(1,10), coalesced6:collect())
+    assert.same(moses.range(1,10), coalesced6:collect())
   end)
 
 --  test("coalesced RDDs with locality") {
@@ -513,46 +514,46 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 
   -- Regression test for SPARK-4019
   it('collect large number of empty partitions', function()
-    local expected = _.range(0,10)
-    assert.same(expected, sc:makeRDD(_.range(0,10), 1000):repartition(2001):collect())
+    local expected = moses.range(0,10)
+    assert.same(expected, sc:makeRDD(moses.range(0,10), 1000):repartition(2001):collect())
   end)
 
   it('take', function()
-    local nums = sc:makeRDD(_.range(1, 999), 1) -- Scala Range would read 1,1000
+    local nums = sc:makeRDD(moses.range(1, 999), 1) -- Scala Range would read 1,1000
     assert.same({}, nums:take(0))
     assert.same({1}, nums:take(1))
     assert.same({1,2,3}, nums:take(3))
-    assert.same(_.range(1,500), nums:take(500))
-    assert.same(_.range(1,501), nums:take(501))
-    assert.same(_.range(1,999), nums:take(999))
-    assert.same(_.range(1,999), nums:take(1000))
+    assert.same(moses.range(1,500), nums:take(500))
+    assert.same(moses.range(1,501), nums:take(501))
+    assert.same(moses.range(1,999), nums:take(999))
+    assert.same(moses.range(1,999), nums:take(1000))
 
-    nums = sc:makeRDD(_.range(1, 999), 2)
+    nums = sc:makeRDD(moses.range(1, 999), 2)
     assert.equals(0, #nums:take(0))
     assert.same({1}, nums:take(1))
     assert.same({1,2,3}, nums:take(3))
-    assert.same(_.range(1,500), nums:take(500))
-    assert.same(_.range(1,501), nums:take(501))
-    assert.same(_.range(1,999), nums:take(999))
-    assert.same(_.range(1,999), nums:take(1000))
+    assert.same(moses.range(1,500), nums:take(500))
+    assert.same(moses.range(1,501), nums:take(501))
+    assert.same(moses.range(1,999), nums:take(999))
+    assert.same(moses.range(1,999), nums:take(1000))
 
-    nums = sc:makeRDD(_.range(1, 999), 100)
+    nums = sc:makeRDD(moses.range(1, 999), 100)
     assert.equals(0, #nums:take(0))
     assert.same({1}, nums:take(1))
     assert.same({1,2,3}, nums:take(3))
-    assert.same(_.range(1,500), nums:take(500))
-    assert.same(_.range(1,501), nums:take(501))
-    assert.same(_.range(1,999), nums:take(999))
-    assert.same(_.range(1,999), nums:take(1000))
+    assert.same(moses.range(1,500), nums:take(500))
+    assert.same(moses.range(1,501), nums:take(501))
+    assert.same(moses.range(1,999), nums:take(999))
+    assert.same(moses.range(1,999), nums:take(1000))
 
-    nums = sc:makeRDD(_.range(1, 999), 1000)
+    nums = sc:makeRDD(moses.range(1, 999), 1000)
     assert.equals(0, #nums:take(0))
     assert.same({1}, nums:take(1))
     assert.same({1,2,3}, nums:take(3))
-    assert.same(_.range(1,500), nums:take(500))
-    assert.same(_.range(1,501), nums:take(501))
-    assert.same(_.range(1,999), nums:take(999))
-    assert.same(_.range(1,999), nums:take(1000))
+    assert.same(moses.range(1,500), nums:take(500))
+    assert.same(moses.range(1,501), nums:take(501))
+    assert.same(moses.range(1,999), nums:take(999))
+    assert.same(moses.range(1,999), nums:take(1000))
 
     nums = sc:parallelize({1,2}, 2)
     assert.equals(2, #nums:take(2147483638))
@@ -700,7 +701,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 
   it('sort an empty RDD', function()
     local data = sc:emptyRDD()
-    assert.same({}, data:sortBy(_.identity):collect())
+    assert.same({}, data:sortBy(moses.identity):collect())
   end)
 
   it('sortByKey', function()
@@ -744,13 +745,13 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
 --  }
 
   it('intersection', function()
-    local all = sc:parallelize(_.range(1, 10))
-    local evens = sc:parallelize(_.range(2, 10, 2))
+    local all = sc:parallelize(moses.range(1, 10))
+    local evens = sc:parallelize(moses.range(2, 10, 2))
     local intersection = {2, 4, 6, 8, 10}
 
     -- intersection is commutative
-    assert.same(intersection, _.sortBy(all:intersection(evens):collect(), _.identity))
-    assert.same(intersection, _.sortBy(evens:intersection(all):collect(), _.identity))
+    assert.same(intersection, moses.sortBy(all:intersection(evens):collect(), moses.identity))
+    assert.same(intersection, moses.sortBy(evens:intersection(all):collect(), moses.identity))
   end)
 
   it('intersection strips duplicates in an input', function()
@@ -758,30 +759,30 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local b = sc:parallelize({1, 1, 2, 3})
     local intersection = {1, 2, 3}
 
-    assert.same(intersection, _.sortBy(a:intersection(b):collect(), _.identity))
-    assert.same(intersection, _.sortBy(b:intersection(a):collect(), _.identity))
+    assert.same(intersection, moses.sortBy(a:intersection(b):collect(), moses.identity))
+    assert.same(intersection, moses.sortBy(b:intersection(a):collect(), moses.identity))
   end)
 
   it('zipWithIndex', function()
     local n = 10
-    local data = sc:parallelize(_.range(0,n), 3)
+    local data = sc:parallelize(moses.range(0,n), 3)
     local ranked = data:zipWithIndex()
-    _.forEach(ranked:collect(), function(x)
+    moses.forEach(ranked:collect(), function(i,x)
       assert.equals(x[2], x[1])
     end)
   end)
 
   it('zipWithIndex with a single partition', function()
     local n = 10
-    local data = sc:parallelize(_.range(0,n), 1)
+    local data = sc:parallelize(moses.range(0,n), 1)
     local ranked = data:zipWithIndex()
-    _.forEach(ranked:collect(), function(x)
+    moses.forEach(ranked:collect(), function(i, x)
       assert.equals(x[2], x[1])
     end)
   end)
 
   it('zipWithIndex chained with other RDDs (SPARK-4433)', function()
-    local count = sc:parallelize(_.range(0,9), 2):zipWithIndex():repartition(4):count() -- Range 0,10 in Scala
+    local count = sc:parallelize(moses.range(0,9), 2):zipWithIndex():repartition(4):count() -- Range 0,10 in Scala
     assert.equals(10, count)
   end)
 

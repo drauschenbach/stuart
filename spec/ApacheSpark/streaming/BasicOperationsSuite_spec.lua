@@ -1,4 +1,3 @@
-local _ = require 'lodash'
 local class = require 'middleclass'
 local DStream = require 'stuart.streaming.DStream'
 local moses = require 'moses'
@@ -32,24 +31,24 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
   local batchDuration = 0.05
 
   it('map', function()
-    local input = {_.range(1,4), _.range(5,8), _.range(9,12)}
+    local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)}
     local operation = function(rdd)
-      return rdd:map(function(x) return _.str(x) end)
+      return rdd:map(tostring)
     end
     local expectedOutput = {'1','2','3','4','5','6','7','8','9','10','11','12'}
     testOperation(input, operation, expectedOutput)
   end)  
   
 --  it('flatMap', function()
---    local input = {_.range(1,4), _.range(5,8), _.range(9,12)}
---    local operation = function(r) return r:flatMap(function(x) return _.range(x, x*2) end) end
+--    local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)}
+--    local operation = function(r) return r:flatMap(function(x) return moses.range(x, x*2) end) end
 --    local expectedOutput = {1} --input:map(function(rdd) return rdd:flatMap(function(x) return {x, x*2} end) end)
 --    _.print('** expectedOutput', expectedOutput)
 --    testOperation(input, operation, expectedOutput)
 --  end)
 
   it('filter', function()
-    local input = {_.range(1,4), _.range(5,8), _.range(9,12)} 
+    local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)} 
     local operation = function(rdd)
       return rdd:filter(function(x) return x % 2 == 0 end)
     end
@@ -790,7 +789,7 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
   
   -----------------------------------------------------------------------------
   function testOperation(input, operation, expectedOutput, numBatches)
-    if not _.isNumber(numBatches) then numBatches = -1 end
+    if not moses.isNumber(numBatches) then numBatches = -1 end
     local numBatches_
     if numBatches > 0 then numBatches_ = numBatches else numBatches_ = #expectedOutput end
     local timeoutSecs = batchDuration * (numBatches_+1)
