@@ -9,7 +9,7 @@
 local moses = require 'moses'
 
 ---
--- Checks if n is between start and up to but not including, end. 
+-- Checks if n is between start and up to but not including, end.
 -- If end is not specified it’s set to start with start then set to 0.
 -- @usage print(_.inRange(-3, -4, 8))
 -- --> true

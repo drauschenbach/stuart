@@ -23,10 +23,11 @@ end
 -- @param value value to cast
 -- @param ... The parameters to pass to any detected function
 -- @return casted value
-lodashStr = function (value, ...)
+local M = {}
+M.str = function (value, ...)
   local str = '';
   -- local v;
-  if moses.isString(value) then     
+  if moses.isString(value) then
     str = value
   elseif moses.isBoolean(value) then
     str = value and 'true' or 'false'
@@ -34,21 +35,21 @@ lodashStr = function (value, ...)
     str = 'nil'
   elseif moses.isNumber(value) then
     str = value .. ''
-  elseif moses.isFunction(value) then       
-    str = _.str(value(...))
+  elseif moses.isFunction(value) then
+    str = M.str(value(...))
   elseif moses.isTable(value) then
     str = '{'
     for k, v in pairs(value) do
-      v = moses.isString(v) and dblQuote(v) or lodashStr(v, ...)
+      v = moses.isString(v) and dblQuote(v) or M.str(v, ...)
       if moses.isNumber(k) then
-        str = str .. v .. ', '              
+        str = str .. v .. ', '
       else
         str = str .. '[' .. dblQuote(k) .. ']=' .. v .. ', '
       end
-    end     
+    end
     str = str:sub(0, #str - 2) .. '}'
   end
   return str
 end
 
-return lodashStr
+return M.str

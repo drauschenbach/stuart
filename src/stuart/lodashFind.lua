@@ -8,7 +8,7 @@
 
 local moses = require 'moses'
 
-local callIteratee = function (predicate, selfArg, ...) 
+local callIteratee = function (predicate, selfArg, ...)
   local result
   predicate = predicate or moses.identity
   if selfArg then
