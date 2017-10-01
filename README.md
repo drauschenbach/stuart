@@ -4,6 +4,8 @@
 
 (He's little). A native Lua implementation of [Apache Spark](https://spark.apache.org), designed for embedding and edge computing.
 
+[![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
+
 ## Getting Started
 
 ### Installing
