@@ -32,9 +32,7 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 
   it('map', function()
     local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)}
-    local operation = function(rdd)
-      return rdd:map(tostring)
-    end
+    local operation = function(rdd) return rdd:map(tostring) end
     local expectedOutput = {'1','2','3','4','5','6','7','8','9','10','11','12'}
     testOperation(input, operation, expectedOutput)
   end)  
@@ -146,15 +144,14 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 --      Seq(Seq(10), Seq(26), Seq(42))
 --    )
 --  }
---
---  test("count") {
---    testOperation(
---      Seq(Seq(), 1 to 1, 1 to 2, 1 to 3, 1 to 4),
---      (s: DStream[Int]) => s.count(),
---      Seq(Seq(0L), Seq(1L), Seq(2L), Seq(3L), Seq(4L))
---    )
---  }
---
+
+  it('count', function()
+    local input = {{}, {1}, {1,2}, {1,2,3}, {1,2,3,4}}
+    local operation = function(rdd) return rdd.context:makeRDD({rdd:count()}) end
+    local expectedOutput = {0,1,2,3,4}
+    testOperation(input, operation, expectedOutput)
+  end)
+
 --  test("countByValue") {
 --    testOperation(
 --      Seq(1 to 1, Seq(1, 1, 1), 1 to 2, Seq(1, 1, 2, 2)),
@@ -796,7 +793,6 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
  
     --local sc = stuart.NewContext(master, appName)
     local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
-    ssc.sc:makeRDD(input)
     local rdds = moses.map(input, function(i,data) return ssc.sc:makeRDD(data) end)
     local inputStream = ssc:queueStream(rdds)
     local operatedStream = inputStream:transform(operation)
