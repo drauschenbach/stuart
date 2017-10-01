@@ -119,7 +119,7 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
       return r
     end, {})
     return z
-  end, zeroValue)
+  end)
   
   local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
   local t = moses.reduce(keys, function(r,key)

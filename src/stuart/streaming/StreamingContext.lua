@@ -45,7 +45,6 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
     local now = socket.gettime()
     local elapsed = now - startTime
     if elapsed > timeout then break end
-    local loopStartTime = now
     
     -- Run each dstream compute() function, until it yields
     for i,copair in ipairs(coroutines) do
