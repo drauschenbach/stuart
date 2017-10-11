@@ -4,7 +4,7 @@
 
 (He's little). A native Lua implementation of [Apache Spark](https://spark.apache.org), designed for embedding and edge computing.
 
-[![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
+![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 
 ## Getting Started
 
@@ -200,5 +200,5 @@ $ luarocks make rockspecs/stuart-<version>.rockspec
 $ luarocks install busted
 $ busted
 ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
-110 successes / 0 failures / 0 errors / 0 pending : 8.477593 seconds
+129 successes / 0 failures / 1 errors / 0 pending : 10.895618 seconds
 ```
