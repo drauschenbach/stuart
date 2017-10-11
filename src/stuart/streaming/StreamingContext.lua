@@ -29,7 +29,7 @@ end
 
 function StreamingContext:awaitTermination()
   self:awaitTerminationOrTimeout(0)
-end  
+end
 
 function StreamingContext:awaitTerminationOrTimeout(timeout)
   if not moses.isNumber(timeout) or timeout < 0 then error('Invalid timeout') end
@@ -46,8 +46,8 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   while self.state == 'active' do
   
     -- Decide whether to timeout
+    local now = socket.gettime()
     if timeout > 0 then
-      local now = socket.gettime()
       local elapsed = now - startTime
       if elapsed > timeout then break end
     end
