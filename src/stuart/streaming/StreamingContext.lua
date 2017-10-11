@@ -27,8 +27,12 @@ function StreamingContext:initialize(sc, batchDuration)
   self.state='initialized'
 end
 
+function StreamingContext:awaitTermination()
+  self:awaitTerminationOrTimeout(0)
+end
+
 function StreamingContext:awaitTerminationOrTimeout(timeout)
-  if not moses.isNumber(timeout) or timeout <= 0 then error('Invalid timeout') end
+  if not moses.isNumber(timeout) or timeout < 0 then error('Invalid timeout') end
   
   local coroutines = {}
   for _,dstream in ipairs(self.dstreams) do
@@ -43,8 +47,10 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   
     -- Decide whether to timeout
     local now = socket.gettime()
-    local elapsed = now - startTime
-    if elapsed > timeout then break end
+    if timeout > 0 then
+      local elapsed = now - startTime
+      if elapsed > timeout then break end
+    end
     
     -- Run each dstream compute() function, until it yields
     for _,copair in ipairs(coroutines) do
@@ -60,7 +66,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
     
     sleep(loopDurationGoal)
   end
-  --moses.print('Ending run loop')
+  --print('Ending run loop')
 end
 
 function StreamingContext:getState()
