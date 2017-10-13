@@ -1,0 +1,36 @@
+## [Unreleased]
+### Added
+- Use `luacjson`, when available (but not required), for faster JSON parsing
+- Support `StreamingContext:awaitTermination()`
+- Support `QueueInputDStream` `oneAtATime` mode
+- Support `DStream:groupByKey()`
+- Travis-based continuous integration on LUA 5.1, 5.2, and 5.3, and LuaJIT 2.0 and 2.1
+- Ported Apache Spark `BasicOperationsSuite` test coverage for `DStream:count()`
+
+### Fixed
+- Remove use of `lodash` from unit tests because of Lua 5.1 incompatibility
+- `ReceiverInputDStream` module leakage into `DStream` module
+- A `NewStreamingContext()` constructor variant was broken
+- `NewContext()` constructor was missing support for passing master and appname params
+- Several local variable leaks into the global namespace
+- A memory leak in `SocketReceiver` due to misnamed variable reference
+
+### Changed
+- Organize specs according to module hierarchy
+- Make cooperative multitasking context switch period match the `StreamingContext` batch duration
+
+## [0.1.0] - 2017-09-30
+### Added
+- Support `Context` class with emptyRDD(), hadoopFile(), makeRDD(), parallelize(), textFile(), and union() support
+- Support `Partition` class
+- Support `RDD` class with aggregate(), aggregateByKey(), cache(), cartesian(), coalesce(), collect(), collectAsMap(), combineByKey(), count(), countApprox(), countByKey(),
+countByValue(), distinct(), filter(), filterByRange(), first(), flatMap(), flatMapValues(), fold(), foldByKey(), foreach(), foreachPartition(), glom(), groupBy(), groupByKey(), histogram(), intersection(), isEmpty(), join(), keyBy(), keys(), leftOuterJoin(), lookup(), map(), mapPartitions(), mapPartitionsWithIndex(), mapValues(), max(), mean(), meanApprox(), min(), reduce(), reduceByKey(), repartition(), rightOuterJoin(), setName(), sortBy(), sortByKey(), stats(), stdev(), subtract(), subtractByKey(), take(), takeSample(), toLocalIterator(), top(), union(), values(), zip, and zipWithIndex() support
+- Support `StreamingContext` class with cooperative multitasking support for parallel receivers, with awaitTerminationOrTimeout(), getState(), queueStream(), receiverStream(), socketTextStream(), start(), and stop() support
+- Support `DStream` class with count(), foreachRDD(), mapValues(), start(), stop(), and transform() support
+- Support `SocketInputDStream`, `QueueInputDStream`, and `TransformedDStream` classes
+- Support `Receiver`, `SocketReceiver`, and `ReceiverInputDStream` classes
+- Provide an `HttpReceiver` class that supports http chunked streaming endpoints
+- Support WebHDFS URLs
+- LuaRocks packaging
+
+<small>(formatted per [keepachangelog-1.1.0](http://keepachangelog.com/en/1.0.0/))</small>
