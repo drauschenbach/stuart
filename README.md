@@ -2,7 +2,7 @@
 
 <img src="http://downloadicons.net/sites/default/files/mouse-icon-86497.png" width="100">
 
-(He's little). A native Lua implementation of [Apache Spark](https://spark.apache.org), designed for embedding and edge computing.
+(He's little). A native Lua implementation of [Apache Spark 2.2.0](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
 
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 
@@ -25,7 +25,7 @@ Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
 sc = require 'stuart'.NewContext() 
 rdd = sc:textFile('README.md')
 print(rdd:count())
-41
+151
 ```
 
 ### Working with lists of values
@@ -33,8 +33,8 @@ print(rdd:count())
 ```lua
 rdd = sc:parallelize({1,2,3,4,5,6,7,8,9,10}, 3)
 filtered = rdd:filter(function(x) return x % 2 == 0 end)
-print(table.concat(filtered:collect(), ','))
-{2,4,6,8,10}
+print('evens: ' .. table.concat(filtered:collect(), ','))
+evens: {2,4,6,8,10}
 ```
 
 ### Working with lists of pairs
@@ -144,7 +144,7 @@ ssc:stop()
 ## Dependencies
 
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
-* [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. Used in WebHDFS response parsing.
+* [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. Used in WebHDFS response parsing. If the [cjson](https://luarocks.org/modules/luarocks/lua-cjson) module is detected, it is used first for performance. But otherwise Lunajson is the portable fall-back.
 * [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for literal adaptation of many Apache Spark APIs.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
 
@@ -164,10 +164,11 @@ Stuart is incompatible with:
 
 ## Roadmap Brainstorm
 
-* Local in-memory [RDDs](https://spark.apache.org/docs/2.2.0/api/scala/index.html#org.apache.spark.rdd.RDD) and [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html).
-* [Spark Streaming](https://spark.apache.org/docs/latest/streaming-programming-guide.html) capabilities.
-* [MLlib](https://spark.apache.org/mllib/) support. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
-* A Redis scheduler. RDDs partitioned across Redis servers. Lua closures sent into Redis to run.
+* Support [eLua Boards](http://wiki.eluaproject.net/Boards) and their alternative I/O and clock mechanisms
+* Support [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html)
+* Support [MLlib Import](https://spark.apache.org/mllib/) in a companion project. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
+* Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) in a companion project.
+* A Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis.
 
 ## Design
 
@@ -196,9 +197,29 @@ $ luarocks make rockspecs/stuart-<version>.rockspec
 
 ## Testing
 
+Testing with `lua-cjson`:
+
 ```
 $ luarocks install busted
+$ luarocks install lua-cjson
 $ busted
 ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
-129 successes / 0 failures / 1 errors / 0 pending : 10.895618 seconds
+129 successes / 0 failures / 0 errors / 0 pending : 10.895618 seconds
+```
+
+Testing with `lunajson`:
+
+```
+$ luarocks remove lua-cjson
+$ busted
+●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
+129 successes / 0 failures / 0 errors / 2 pending : 10.895618 seconds
+
+Pending → ...
+util.json can decode a scalar using cjson
+... cjson not installed
+
+Pending → ...
+util.json can decode an object using cjson
+... cjson not installed
 ```
