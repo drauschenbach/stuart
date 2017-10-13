@@ -1,6 +1,6 @@
 local class = require 'middleclass'
 local http = require 'socket.http'
-local lunajson = require 'lunajson'
+local jsonutil = require 'stuart.util.json'
 local moses = require 'moses'
 local url = require 'socket.url'
 
@@ -19,7 +19,7 @@ function WebHdfsFileSystem:listStatus(path)
   urlSegments.query = 'op=LISTSTATUS'
   local uri = url.build(urlSegments)
   local json = http.request(uri)
-  local obj = lunajson.decode(json)
+  local obj = jsonutil.decode(json)
   return obj.FileStatuses.FileStatus
 end
 
