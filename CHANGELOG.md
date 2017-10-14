@@ -1,4 +1,6 @@
 ## [Unreleased]
+
+## [0.1.1] - 2017-10-14
 ### Added
 - Use `luacjson`, when available (but not required), for faster JSON parsing
 - Support `StreamingContext:awaitTermination()`
