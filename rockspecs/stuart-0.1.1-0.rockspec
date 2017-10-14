@@ -40,7 +40,7 @@ build = {
       ["stuart.streaming.SocketInputDStream"] = "src/stuart/streaming/SocketInputDStream.lua",
       ["stuart.streaming.SocketReceiver"] = "src/stuart/streaming/SocketReceiver.lua",
       ["stuart.streaming.StreamingContext"] = "src/stuart/streaming/StreamingContext.lua",
-      ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua"
-      ["stuart.util.json"] = "src/stuart/util/json.lua",
+      ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua",
+      ["stuart.util.json"] = "src/stuart/util/json.lua"
    }
 }
