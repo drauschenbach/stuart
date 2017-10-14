@@ -25,7 +25,7 @@
 - Support `Partition` class
 - Support `RDD` class with aggregate(), aggregateByKey(), cache(), cartesian(), coalesce(), collect(), collectAsMap(), combineByKey(), count(), countApprox(), countByKey(),
 countByValue(), distinct(), filter(), filterByRange(), first(), flatMap(), flatMapValues(), fold(), foldByKey(), foreach(), foreachPartition(), glom(), groupBy(), groupByKey(), histogram(), intersection(), isEmpty(), join(), keyBy(), keys(), leftOuterJoin(), lookup(), map(), mapPartitions(), mapPartitionsWithIndex(), mapValues(), max(), mean(), meanApprox(), min(), reduce(), reduceByKey(), repartition(), rightOuterJoin(), setName(), sortBy(), sortByKey(), stats(), stdev(), subtract(), subtractByKey(), take(), takeSample(), toLocalIterator(), top(), union(), values(), zip, and zipWithIndex() support
-- Support `StreamingContext` class with cooperative multitasking support for parallel receivers, with awaitTerminationOrTimeout(), getState(), queueStream(), receiverStream(), socketTextStream(), start(), and stop() support
+- Support `StreamingContext` class with cooperative multitasking support for multiple concurrent receivers, with awaitTerminationOrTimeout(), getState(), queueStream(), receiverStream(), socketTextStream(), start(), and stop() support
 - Support `DStream` class with count(), foreachRDD(), mapValues(), start(), stop(), and transform() support
 - Support `SocketInputDStream`, `QueueInputDStream`, and `TransformedDStream` classes
 - Support `Receiver`, `SocketReceiver`, and `ReceiverInputDStream` classes
