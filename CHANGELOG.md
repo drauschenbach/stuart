@@ -1,4 +1,6 @@
 ## [Unreleased]
+### Added
+- Ported Apache Spark `SparkPi` example
 
 ## [0.1.1] - 2017-10-14
 ### Added
