@@ -5,7 +5,7 @@ local stuart = require 'stuart'
 
 local sc = stuart.NewContext('local[1]', 'Spark Pi')
 local slices = 2
-if #arg > 0 then slices = arg[1] end
+if arg ~= nil and #arg > 0 then slices = arg[1] end
 
 local NUM_SAMPLES = 5000
 local n = 100000 * slices
