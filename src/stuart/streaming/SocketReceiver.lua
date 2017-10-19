@@ -27,7 +27,8 @@ function SocketReceiver:run(durationBudget)
   while true do
     local elapsed = socket.gettime() - timeOfLastYield
     if elapsed > durationBudget then
-      local rdd = self.ssc.sc:makeRDD(data)
+      local rdd = nil
+      if #data > 0 then rdd = self.ssc.sc:makeRDD(data) end
       coroutine.yield({rdd})
       data = {}
       timeOfLastYield = socket.gettime()
