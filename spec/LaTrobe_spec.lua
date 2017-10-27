@@ -636,6 +636,13 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.same({9,8}, c:top(2))
   end)
 
+  it('toString()', function()
+    local z = sc:parallelize({1,2,3,4,5,6}, 2)
+    local actual = z:toString()
+    assert.is_not_nil(string.find(actual, 'RDD'))
+    assert.is_not_nil(string.find(actual, '[' .. z.id .. ']'))
+  end)
+
   it('union()', function()
     local a = sc:parallelize(moses.range(1,3), 1)
     local b = sc:parallelize(moses.range(5,7), 1)

@@ -27,6 +27,10 @@ function RDD:_flattenValues()
   return self
 end
 
+function RDD.__tostring(self)
+  return 'RDD[' .. self.id .. ']'
+end
+
 function RDD:aggregate(zeroValue, seqOp, combOp)
   return moses.reduce(self.partitions, function(r, p)
     local y = moses.reduce(p.data, seqOp, moses.clone(zeroValue))
@@ -557,6 +561,10 @@ end
 function RDD:top(num)
   local t = moses.sort(self:collect(), function(a,b) return a>b end)
   return moses.slice(t, 1, num)
+end
+
+function RDD:toString()
+  return tostring(self)
 end
 
 function RDD:union(other)
