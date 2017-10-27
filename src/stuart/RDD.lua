@@ -533,8 +533,8 @@ function RDD:take(n)
   return t
 end
 
-function RDD:takeSample(_, num)
-  return moses.sample(self:collect(), num)
+function RDD:takeSample(_, num, seed)
+  return moses.sample(self:collect(), num, seed)
 end
 
 function RDD:toLocalIterator()
