@@ -1,6 +1,7 @@
 ## [Unreleased]
 ### Added
 - Ported Apache Spark `SparkPi` example
+- Support `RDD:toString()` and implicit `__tostring` stringification of RDDs for debugging
 
 ## [0.1.1] - 2017-10-14
 ### Added
