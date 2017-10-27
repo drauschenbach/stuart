@@ -3,6 +3,7 @@
 - Ported Apache Spark `SparkPi` example
 - Support `RDD:toString()` and implicit `__tostring` stringification of RDDs for debugging
 - Travis-based Luacheck source code static analysis now also applies to specs
+- Support `RDD:takeSample()` random seed 3rd argument
 
 ## [0.1.1] - 2017-10-14
 ### Added
