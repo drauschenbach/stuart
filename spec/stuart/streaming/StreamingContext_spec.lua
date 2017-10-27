@@ -41,7 +41,7 @@ describe('StreamingContext', function()
     
     local r = {}
     dstream:foreachRDD(function(rdd)
-      moses.forEach(rdd:collect(), function(i,e) table.insert(r, e) end)
+      moses.forEach(rdd:collect(), function(_,e) table.insert(r, e) end)
     end)
     
     ssc:start()
@@ -57,7 +57,7 @@ describe('StreamingContext', function()
     local dstream = ssc:queueStream({sc:makeRDD(moses.range(1,10)), sc:makeRDD({20,21})})
     dstream = dstream:count()
     dstream:foreachRDD(function(rdd)
-      moses.forEach(rdd:collect(), function(i,e) result[#result+1] = e end)
+      moses.forEach(rdd:collect(), function(_,e) result[#result+1] = e end)
     end)
 
     ssc:start()

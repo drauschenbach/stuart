@@ -2,7 +2,6 @@ local class = require 'middleclass'
 local DStream = require 'stuart.streaming.DStream'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
-local socket = require 'socket'
 local stuart = require 'stuart'
 
 registerAsserts(assert)
@@ -30,13 +29,41 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
   local appName = debug.getinfo(1,'S').short_src
   local batchDuration = 0.05
 
+  -----------------------------------------------------------------------------
+
+  local testOperation = function(input, operation, expectedOutput, numBatches)
+    if not moses.isNumber(numBatches) then numBatches = -1 end
+    local numBatches_
+    if numBatches > 0 then numBatches_ = numBatches else numBatches_ = #expectedOutput end
+    local timeoutSecs = batchDuration * (numBatches_+1)
+ 
+    --local sc = stuart.NewContext(master, appName)
+    local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
+    local rdds = moses.map(input, function(_,data) return ssc.sc:makeRDD(data) end)
+    local inputStream = ssc:queueStream(rdds)
+    local operatedStream = inputStream:transform(operation)
+    
+    local output = {}
+    operatedStream:foreachRDD(function(rdd)
+      output = moses.append(output, rdd:collect())
+    end)
+
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(timeoutSecs)
+    ssc:stop()
+    
+    assert.same(expectedOutput, output)
+  end
+  
+  -----------------------------------------------------------------------------
+
   it('map', function()
     local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)}
     local operation = function(rdd) return rdd:map(tostring) end
     local expectedOutput = {'1','2','3','4','5','6','7','8','9','10','11','12'}
     testOperation(input, operation, expectedOutput)
-  end)  
-  
+  end)
+
 --  it('flatMap', function()
 --    local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)}
 --    local operation = function(r) return r:flatMap(function(x) return moses.range(x, x*2) end) end
@@ -46,7 +73,7 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 --  end)
 
   it('filter', function()
-    local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)} 
+    local input = {moses.range(1,4), moses.range(5,8), moses.range(9,12)}
     local operation = function(rdd)
       return rdd:filter(function(x) return x % 2 == 0 end)
     end
@@ -783,30 +810,5 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
 --      }
 --    }
 --  }
-  
-  -----------------------------------------------------------------------------
-  function testOperation(input, operation, expectedOutput, numBatches)
-    if not moses.isNumber(numBatches) then numBatches = -1 end
-    local numBatches_
-    if numBatches > 0 then numBatches_ = numBatches else numBatches_ = #expectedOutput end
-    local timeoutSecs = batchDuration * (numBatches_+1)
- 
-    --local sc = stuart.NewContext(master, appName)
-    local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
-    local rdds = moses.map(input, function(i,data) return ssc.sc:makeRDD(data) end)
-    local inputStream = ssc:queueStream(rdds)
-    local operatedStream = inputStream:transform(operation)
-    
-    local output = {}
-    local outputStream = operatedStream:foreachRDD(function(rdd)
-      output = moses.append(output, rdd:collect())
-    end)
-
-    ssc:start()
-    ssc:awaitTerminationOrTimeout(timeoutSecs)
-    ssc:stop()
-    
-    assert.same(expectedOutput, output)
-  end
   
 end)

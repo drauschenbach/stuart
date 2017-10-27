@@ -1,5 +1,4 @@
 local lodashFind = require 'stuart.lodashFind'
-local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -396,7 +395,7 @@ describe('Apache Spark 2.2.0 PairRDDFunctionsSuite', function()
     -- specify 2000 partitions
     local a = sc:makeRDD({1,2,3,4}, 2000)
     -- do a map, which loses the partitioner
-    local b = a:map(function(a) return {a, tostring(a*2)} end)
+    local b = a:map(function(c) return {c, tostring(c*2)} end)
     -- then a group by, and see we didn't revert to 2 partitions
     local c = b:groupByKey()
     assert.equals(2000, #c.partitions)

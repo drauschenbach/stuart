@@ -9,7 +9,7 @@ describe('Apach Spark examples', function()
 
   local sc = stuart.NewContext()
 
-  function transitiveClosure(graph)
+  local transitiveClosure = function(graph)
     local slices = 2
     local tc = sc:parallelize(graph, slices):cache()
     
@@ -35,7 +35,7 @@ describe('Apach Spark examples', function()
     return tc
   end
   
-  function toMatrix(graph, numVertices)
+  local toMatrix = function(graph, numVertices)
     -- create the matrix
     local m = {}
     for i = 1, numVertices do
@@ -48,7 +48,7 @@ describe('Apach Spark examples', function()
     -- populate it
     for x, pair in ipairs(graph) do
       local i = pair[1]
-      local j = pair[2] 
+      local j = pair[2]
       m[i+1][j+1] = 1
     end
     return m
