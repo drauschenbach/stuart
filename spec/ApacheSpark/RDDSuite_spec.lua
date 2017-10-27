@@ -43,7 +43,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local partitionSums = nums:mapPartitions(function(iter)
       local sum = 0
       for v in iter do sum = sum + v end
-      local i = 0 
+      local i = 0
       return function()
         i = i + 1
         if i == 1 then return sum end
@@ -51,13 +51,13 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     end)
     assert.same({3,7}, partitionSums:collect())
 
-    local partitionSumsWithSplit = nums:mapPartitionsWithIndex(function(split, iter)
+    local partitionSumsWithSplit = nums:mapPartitionsWithIndex(function(x, iter)
       local sum = 0
       for v in iter do sum = sum + v end
-      local i = 0 
+      local i = 0
       return function()
         i = i + 1
-        if i == 1 then return {split, sum} end
+        if i == 1 then return {x, sum} end
       end
     end)
     assert.contains_pair(partitionSumsWithSplit:collect(), {0,3})
@@ -178,7 +178,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local mergeMaps = function(map1, map2)
       local r = map1
       for key,value in pairs(map2) do
-        r[key] = (r[key] or 0) + value 
+        r[key] = (r[key] or 0) + value
       end
       return r
     end
@@ -331,6 +331,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     -- val isEquals = coalesced5.dependencies.head.rdd.dependencies.head.rdd.
     --   asInstanceOf[ShuffledRDD[_, _, _]] != null
     -- assert(isEquals)
+    assert.is_not_nil(coalesced5)
 
     -- when shuffling, we can increase the number of partitions
     local coalesced6 = data:coalesce(20, true)
@@ -726,7 +727,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     assert.same(desc, data:sortBy(function(x) return split(x, '|')[1] end, false):collect())
   end)
 
---  This test is Scala-specific and not applicable to Lua or other weakly-typed language 
+--  This test is Scala-specific and not applicable to Lua or other weakly-typed language
 --  test("sortByKey with explicit ordering") {
 --  }
 
@@ -767,7 +768,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local n = 10
     local data = sc:parallelize(moses.range(0,n), 3)
     local ranked = data:zipWithIndex()
-    moses.forEach(ranked:collect(), function(i,x)
+    moses.forEach(ranked:collect(), function(_,x)
       assert.equals(x[2], x[1])
     end)
   end)
@@ -776,7 +777,7 @@ describe('Apache Spark 2.2.0 RDDSuite', function()
     local n = 10
     local data = sc:parallelize(moses.range(0,n), 1)
     local ranked = data:zipWithIndex()
-    moses.forEach(ranked:collect(), function(i, x)
+    moses.forEach(ranked:collect(), function(_, x)
       assert.equals(x[2], x[1])
     end)
   end)

@@ -1,4 +1,3 @@
-local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 

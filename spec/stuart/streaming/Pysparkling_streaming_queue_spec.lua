@@ -6,7 +6,7 @@ registerAsserts(assert)
 
 describe('Pysparkling test_streaming_queue.py', function()
 
-  function sum(x) return moses.reduce(x, function(r,v) return r+v end) end
+  local sum = function(x) return moses.reduce(x, function(r,v) return r+v end) end
 
   it('count()', function()
     local sc = stuart.NewContext()
