@@ -1,4 +1,4 @@
-local lodashFind = require 'stuart.lodashFind'
+local lodashFind = require 'stuart.util.lodashFind'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
