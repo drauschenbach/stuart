@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.1.2] - 2017-10-28
 ### Added
 - Support `RDD:sample()` with an initial implementation that does not yet respect the `withReplacement` param
 - Support `RDD:sum()` and `RDD:sumApprox()`
