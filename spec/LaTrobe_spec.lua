@@ -529,6 +529,18 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.equals(5, #rdd2.partitions)
   end)
 
+  it('sample()', function()
+    local a = sc:parallelize(moses.range(10000), 3)
+    local res24 = a:sample(false, 0.1, 0):count()
+    assert.equal_within_relative_tolerance(960, res24, 60)
+    
+    local res25 = a:sample(true, 0.3, 0):count()
+    assert.equal_within_relative_tolerance(2888, res25, 180)
+    
+    local res26 = a:sample(true, 0.3, 13):count()
+    assert.equal_within_relative_tolerance(2985, res26, 180)
+  end)
+  
   it('sortBy()', function()
     local y = sc:parallelize({5, 7, 1, 3, 2, 1})
     

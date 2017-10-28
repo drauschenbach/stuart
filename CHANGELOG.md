@@ -1,9 +1,12 @@
 ## [Unreleased]
 ### Added
-- Ported Apache Spark `SparkPi` example
+- Support `RDD:sample()` with an initial implementation that does not yet respect the `withRepacement` param
 - Support `RDD:toString()` and implicit `__tostring` stringification of RDDs for debugging
+- Ported Apache Spark `SparkPi` example
 - Travis-based Luacheck source code static analysis now also applies to specs
-- Support `RDD:takeSample()` random seed 3rd argument
+
+### Changed
+- Support random seed 3rd argument to `RDD:takeSample()`
 
 ## [0.1.1] - 2017-10-14
 ### Added

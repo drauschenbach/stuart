@@ -445,6 +445,15 @@ function RDD:rightOuterJoin(other)
   return self.context:parallelize(t)
 end
 
+function RDD:sample(_, fraction, seed)
+  assert(fraction >= 0, 'Fraction must be nonnegative, but got ' .. fraction)
+  local t = self:collect()
+  local n = math.max(1, #t * fraction)
+  if n > #t then return {} end
+  local r = moses.sample(self:collect(), n, seed)
+  return self.context:parallelize(r)
+end
+
 function RDD:setName(name)
   self.name = name
 end
