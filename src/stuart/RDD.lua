@@ -1,5 +1,7 @@
 local class = require 'middleclass'
 local moses = require 'moses'
+local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
+local samplingUtils = require 'stuart.util.spark.samplingUtils'
 
 local RDD = class('RDD')
 
@@ -542,8 +544,28 @@ function RDD:take(n)
   return t
 end
 
-function RDD:takeSample(_, num, seed)
-  return moses.sample(self:collect(), num, seed)
+function RDD:takeSample(withReplacement, num, seed)
+  assert(num >= 0, 'Negative number of elements requested')
+
+  if num == 0 then return {} end
+  local initialCount = self:count()
+  if initialCount == 0 then return {} end
+  
+  if seed ~= nil then math.randomseed(seed) end
+
+  if not withReplacement and num >= initialCount then
+    return randomizeInPlace(self:collect())
+  end
+  
+  local fraction = samplingUtils.computeFractionForSampleSize(num, initialCount, withReplacement)
+  local samples = self:sample(withReplacement, fraction, math.random(1.8e308)):collect()
+
+  -- If the first sample didn't turn out large enough, keep trying to take samples;
+  -- this shouldn't happen often because we use a big multiplier for the initial size
+  while #samples < num do
+    samples = self:sample(withReplacement, fraction, math.random(1.8e308)):collect()
+  end
+  return moses.first(randomizeInPlace(samples), num)
 end
 
 function RDD:toLocalIterator()
