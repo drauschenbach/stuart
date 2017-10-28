@@ -558,12 +558,12 @@ function RDD:takeSample(withReplacement, num, seed)
   end
   
   local fraction = samplingUtils.computeFractionForSampleSize(num, initialCount, withReplacement)
-  local samples = self:sample(withReplacement, fraction, math.random(1.8e308)):collect()
+  local samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
 
   -- If the first sample didn't turn out large enough, keep trying to take samples;
   -- this shouldn't happen often because we use a big multiplier for the initial size
   while #samples < num do
-    samples = self:sample(withReplacement, fraction, math.random(1.8e308)):collect()
+    samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
   end
   return moses.first(randomizeInPlace(samples), num)
 end
