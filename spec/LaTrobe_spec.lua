@@ -615,6 +615,12 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(result, {4,'lion'})
   end)
   
+  it('sum()', function()
+    local x = sc:parallelize({1.0, 2.0, 3.0, 5.0, 20.0, 19.02, 19.29, 11.09, 21.0}, 2)
+    local res17 = x:sum()
+    assert.equal_within_relative_tolerance(res17, 101.39999999999999, 0.01)
+  end)
+  
   it('take()', function()
     local b = sc:parallelize({'dog', 'cat', 'ape', 'salmon', 'gnu'}, 2)
     local actual = b:take(2)

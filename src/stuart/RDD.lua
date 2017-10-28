@@ -533,6 +533,14 @@ function RDD:subtractByKey(other)
   return self.context:parallelize(t, #self.partitions)
 end
 
+function RDD:sum()
+  return moses.reduce(self:collect(), function(r, v) return r+v end, 0)
+end
+
+function RDD:sumApprox()
+  return self:sum()
+end
+
 function RDD:take(n)
   local iter = self:toLocalIterator()
   local t = {}
