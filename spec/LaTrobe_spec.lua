@@ -632,6 +632,12 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.same(expected, actual)
   end)
 
+  it('takeSample()', function()
+    local x = sc:parallelize(moses.range(1000), 3)
+    local res3 = x:takeSample(true, 100, 1)
+    assert.equal(100, #res3)
+  end)
+  
   it('toLocalIterator()', function()
     local z = sc:parallelize({1,2,3,4,5,6}, 2)
     local iter = z:toLocalIterator()

@@ -5,6 +5,9 @@
 - Ported Apache Spark `SparkPi` example
 - Travis-based Luacheck source code static analysis now also applies to specs
 
+### Fixed
+- `RDD:takeSample()` fails to return any results when RDD contains middleclass classes
+
 ### Changed
 - Support random seed 3rd argument to `RDD:takeSample()`
 
