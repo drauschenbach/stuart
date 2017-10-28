@@ -1,7 +1,7 @@
 package = "stuart"
 version = "0.1.2-0"
 source = {
-   url = "https://github.com/BixData/stuart/archive/0.1.1-0.tar.gz",
+   url = "https://github.com/BixData/stuart/archive/0.1.2-0.tar.gz",
    dir = "stuart-0.1.2-0"
 }
 description = {
