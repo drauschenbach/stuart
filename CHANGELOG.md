@@ -1,6 +1,7 @@
 ## [Unreleased]
 ### Added
-- Support `RDD:sample()` with an initial implementation that does not yet respect the `withRepacement` param
+- Support `RDD:sample()` with an initial implementation that does not yet respect the `withReplacement` param
+- Support `RDD:sum()`
 - Support `RDD:toString()` and implicit `__tostring` stringification of RDDs for debugging
 - Ported Apache Spark `SparkPi` example
 - Travis-based Luacheck source code static analysis now also applies to specs
