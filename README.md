@@ -185,7 +185,7 @@ Stuart is designed for embedding, and so follows some rules:
 * Modules begin with a lowercase letter (e.g. `stuart.lua`, `fileSystemFactory.lua`)
 * Two spaces for indents.
 * The `_` global variable is the unused variable stand-in.
-* Companion libraries such as Stuart ML (a Lua port of Spark ML) will end up in their own separate Git repo and LuaRocks module such as `"stuart-ml"`.
+* Companion libraries such as [Stuart ML](https://github.com/BixData/stuart-ml) (a Lua port of Spark MLlib) will end up in their own separate Git repo and [LuaRocks module](http://luarocks.org/modules/drauschenbach/stuart-ml).
 
 ## Building
 
