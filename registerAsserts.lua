@@ -40,14 +40,29 @@ local registerAsserts = function(assert)
   end, 'assertion.contains_pair.positive', 'assertion.contains_pair.negative')
 
   -----------------------------------------------------------------------------
-  say:set('assertion.equal_within_relative_tolerance.positive', 'Expected %s to equal %s within relative tolerance %s')
-  say:set('assertion.equal_within_relative_tolerance.negative', 'Expected %s to not equal %s within relative tolerance %s')
-  assert:register('assertion', 'equal_within_relative_tolerance', function(state, arguments)
-    local value1 = arguments[1]
-    local value2 = arguments[2]
-    local tolerance = arguments[3]
-    return math.abs(value1 - value2) <= tolerance
-  end, 'assertion.equal_within_relative_tolerance.positive', 'assertion.equal_within_relative_tolerance.negative')
+  say:set('assertion.equal_absTol.positive', 'Expected %s to equal %s within absolute tolerance %s')
+  say:set('assertion.equal_absTol.negative', 'Expected %s to not equal %s within absolute tolerance %s')
+  assert:register('assertion', 'equal_absTol', function(_, arguments)
+    local x = arguments[1]
+    local y = arguments[2]
+    local eps = arguments[3]
+    if x == y then return true end
+    return math.abs(x - y) < eps
+  end, 'assertion.equal_absTol.positive', 'assertion.equal_absTol.negative')
+  
+  -----------------------------------------------------------------------------
+  say:set('assertion.equal_relTol.positive', 'Expected %s to equal %s within relative tolerance %s')
+  say:set('assertion.equal_relTol.negative', 'Expected %s to not equal %s within relative tolerance %s')
+  assert:register('assertion', 'equal_relTol', function(_, arguments)
+    local x = arguments[1]
+    local y = arguments[2]
+    local eps = arguments[3]
+    if x == y then return true end
+    local absX = math.abs(x)
+    local absY = math.abs(y)
+    local diff = math.abs(x - y)
+    return diff < eps * math.min(absX, absY)
+  end, 'assertion.equal_relTol.positive', 'assertion.equal_relTol.negative')
   
   -----------------------------------------------------------------------------
   say:set('assertion.is_in_range.positive', 'Expected %s to be between %s and %s')
