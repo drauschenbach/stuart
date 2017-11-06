@@ -37,9 +37,7 @@ function Partition:_toLocalIterator()
   local i = 0
   return function()
     i = i + 1
-    if i <= #self.data then
-      return self.data[i]
-    end
+    return self.data[i]
   end
 end
 
