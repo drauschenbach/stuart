@@ -1,4 +1,8 @@
 ## [Unreleased]
+### Added
+- Support `Context` `defaultParallelism` field (defaults to 1)
+- Support `RDD:groupByKey()` `numPartitions` param
+
 ### Changed
 - Renamed assertions within tolerance to `assert_relTol` and `assert_absTol`, which is more 1-1 with Spark Scala unit tests
 
