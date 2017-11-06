@@ -11,6 +11,7 @@ function Context:initialize(master, appName)
   self.lastRddId = 0
   self.master = master or 'local[1]'
   self.appName = appName
+  self.defaultParallelism = 1
 end
 
 function Context:emptyRDD()
@@ -38,7 +39,8 @@ function Context:makeRDD(x, numPartitions)
 end
 
 function Context:parallelize(x, numPartitions)
-  if numPartitions == 1 or not moses.isNumber(numPartitions) then
+  if not moses.isNumber(numPartitions) then numPartitions = self.defaultParallelism end
+  if numPartitions == 1 then
     local p = Partition:new(x, 0)
     return RDD:new(self, {p})
   end

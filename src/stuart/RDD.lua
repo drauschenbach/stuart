@@ -249,7 +249,8 @@ function RDD:groupBy(f)
   return self.context:parallelize(t)
 end
 
-function RDD:groupByKey()
+function RDD:groupByKey(numPartitions)
+  numPartitions = numPartitions or #self.partitions
   local keys = moses.keys(self:_dict())
   local t = moses.map(keys, function(_,k)
     local v = moses.reduce(self:collect(), function(r, e)
@@ -258,7 +259,7 @@ function RDD:groupByKey()
     end, {})
     return {k, v}
   end)
-  return self.context:parallelize(t, #self.partitions)
+  return self.context:parallelize(t, numPartitions)
 end
 
 function RDD:histogram(buckets)
