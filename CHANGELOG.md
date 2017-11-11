@@ -1,9 +1,10 @@
-## [Unreleased]
+## [0.1.3] - 2017-11-11
 ### Added
 - Support `Context` `defaultParallelism` field (defaults to 1)
 - Support `RDD:groupByKey()` `numPartitions` param
 
 ### Changed
+- Consolidate Apache Spark and Stuart unit tests into a single unified folder hierarchy
 - Renamed assertions within tolerance to `assert_relTol` and `assert_absTol`, which is more 1-1 with Spark Scala unit tests
 
 ## [0.1.2] - 2017-10-28
