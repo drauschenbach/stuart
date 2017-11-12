@@ -6,13 +6,30 @@
 
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 
-## Getting Started
+### Contents
 
-### Installing
+* [Installation](#installation)
+* [Usage](#usage)
+	* [Reading a text file](#reading-a-text-file)
+	* [Working with lists of values](#working-with-lists-of-values)
+	* [Working with lists of pairs](#working-with-lists-of-pairs)
+	* [Streaming with a socket text datasource](#streaming-with-a-socket-text-datasource)
+	* [Streaming with a custom receiver](#streaming-with-a-custom-receiver)
+* [Dependencies](#dependencies)
+* [Compatibility](#compatibility)
+* [Libraries for Stuart](#libraries-for-stuart)
+* [Design](#design)
+* [Contributing](#contributing)
+* [Building](#building)
+* [Testing](#testing)
+
+## Installation
 
 ```bash
 $ luarocks install stuart
 ```
+
+## Usage
 
 ### Reading a text file
 
@@ -144,7 +161,7 @@ ssc:stop()
 ## Dependencies
 
 * [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
-* [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. Used in WebHDFS response parsing. If the [cjson](https://luarocks.org/modules/luarocks/lua-cjson) module is detected, it is used first for performance. But otherwise Lunajson is the portable fall-back.
+* [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. If the [cjson](https://luarocks.org/modules/luarocks/lua-cjson) module is detected, it is used first for performance. But otherwise Lunajson is the portable fall-back.
 * [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for literal adaptation of many Apache Spark APIs.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
 
@@ -162,23 +179,29 @@ Stuart is incompatible with:
 
 * [Shopify/go-lua](https://github.com/Shopify/go-lua), due to its lack of `coroutine` and `debug.getinfo()` capabilities.
 
-## Roadmap Brainstorm
+## Libraries for Stuart
 
-* Support [eLua Boards](http://wiki.eluaproject.net/Boards) and their alternative I/O and clock mechanisms
-* Support [DataFrames](https://spark.apache.org/docs/latest/sql-programming-guide.html)
-* Support [MLlib Import](https://spark.apache.org/mllib/) in a companion project. Load a model, and use it at the edge, perhaps from a Spark Streaming control loop.
-* Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) in a companion project.
+* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/latest/sql-programming-guide.html), for support of DataFrames and Parquet files
+* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/latest/ml-guide.html), for loading and evaluating models such as KMeansModel
+
+## Roadmap
+
+* Support [eLua Boards](http://wiki.eluaproject.net/Boards) by supporting user-defined modules for I/O and clock mechanisms
+* Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) via a `stuart-pmml` companion library
 * A Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis.
 
 ## Design
 
-Stuart is designed for embedding, and so follows some rules:
+Stuart is designed for real-time and embedding, and so follows some rules:
 
 * It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be interpreted by a JIT or cross-compiler. Any potential C code optimizations are externally sourced through the Lua module loader.
-* It does not execute programs (like `ls` or `dir` to list files); there may not even be an OS.
+* It does not perform deferred evaluation of anything; all compute costs are paid upfront for predictable and steady throughput.
+* It does not execute programs (like `ls` or `dir` to list files), because there may not even be an OS.
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
 
-### Contributor Guidelines
+## Contributing
+
+### Contribution Guidelines
 
 * [Busted](https://olivinelabs.com/busted/)-based [TDD](https://en.wikipedia.org/wiki/Test-driven_development)
 * Class modules begin with an uppercase letter, and end up in their own file that begins with an uppercase letter (e.g. `RDD.lua`)
