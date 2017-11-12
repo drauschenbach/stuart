@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local logging = require 'stuart.internal.logging'
 local moses = require 'moses'
 
 local fileSystemFactory = require 'stuart.fileSystemFactory'
@@ -6,12 +7,14 @@ local Partition = require 'stuart.Partition'
 local RDD = require 'stuart.RDD'
 
 local Context = class('Context')
+Context.SPARK_VERSION = '2.2.0'
 
 function Context:initialize(master, appName)
   self.lastRddId = 0
   self.master = master or 'local[1]'
   self.appName = appName
   self.defaultParallelism = 1
+  logging.logInfo('Running Embedded Spark (Stuart) version ' .. Context.SPARK_VERSION)
 end
 
 function Context:emptyRDD()
@@ -55,6 +58,10 @@ function Context:parallelize(x, numPartitions)
     return Partition:new(chunk, i)
   end)
 	return RDD:new(self, partitions)
+end
+
+function Context:setLogLevel(level)
+  logging.log:setLevel(level)
 end
 
 function Context:textFile(path, minPartitions)
