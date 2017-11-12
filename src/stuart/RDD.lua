@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local log = require 'stuart.internal.logging'.log
 local moses = require 'moses'
 local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
 local samplingUtils = require 'stuart.util.spark.samplingUtils'
@@ -571,8 +572,11 @@ function RDD:takeSample(withReplacement, num, seed)
 
   -- If the first sample didn't turn out large enough, keep trying to take samples;
   -- this shouldn't happen often because we use a big multiplier for the initial size
+  local numIters = 0
   while #samples < num do
+    log:warn('Needed to re-sample due to insufficient sample size. Repeat #' .. numIters)
     samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
+    numIters = numIters + 1
   end
   return moses.first(randomizeInPlace(samples), num)
 end

@@ -1,3 +1,7 @@
+## [unreleased]
+### Added
+- Support `logging` module and `Logger` class, and add logging to RDD, Context, DStream, and Receiver classes. Connect/disconnect info now shown.
+
 ## [0.1.3] - 2017-11-11
 ### Added
 - Support `Context` `defaultParallelism` field (defaults to 1)

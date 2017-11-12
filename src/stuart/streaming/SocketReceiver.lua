@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local log = require 'stuart.internal.logging'.log
 local socket = require 'socket'
 local Receiver = require 'stuart.streaming.Receiver'
 
@@ -11,7 +12,13 @@ function SocketReceiver:initialize(ssc, hostname, port)
 end
 
 function SocketReceiver:onStart()
-  self.conn = socket.connect(self.hostname, self.port)
+  log:info(string.format('Connecting to %s:%d', self.hostname, self.port))
+  self.conn, self.err = socket.connect(self.hostname, self.port)
+  if self.err then
+    log:error(string.format('Error connecting to %s:%d: %s', self.hostname, self.port, self.err))
+    return
+  end
+  log:info(string.format('Connected to %s:%d', self.hostname, self.port))
 end
 
 function SocketReceiver:onStop()
