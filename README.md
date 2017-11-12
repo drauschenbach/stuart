@@ -183,8 +183,8 @@ Stuart is incompatible with:
 
 ## Libraries for Stuart
 
-* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/latest/sql-programming-guide.html), for support of DataFrames and Parquet files
-* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/latest/ml-guide.html), for loading and evaluating models such as KMeansModel
+* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html), for support of DataFrames and Parquet files
+* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html), for loading and evaluating models such as KMeansModel
 
 ## Roadmap
 
@@ -216,7 +216,7 @@ While many frameworks deliver streaming analytics capabilities, Spark leads the 
 
 **Embedding.** Lua is arguably one of the most crash-proof language runtimes, making it attractive for industrial automation, sensors, wearables, and microcontrollers. Whereas JVM-based analytics tend to require an operator.
 
-**GPUs.** If you are thinking about pushing closures into a GPU, Lua seems like a reasonable choice.
+**GPUs.** If you are thinking about pushing closures into a GPU, Lua seems like a reasonable choice, and one of the easier languages to transpile into OpenCL or CUDA.
 
 **Torch.** [Torch](http://torch.ch) is the original deep-learning library ecosystem, 15+ years mature, and with deep ties to university and leading commercial interests. It runs on mobile phones, and serves as a fantastic case in point for why Lua makes sense for analytics jobs. A data scientist should be able to use Spark and Torch side-by-side, and maybe even from the same Spark Streaming control loop.
 
