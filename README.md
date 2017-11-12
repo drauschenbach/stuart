@@ -218,7 +218,7 @@ While many frameworks deliver streaming analytics capabilities, Spark leads the 
 
 **GPUs.** If you are thinking about pushing closures into a GPU, Lua seems like a reasonable choice.
 
-**Torch.** [Torch](http://torch.ch) is the original deep-learning library ecosystem, 15+ years mature, and with deep ties to university and leading commercial interests. It runs on mobile phones, and serves as a fantastic case in point for why Lua makes sense for analytics jobs. A data scientist should be able to use Spark and Torch side-by-side, and maybe even from the same Spark Streaming job.
+**Torch.** [Torch](http://torch.ch) is the original deep-learning library ecosystem, 15+ years mature, and with deep ties to university and leading commercial interests. It runs on mobile phones, and serves as a fantastic case in point for why Lua makes sense for analytics jobs. A data scientist should be able to use Spark and Torch side-by-side, and maybe even from the same Spark Streaming control loop.
 
 ## Contributing
 
@@ -237,6 +237,7 @@ The LuaRocks built-in build system is used for packaging.
 
 ```bash
 $ luarocks make rockspecs/stuart-<version>.rockspec
+stuart <version> is now built and installed in /usr/local (license: Apache 2.0)
 ```
 
 ## Testing
@@ -246,18 +247,20 @@ Testing with `lua-cjson`:
 ```
 $ luarocks install busted
 $ luarocks install lua-cjson
-$ busted
-●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
-129 successes / 0 failures / 0 errors / 0 pending : 10.895618 seconds
+$ busted -v --defer-print
+17/11/12 08:46:51 INFO Running Embedded Spark (Stuart) version 2.2.0 
+...
+141 successes / 0 failures / 0 errors / 0 pending : 12.026833 seconds
 ```
 
 Testing with `lunajson`:
 
 ```
 $ luarocks remove lua-cjson
-$ busted
-●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
-129 successes / 0 failures / 0 errors / 2 pending : 10.895618 seconds
+$ busted -v --defer-print
+17/11/12 08:46:51 INFO Running Embedded Spark (Stuart) version 2.2.0 
+...
+139 successes / 0 failures / 0 errors / 2 pending : 12.026833 seconds
 
 Pending → ...
 util.json can decode a scalar using cjson
