@@ -19,6 +19,8 @@
 * [Compatibility](#compatibility)
 * [Libraries for Stuart](#libraries-for-stuart)
 * [Design](#design)
+	* [Why Spark?](#why-spark)
+	* [Why Lua?](#why-lua)
 * [Contributing](#contributing)
 * [Building](#building)
 * [Testing](#testing)
@@ -120,7 +122,7 @@ function MyReceiver:onStart()
 end
 
 function MyReceiver:onStop()
-	if self.conn ~= nil then self.conn:close() end
+  if self.conn ~= nil then self.conn:close() end
 end
 
 function MyReceiver:run(durationBudget)
@@ -151,7 +153,7 @@ ssc = stuart.NewStreamingContext(sc, 0.5)
 local receiver = MyReceiver:new(ssc, 'localhost', 9999)
 local dstream = ssc:receiverStream(receiver)
 dstream:foreachRDD(function(rdd)
-	print('Received RDD: ' .. rdd:collect())
+  print('Received RDD: ' .. rdd:collect())
 end)
 ssc:start()
 ssc:awaitTerminationOrTimeout(10)
@@ -188,16 +190,35 @@ Stuart is incompatible with:
 
 * Support [eLua Boards](http://wiki.eluaproject.net/Boards) by supporting user-defined modules for I/O and clock mechanisms
 * Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) via a `stuart-pmml` companion library
-* A Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis.
+* Support a Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis for execution.
+* Support [OpenCL](https://en.wikipedia.org/wiki/OpenCL) or [CUDA](https://en.wikipedia.org/wiki/CUDA) schedulers that send Lua closures into a GPU for execution.
 
 ## Design
 
-Stuart is designed for real-time and embedding, and so follows some rules:
+Stuart is designed for real-time and embedding, and so it follows some rules:
 
-* It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be interpreted by a JIT or cross-compiler. Any potential C code optimizations are externally sourced through the Lua module loader.
-* It does not perform deferred evaluation of anything; all compute costs are paid upfront for predictable and steady throughput.
+* It does not perform deferred evaluation of anything; all compute costs are paid upfront for predictable throughput.
+* It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be cross-compiled. Any potential C code optimizations are externally sourced through the module loader. For example, Stuart links to `lunajson`, but it also detects and uses `cjson` when that native module is present.
 * It does not execute programs (like `ls` or `dir` to list files), because there may not even be an OS.
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
+
+### Why Spark?
+
+While many frameworks deliver streaming analytics capabilities, Spark leads the pack in numbers of trained data scientists, numbers of SaaS environments where Spark models can be built and trained, numbers of contributors moving the platform forward, numbers of universities teaching it, and net commercial investment.
+
+### Why Lua?
+
+**Depoyment.** Amalgamated Lua jobs with inlined module dependencies solves the Spark job deployment problem, and obviates the need for any shared filesystem or brittle classpath coordination. [Redis Scripting](https://redis.io/commands/eval) showcases the power of SHA1 content hashing for Lua job distribution.
+
+**Packaging.** Lua jobs, like JavaScript, are easy to minify, and statically analyze to strip out unused modules and function calls. Your job script only need be as large as the number of Spark capabilities it makes use of.
+
+**Portability.** Because Lua is a tiny language that elegantly supports classes and closures, it serves as a better source of truth for functional algorithms than Scala. This makes it relatively easy for Stuart jobs to be transpiled into Scala, Java, Python, Go, C, or maybe even CUDA, or to be interpreted by a VM in any of those same environments, which significantly extends Spark's reach by divorcing it from the JVM.
+
+**Embedding.** Lua is arguably one of the most crash-proof language runtimes, making it attractive for industrial automation, sensors, wearables, and microcontrollers. Whereas JVM-based analytics tend to require an operator.
+
+**GPUs.** If you are thinking about pushing closures into a GPU, Lua seems like a reasonable choice.
+
+**Torch.** [Torch](http://torch.ch) is the original deep-learning library ecosystem, 15+ years mature, and with deep ties to university and leading commercial interests. It runs on mobile phones, and serves as a fantastic case in point for why Lua makes sense for analytics jobs. A data scientist should be able to use Spark and Torch side-by-side, and maybe even from the same Spark Streaming job.
 
 ## Contributing
 
