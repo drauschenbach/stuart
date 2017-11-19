@@ -1,5 +1,8 @@
 local Context = require 'stuart.Context'
+local moses = require 'moses'
+moses.range = require 'stuart.util.mosesPatchedRange'
 local registerAsserts = require 'registerAsserts'
+local SparkConf = require 'stuart.SparkConf'
 local StreamingContext = require 'stuart.streaming.StreamingContext'
 local stuart = require 'stuart'
 
@@ -10,6 +13,18 @@ describe('Apache Spark 2.2.0 StreamingContextSuite', function()
   local master = 'local[1]'
   local appName = debug.getinfo(1,'S').short_src
   local batchDuration = 0.5 -- 500 milliseconds
+  local sparkHome = 'someDir'
+
+  it('from no conf constructor', function()
+    local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
+    assert.equal(master, ssc.sparkContext.conf:get('spark.master'))
+    assert.equal(appName, ssc.sparkContext.conf:get('spark.app.name'))
+  end)
+  
+  it('from no conf + spark home', function()
+    local ssc = stuart.NewStreamingContext(master, appName, batchDuration, sparkHome, nil)
+    assert.equal(sparkHome, ssc.conf:get('spark.home'))
+  end)
 
   it('from existing SparkContext', function()
     local sc = Context:new(master, appName)
@@ -49,7 +64,7 @@ describe('Apache Spark 2.2.0 StreamingContextSuite', function()
     assert.equals('stopped', ssc:getState())
   end)
 
-  it('stop after start', function()
+  it('start after stop', function()
     local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
     ssc:stop()
     assert.has_error(function()

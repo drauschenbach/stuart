@@ -38,6 +38,13 @@ function SparkConf:getAll()
   return t
 end
 
+function SparkConf:getBoolean(key, defaultValue)
+  local s = self.settings[key]
+  if s == 'true' then return true end
+  if s == 'false' then return false end
+  return defaultValue
+end
+
 function SparkConf:master()
   return self:get('spark.master')
 end

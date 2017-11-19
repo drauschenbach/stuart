@@ -10,17 +10,17 @@ local SparkConf = require 'stuart.SparkConf'
 local Context = class('Context')
 Context.SPARK_VERSION = '2.2.0'
 
-function Context:initialize(arg1, arg2, arg3)
+function Context:initialize(arg1, arg2, arg3, arg4)
   if arg1 == nil and arg2 == nil then
     self.conf = SparkConf:new()
   elseif isInstanceOf(arg1, SparkConf) then
     self.conf = arg1
   else
-    self.conf = Context._updatedConf(SparkConf:new(), arg1, arg2, arg3)
+    self.conf = Context._updatedConf(SparkConf:new(), arg1, arg2, arg3, arg4)
   end
   
-  self.lastRddId = 0
   self.defaultParallelism = 1
+  self.lastRddId = 0
   logging.logInfo('Running Embedded Spark (Stuart) version ' .. Context.SPARK_VERSION)
 end
 
