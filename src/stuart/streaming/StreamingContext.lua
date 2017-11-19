@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local isInstanceOf = require 'stuart.util.isInstanceOf'
 local moses = require 'moses'
 local socket = require 'socket'
 
@@ -9,11 +10,6 @@ local SocketInputDStream = require 'stuart.streaming.SocketInputDStream'
 
 local function sleep(timeout)
   socket.select(nil, nil, timeout)
-end
-
-local function isInstanceOf(x, aClass)
-  if not moses.has(x, 'isInstanceOf') then return false end
-  return x:isInstanceOf(aClass)
 end
 
 -------------------------------------------------------------------------------

@@ -1,25 +1,40 @@
 local class = require 'middleclass'
+local fileSystemFactory = require 'stuart.fileSystemFactory'
+local isInstanceOf = require 'stuart.util.isInstanceOf'
 local logging = require 'stuart.internal.logging'
 local moses = require 'moses'
-
-local fileSystemFactory = require 'stuart.fileSystemFactory'
 local Partition = require 'stuart.Partition'
 local RDD = require 'stuart.RDD'
+local SparkConf = require 'stuart.SparkConf'
 
 local Context = class('Context')
 Context.SPARK_VERSION = '2.2.0'
 
-function Context:initialize(master, appName)
+function Context:initialize(arg1, arg2, arg3)
+  if arg1 == nil and arg2 == nil then
+    self.conf = SparkConf:new()
+  elseif isInstanceOf(arg1, SparkConf) then
+    self.conf = arg1
+  else
+    self.conf = Context._updatedConf(SparkConf:new(), arg1, arg2, arg3)
+  end
+  
   self.lastRddId = 0
-  self.master = master or 'local[1]'
-  self.appName = appName
   self.defaultParallelism = 1
   logging.logInfo('Running Embedded Spark (Stuart) version ' .. Context.SPARK_VERSION)
+end
+
+function Context:appName()
+  return self.conf:get('spark.app.name')
 end
 
 function Context:emptyRDD()
   local rdd = self:parallelize({}, 0)
   return rdd
+end
+
+function Context:getConf()
+  return self.conf:clone()
 end
 
 function Context:getNextId()
@@ -39,6 +54,10 @@ end
 
 function Context:makeRDD(x, numPartitions)
   return self:parallelize(x, numPartitions)
+end
+
+function Context:master()
+  return self.conf:get('spark.master')
 end
 
 function Context:parallelize(x, numPartitions)
@@ -72,6 +91,16 @@ function Context:union(rdds)
   local t = rdds[1]
   for i = 2, #rdds do t = t:union(rdds[i]) end
   return t
+end
+
+function Context._updatedConf(conf, master, appName, sparkHome)
+  local res = conf:clone()
+  res:setMaster(master)
+  res:setAppName(appName)
+  if sparkHome ~= nil then
+    res:setSparkHome(sparkHome)
+  end
+  return res
 end
 
 return Context

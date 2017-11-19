@@ -83,7 +83,7 @@ ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
 
 dstream = ssc:socketTextStream('localhost', 9999)
 dstream:foreachRDD(function(rdd)
-	print('Received RDD: ' .. rdd:collect())
+  print('Received RDD: ' .. rdd:collect())
 end)
 ssc:start()
 ssc:awaitTerminationOrTimeout(10)
@@ -172,8 +172,8 @@ ssc:stop()
 Stuart is compatible with:
 
 * [GopherLua](https://github.com/yuin/gopher-lua)
-* [Lua 5.1+](https://www.lua.org)
-* [LuaJIT](https://www.lua.org)
+* [Lua](https://www.lua.org) 5.1, 5.2, 5.3
+* [LuaJIT](https://www.lua.org) 2.0, 2.1
 
 Use [gluasocket](https://github.com/BixData/gluasocket) to embed Stuart in a Go app.
 
