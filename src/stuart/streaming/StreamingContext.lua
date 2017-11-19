@@ -21,6 +21,8 @@ function StreamingContext:initialize(sc, batchDuration)
   self.batchDuration = batchDuration or 1
   self.dstreams={}
   self.state='initialized'
+  getmetatable(self).conf = sc.conf
+  getmetatable(self).sparkContext = sc
 end
 
 function StreamingContext:awaitTermination()
