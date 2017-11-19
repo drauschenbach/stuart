@@ -1,5 +1,6 @@
 ## [unreleased]
 ### Added
+- Support `Context` `stop()` and `isStopped()`, and `StreamingContext` `stop(stopSparkContext)` param
 - Support `SparkConf` class
 - Support `logging` module and `Logger` class, and add logging to RDD, Context, DStream, and Receiver classes. Connect/disconnect info now shown.
 

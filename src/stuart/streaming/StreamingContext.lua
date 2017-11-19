@@ -102,11 +102,15 @@ function StreamingContext:start()
   self.state = 'active'
 end
 
-function StreamingContext:stop()
+function StreamingContext:stop(stopSparkContext)
+  if stopSparkContext == nil then
+    stopSparkContext = self.conf:getBoolean('spark.streaming.stopSparkContextByDefault', true)
+  end
   for _, dstream in ipairs(self.dstreams) do
     dstream:stop()
   end
   self.state = 'stopped'
+  if stopSparkContext then self.sc:stop() end
 end
 
 return StreamingContext
