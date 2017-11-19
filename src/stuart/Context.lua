@@ -21,6 +21,7 @@ function Context:initialize(arg1, arg2, arg3, arg4)
   
   self.defaultParallelism = 1
   self.lastRddId = 0
+  self.stopped = false
   logging.logInfo('Running Embedded Spark (Stuart) version ' .. Context.SPARK_VERSION)
 end
 
@@ -52,6 +53,10 @@ function Context:hadoopFile(path, minPartitions)
   return self:parallelize(lines, minPartitions)
 end
 
+function Context:isStopped()
+  return self.stopped
+end
+
 function Context:makeRDD(x, numPartitions)
   return self:parallelize(x, numPartitions)
 end
@@ -61,6 +66,7 @@ function Context:master()
 end
 
 function Context:parallelize(x, numPartitions)
+  assert(not self.stopped)
   if not moses.isNumber(numPartitions) then numPartitions = self.defaultParallelism end
   if numPartitions == 1 then
     local p = Partition:new(x, 0)
@@ -83,7 +89,12 @@ function Context:setLogLevel(level)
   logging.log:setLevel(level)
 end
 
+function Context:stop()
+  self.stopped = true
+end
+
 function Context:textFile(path, minPartitions)
+  assert(not self.stopped)
   return self:hadoopFile(path, minPartitions)
 end
 
