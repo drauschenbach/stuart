@@ -23,4 +23,4 @@ install:
 
 script:
   - luacheck --std max+busted --codes src spec --no-self --ignore 213 311 611 631
-  - busted --verbose
+  - busted --verbose --defer-print
