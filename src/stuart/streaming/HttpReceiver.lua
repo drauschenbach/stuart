@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local clock = require 'stuart.interface.clock'
 local log = require 'stuart.internal.logging'.log
 local socket = require 'socket'
 local socketUrl = require 'socket.url'
@@ -43,16 +44,16 @@ function HttpReceiver:onStop()
 end
 
 function HttpReceiver:run(durationBudget)
-  local timeOfLastYield = socket.gettime()
+  local timeOfLastYield = clock.now()
   local data = {}
   local minWait = 0.02 -- never block less than 20ms
   while true do
-    local elapsed = socket.gettime() - timeOfLastYield
+    local elapsed = clock.now() - timeOfLastYield
     if elapsed > durationBudget then
       local rdd = self.ssc.sc:makeRDD(data)
       coroutine.yield({rdd})
       data = {}
-      timeOfLastYield = socket.gettime()
+      timeOfLastYield = clock.now()
     else
       self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
       if self.mode == 'text' then

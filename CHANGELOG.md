@@ -1,5 +1,6 @@
 ## [unreleased]
 ### Added
+- Support a `stuart.interface.clock` module that can be preloaded with a custom implementation that binds Stuart to a proprietary hardware clock, instead of always depending on LuaSocket for time which may be unavailable in microcontroller environments
 - Support `Context` `stop()` and `isStopped()`, and `StreamingContext` `stop(stopSparkContext)` param
 - Support `SparkConf` class
 - Support `logging` module and `Logger` class, and add logging to RDD, Context, DStream, and Receiver classes. Connect/disconnect info now shown.
