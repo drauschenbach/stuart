@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local clock = require 'stuart.interface.clock'
 local isInstanceOf = require 'stuart.util.isInstanceOf'
 local moses = require 'moses'
 local socket = require 'socket'
@@ -38,13 +39,13 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   end
   
   -- run loop
-  local startTime = socket.gettime()
+  local startTime = clock.now()
   local loopDurationGoal = self.batchDuration
   local individualDStreamDurationBudget = loopDurationGoal / #self.dstreams
   while self.state == 'active' do
   
     -- Decide whether to timeout
-    local now = socket.gettime()
+    local now = clock.now()
     if timeout > 0 then
       local elapsed = now - startTime
       if elapsed > timeout then break end

@@ -15,6 +15,7 @@
 	* [Working with lists of pairs](#working-with-lists-of-pairs)
 	* [Streaming with a socket text datasource](#streaming-with-a-socket-text-datasource)
 	* [Streaming with a custom receiver](#streaming-with-a-custom-receiver)
+* [Embedding](#embedding)
 * [Dependencies](#dependencies)
 * [Compatibility](#compatibility)
 * [Libraries for Stuart](#libraries-for-stuart)
@@ -159,6 +160,14 @@ ssc:start()
 ssc:awaitTerminationOrTimeout(10)
 ssc:stop()
 ```
+
+## Embedding
+
+Modules named `stuart.interface.*` provide interfaces to hardware or a host OS, designed to make it easy for you to preload your own custom module that is specific to your host application or device. These interfaces are seen as a public API, and so any changes to them will incrememt the SemVer versioning accordingly.
+
+### stuart.interface.clock
+
+Used by Stuart to measure time, which is required by the `StreamingContext` cooperative multitasking. On an OS, implementation defaults to LuaSocket `gettime()` with 4 decimals of precision. Falls back on Lua `os.time(os.clock('*t'))` with 0 digits of precision (whole seconds).
 
 ## Dependencies
 

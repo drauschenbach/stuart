@@ -33,6 +33,7 @@ build = {
       ["stuart.SparkConf"] = "src/stuart/SparkConf.lua",
       ["stuart.WebHdfsFileSystem"] = "src/stuart/WebHdfsFileSystem.lua",
       ["stuart.fileSystemFactory"] = "src/stuart/fileSystemFactory.lua",
+      ["stuart.interface.clock"] = "src/stuart/interface/clock.lua",
       ["stuart.internal.Logger"] = "src/stuart/internal/Logger.lua",
       ["stuart.internal.logging"] = "src/stuart/internal/logging.lua",
       ["stuart.streaming.DStream"] = "src/stuart/streaming/DStream.lua",
