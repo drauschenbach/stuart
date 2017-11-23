@@ -163,7 +163,7 @@ ssc:stop()
 
 ## Embedding
 
-Modules named `stuart.interface.*` provide interfaces to hardware or a host OS, designed to make it easy for you to preload your own custom module that is specific to your host application or device. These interfaces are seen as a public API, and so any changes to them will incrememt the SemVer versioning accordingly.
+Modules named `stuart.interface.*` provide interfaces to hardware or a host OS, designed to make it easy for you to preload your own custom module that is specific to your host application or device. These interfaces are seen as a public API, and so any changes to them will increment the SemVer versioning accordingly.
 
 ### stuart.interface.clock
 
