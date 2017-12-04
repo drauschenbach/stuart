@@ -22,7 +22,7 @@ function Context:initialize(arg1, arg2, arg3, arg4)
   self.defaultParallelism = 1
   self.lastRddId = 0
   self.stopped = false
-  logging.logInfo('Running Embedded Spark (Stuart) version ' .. Context.SPARK_VERSION)
+  logging.logInfo('Running Stuart (Embedded Spark) version ' .. Context.SPARK_VERSION)
 end
 
 function Context:appName()

@@ -257,7 +257,7 @@ Testing with `lua-cjson`:
 $ luarocks install busted
 $ luarocks install lua-cjson
 $ busted -v --defer-print
-17/11/12 08:46:51 INFO Running Embedded Spark (Stuart) version 2.2.0 
+17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0 
 ...
 141 successes / 0 failures / 0 errors / 0 pending : 12.026833 seconds
 ```
@@ -267,7 +267,7 @@ Testing with `lunajson`:
 ```
 $ luarocks remove lua-cjson
 $ busted -v --defer-print
-17/11/12 08:46:51 INFO Running Embedded Spark (Stuart) version 2.2.0 
+17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0 
 ...
 139 successes / 0 failures / 0 errors / 2 pending : 12.026833 seconds
 

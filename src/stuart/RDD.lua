@@ -30,7 +30,7 @@ function RDD:_flattenValues()
   return self
 end
 
-function RDD.__tostring(self)
+function RDD:__tostring()
   return 'RDD[' .. self.id .. ']'
 end
 
