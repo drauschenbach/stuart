@@ -1,3 +1,7 @@
+## [Unreleased]
+### Fixed
+- `util.isInstanceOf` fails for non-table arguments such as nil
+
 ## [0.1.4] - 2017-11-27
 ### Added
 - Support a `stuart.interface.clock` module that can be preloaded with a custom implementation that binds Stuart to a proprietary hardware clock, instead of always depending on LuaSocket for time which may be unavailable in microcontroller environments
