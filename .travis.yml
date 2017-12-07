@@ -20,6 +20,7 @@ install:
   - luarocks install lunajson
   - luarocks install middleclass
   - luarocks install moses
+  - luarocks install net-url
 
 script:
   - luacheck --std max+busted --codes src spec --no-self --ignore 213 311 611 631

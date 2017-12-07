@@ -19,7 +19,8 @@ dependencies = {
    "luasocket <= 3.0rc1-2",
    "lunajson <= 1.2-0",
    "middleclass <= 4.1-0",
-   "moses <= 1.6.1-1"
+   "moses <= 1.6.1-1",
+   "net-url <= 0.9-1"
 }
 build = {
    type = "builtin",
@@ -27,15 +28,19 @@ build = {
       stuart = "src/stuart.lua",
       ["stuart.Context"] = "src/stuart/Context.lua",
       ["stuart.FileSystem"] = "src/stuart/FileSystem.lua",
+      ["stuart.fileSystemFactory"] = "src/stuart/fileSystemFactory.lua",
       ["stuart.LocalFileSystem"] = "src/stuart/LocalFileSystem.lua",
       ["stuart.Partition"] = "src/stuart/Partition.lua",
       ["stuart.RDD"] = "src/stuart/RDD.lua",
       ["stuart.SparkConf"] = "src/stuart/SparkConf.lua",
       ["stuart.WebHdfsFileSystem"] = "src/stuart/WebHdfsFileSystem.lua",
-      ["stuart.fileSystemFactory"] = "src/stuart/fileSystemFactory.lua",
+      
+      ["stuart.hadoop.Path"] = "src/stuart/hadoop/Path.lua",
+      
       ["stuart.interface.clock"] = "src/stuart/interface/clock.lua",
       ["stuart.internal.Logger"] = "src/stuart/internal/Logger.lua",
       ["stuart.internal.logging"] = "src/stuart/internal/logging.lua",
+      
       ["stuart.streaming.DStream"] = "src/stuart/streaming/DStream.lua",
       ["stuart.streaming.HttpReceiver"] = "src/stuart/streaming/HttpReceiver.lua",
       ["stuart.streaming.QueueInputDStream"] = "src/stuart/streaming/QueueInputDStream.lua",
@@ -45,6 +50,7 @@ build = {
       ["stuart.streaming.SocketReceiver"] = "src/stuart/streaming/SocketReceiver.lua",
       ["stuart.streaming.StreamingContext"] = "src/stuart/streaming/StreamingContext.lua",
       ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua",
+      
       ["stuart.util.isInstanceOf"] = "src/stuart/util/isInstanceOf.lua",
       ["stuart.util.json"] = "src/stuart/util/json.lua",
       ["stuart.util.spark.randomizeInPlace"] = "src/stuart/util/spark/randomizeInPlace.lua",
