@@ -175,6 +175,7 @@ Used by Stuart to measure time, which is required by the `StreamingContext` coop
 * [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. If the [cjson](https://luarocks.org/modules/luarocks/lua-cjson) module is detected, it is used first for performance. But otherwise Lunajson is the portable fall-back.
 * [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for literal adaptation of many Apache Spark APIs.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
+* [net-url](https://luarocks.org/modules/golgote/net-url), a URL and query string parser/builder/normalizer.
 
 ## Compatibility
 

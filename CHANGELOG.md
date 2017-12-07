@@ -1,4 +1,7 @@
 ## [Unreleased]
+### Added
+- New Hadoop `Path` class, which introduces new [net-url](https://luarocks.org/modules/golgote/net-url) module dependency
+
 ### Fixed
 - `util.isInstanceOf` fails for non-table arguments such as nil
 
