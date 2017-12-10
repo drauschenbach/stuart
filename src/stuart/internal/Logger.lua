@@ -45,9 +45,8 @@ function Logger:log(event)
   local s = {
     [1]=os.date('%y/%m/%d %H:%M:%S'),
     [2]=levelName[event.level],
-    [3]=event.message,
-    [4]='\n'}
-  io.stderr:write(table.concat(s,' '))
+    [3]=event.message}
+  io.stderr:write(table.concat(s,' ') .. '\n')
 end
 
 function Logger:setLevel(level)
