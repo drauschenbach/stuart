@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.1.5] - 2017-12-10
 ### Added
 - New Hadoop `Path` class, which introduces new [net-url](https://luarocks.org/modules/golgote/net-url) module dependency
 
