@@ -32,6 +32,10 @@ FileSystemFactory.createForOpenPath = function(path)
       constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
         .. '/' .. segments[1] .. '/'
       openPath = table.concat(moses.rest(segments, 2), '/')
+    else
+      -- provide /webhdfs when absent
+      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/webhdfs/'
+      openPath = table.concat(segments, '/')
     end
     local fs = WebHdfsFileSystem:new(constructorUri)
     return fs, openPath

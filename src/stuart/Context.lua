@@ -49,8 +49,10 @@ function Context:hadoopFile(path, minPartitions)
     local fileStatuses = fs:listStatus(openPath)
     local lines = {}
     for _,fileStatus in ipairs(fileStatuses) do
-      if fileStatus.path:sub(1,1) ~= '.' and fileStatus.path:sub(1,1) ~= '_' then
-        local content = fs:open(fs.uri .. openPath .. '/' .. fileStatus.path)
+      if fileStatus.pathSuffix:sub(1,1) ~= '.' and fileStatus.pathSuffix:sub(1,1) ~= '_' then
+        local uri = openPath .. '/' .. fileStatus.pathSuffix
+        local content, status = fs:open(uri)
+        if status and status >= 400 then error(content) end
         for line in content:gmatch('[^\r\n]+') do
           lines[#lines+1] = line
         end

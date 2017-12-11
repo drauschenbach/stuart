@@ -27,23 +27,13 @@ function LocalFileSystem:listStatus(path)
   if has_lfs then
     local fileStatuses = {}
     for file in lfs.dir(self.uri .. (path or '')) do
-      local attr = lfs.attributes(file)
-      if attr then
-        fileStatuses[#fileStatuses+1] = {
-          isDirectory= attr.mode == 'directory',
-          isFile= attr.mode == 'file',
-          isSymlink= attr.mode == 'link',
-          len= attr.size,
-          path= file
-        }
-      else -- https://github.com/keplerproject/luafilesystem/issues/104
-        fileStatuses[#fileStatuses+1] = {
-          isDirectory = false,
-          isFile = true,
-          isSymlink = false,
-          path= file
-        }
-      end
+      local attr, err = lfs.attributes(self.uri .. (path or '') .. '/' .. file)
+      if err then error(err) end
+      fileStatuses[#fileStatuses+1] = {
+        type= attr.mode:upper(),
+        length= attr.size,
+        pathSuffix= file
+      }
     end
     return fileStatuses
   end

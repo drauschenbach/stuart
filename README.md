@@ -280,3 +280,9 @@ Pending → ...
 util.json can decode an object using cjson
 ... cjson not installed
 ```
+
+Testing with a WebHDFS endpoint:
+
+```
+$ WEBHDFS_URL=webhdfs://localhost:50075/webhdfs busted -v --defer-print
+```

@@ -34,6 +34,13 @@ describe('fileSystemFactory', function()
       assert.equals('a/b/foo.txt', openPath)
     end)
 
+    it('injects /webhdfs/v1 for a WebHDFS URL that omits then', function()
+      local fs, openPath = fileSystemFactory.createForOpenPath('webhdfs://127.0.0.1:50070/a/b/foo.txt?op=OPEN')
+      assert.is_true(fs:isInstanceOf(WebHdfsFileSystem))
+      assert.equals('webhdfs://127.0.0.1:50070/webhdfs/', fs:getUri())
+      assert.equals('a/b/foo.txt', openPath)
+    end)
+
   end)
   
 end)
