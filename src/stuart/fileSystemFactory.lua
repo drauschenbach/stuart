@@ -32,6 +32,10 @@ FileSystemFactory.createForOpenPath = function(path)
       constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
         .. '/' .. segments[1] .. '/'
       openPath = table.concat(moses.rest(segments, 2), '/')
+    else
+      -- provide /webhdfs when absent
+      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/webhdfs/'
+      openPath = table.concat(segments, '/')
     end
     local fs = WebHdfsFileSystem:new(constructorUri)
     return fs, openPath
@@ -45,8 +49,15 @@ FileSystemFactory.createForOpenPath = function(path)
   
   local segments = socketUrl.parse_path(path)
   segments['is_absolute'] = nil
-  local constructorUri = table.concat(moses.first(segments, #segments - 1), '/') .. '/'
-  local openPath = segments[#segments]
+  segments['is_directory'] = nil
+  local constructorUri, openPath
+  if #segments == 1 then
+    constructorUri = './'
+    openPath = segments[1]
+  else
+    constructorUri = table.concat(moses.first(segments, #segments - 1), '/') .. '/'
+    openPath = segments[#segments]
+  end
   local fs = LocalFileSystem:new(constructorUri)
   return fs, openPath
   

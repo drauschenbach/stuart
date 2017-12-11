@@ -1,5 +1,6 @@
-## [0.1.5] - 2017-12-10
+## [0.1.5-1] - 2017-12-11
 ### Added
+- Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
 - New Hadoop `Path` class, which introduces new [net-url](https://luarocks.org/modules/golgote/net-url) module dependency
 
 ### Fixed

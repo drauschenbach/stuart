@@ -45,12 +45,28 @@ end
 
 function Context:hadoopFile(path, minPartitions)
   local fs, openPath = fileSystemFactory.createForOpenPath(path)
-  local content = fs:open(openPath)
-  local lines = {}
-  for line in content:gmatch('[^\r\n]+') do
-    lines[#lines+1] = line
+  if fs:isDirectory(openPath) then
+    local fileStatuses = fs:listStatus(openPath)
+    local lines = {}
+    for _,fileStatus in ipairs(fileStatuses) do
+      if fileStatus.pathSuffix:sub(1,1) ~= '.' and fileStatus.pathSuffix:sub(1,1) ~= '_' then
+        local uri = openPath .. '/' .. fileStatus.pathSuffix
+        local content, status = fs:open(uri)
+        if status and status >= 400 then error(content) end
+        for line in content:gmatch('[^\r\n]+') do
+          lines[#lines+1] = line
+        end
+      end
+    end
+    return self:parallelize(lines, minPartitions)
+  else
+    local content = fs:open(openPath)
+    local lines = {}
+    for line in content:gmatch('[^\r\n]+') do
+      lines[#lines+1] = line
+    end
+    return self:parallelize(lines, minPartitions)
   end
-  return self:parallelize(lines, minPartitions)
 end
 
 function Context:isStopped()
