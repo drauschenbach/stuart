@@ -13,6 +13,13 @@ describe('fileSystemFactory', function()
       assert.equals('aristotle1.txt', openPath)
     end)
   
+    it('returns a LocalFileSystem for relative directory path', function()
+      local fs, openPath = fileSystemFactory.createForOpenPath('spec-fixtures/')
+      assert.is_true(fs:isInstanceOf(LocalFileSystem))
+      assert.equals('./', fs:getUri())
+      assert.equals('spec-fixtures', openPath)
+    end)
+  
     it('returns a LocalFileSystem for a relative path starting with ./', function()
       local fs, openPath = fileSystemFactory.createForOpenPath('./spec-fixtures/aristotle1.txt')
       assert.is_true(fs:isInstanceOf(LocalFileSystem))
