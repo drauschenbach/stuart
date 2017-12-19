@@ -1,6 +1,6 @@
 local class = require 'middleclass'
 local isInstanceOf = require 'stuart.util.isInstanceOf'
-local url = require 'net.url'
+local netUrl = require 'net.url'
 
 local function lastIndexOf(haystack, needle)
   local last_index = 0
@@ -15,7 +15,7 @@ local Path = class('Path')
 function Path:initialize(arg1, arg2)
   if arg2 == nil then -- arg1=pathString
     self:_checkPathArg(arg1)
-    self.uri = url.parse(arg1)
+    self.uri = netUrl.parse(arg1)
     self:normalize()
   else -- arg1=parent, arg2=child
     local parent, child = arg1, arg2
@@ -23,7 +23,7 @@ function Path:initialize(arg1, arg2)
     if not isInstanceOf(child, Path) then child = Path:new(child) end
     -- resolve a child path against a parent path
     parent.uri.path = parent.uri.path .. '/'
-    self.uri = url.resolve(parent.uri, child.uri)
+    self.uri = netUrl.resolve(parent.uri, child.uri)
     self:normalize(parent:isAbsolute())
   end
 end

@@ -1,5 +1,6 @@
 local moses = require 'moses'
-local socketUrl = require 'socket.url'
+local netUrl = require 'net.url'
+local split = require 'stuart.util.split'
 
 local LocalFileSystem = require 'stuart.LocalFileSystem'
 local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
@@ -11,17 +12,16 @@ local FileSystemFactory = {}
 -- ============================================================================
 FileSystemFactory.createForOpenPath = function(path)
 
-  local parsedUri = socketUrl.parse(path)
+  local parsedUri = netUrl.parse(path)
   
   -- --------------------------------------------------------------------------
   -- URI support
   -- --------------------------------------------------------------------------
   
+  local segments = split(parsedUri.path, '/')
   if parsedUri.scheme == 'webhdfs' or parsedUri.scheme == 'swebhdfs' then
     local constructorUri, openPath
     local uriSegments = moses.clone(parsedUri)
-    local segments = socketUrl.parse_path(uriSegments.path)
-    segments['is_absolute'] = nil
     if #segments > 2 and segments[1] == 'webhdfs' and segments[2] == 'v1' then
       -- split /webhdfs/v1/path/file into constructorUri=/webhdfs/v1/ and openPath=path/file
       constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
@@ -47,9 +47,6 @@ FileSystemFactory.createForOpenPath = function(path)
   -- local path support
   -- --------------------------------------------------------------------------
   
-  local segments = socketUrl.parse_path(path)
-  segments['is_absolute'] = nil
-  segments['is_directory'] = nil
   local constructorUri, openPath
   if #segments == 1 then
     constructorUri = './'
