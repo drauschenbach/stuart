@@ -1,23 +1,24 @@
 local class = require 'middleclass'
-local http = require 'socket.http'
+local has_luasocket, http = pcall(require, 'socket.http')
 local jsonutil = require 'stuart.util.json'
 local moses = require 'moses'
-local url = require 'socket.url'
+local _, socketUrl = pcall(require, 'socket.url')
 
 local FileSystem = require 'stuart.FileSystem'
 
 local WebHdfsFileSystem = class('WebHdfsFileSystem', FileSystem)
 
 function WebHdfsFileSystem:initialize(uri)
+  assert(has_luasocket)
   FileSystem.initialize(self, uri)
-  self.parsedUri = url.parse(uri)
+  self.parsedUri = socketUrl.parse(uri)
 end
 
 function WebHdfsFileSystem:getFileStatus(path)
   local urlSegments = moses.clone(self.parsedUri)
   urlSegments.path = urlSegments.path .. '/v1/' .. (path or '')
   urlSegments.query = 'op=GETFILESTATUS'
-  local uri = url.build(urlSegments)
+  local uri = socketUrl.build(urlSegments)
   local json, status, headers = http.request(uri)
   local obj = jsonutil.decode(json)
   if obj.RemoteException then error(obj.RemoteException.message) end
@@ -33,7 +34,7 @@ function WebHdfsFileSystem:listStatus(path)
   local urlSegments = moses.clone(self.parsedUri)
   urlSegments.path = urlSegments.path .. '/v1/' .. (path or '')
   urlSegments.query = 'op=LISTSTATUS'
-  local uri = url.build(urlSegments)
+  local uri = socketUrl.build(urlSegments)
   local json, status, headers = http.request(uri)
   local obj = jsonutil.decode(json)
   if obj.RemoteException then error(obj.RemoteException.message) end
@@ -44,7 +45,7 @@ function WebHdfsFileSystem:mkdirs(path)
   local urlSegments = moses.clone(self.parsedUri)
   urlSegments.path = urlSegments.path .. '/v1/' .. (path or '')
   urlSegments.query = 'op=MKDIRS'
-  local uri = url.build(urlSegments)
+  local uri = socketUrl.build(urlSegments)
   local json, status, headers = http.request(uri)
   local obj = jsonutil.decode(json)
   if obj.RemoteException then error(obj.RemoteException.message) end
@@ -55,7 +56,7 @@ function WebHdfsFileSystem:open(path)
   local urlSegments = moses.clone(self.parsedUri)
   urlSegments.path = urlSegments.path .. '/v1/' .. (path or '')
   urlSegments.query = 'op=OPEN'
-  local uri = url.build(urlSegments)
+  local uri = socketUrl.build(urlSegments)
   local data, status, headers = http.request(uri)
   return data, status, headers
 end
