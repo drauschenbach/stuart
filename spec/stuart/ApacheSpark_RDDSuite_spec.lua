@@ -1,5 +1,6 @@
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
+local split = require 'stuart.util.split'
 local stuart = require 'stuart'
 
 moses.range = require 'stuart.util.mosesPatchedRange'
@@ -9,13 +10,6 @@ registerAsserts(assert)
 describe('Apache Spark 2.2.0 RDDSuite', function()
 
   local sc = stuart.NewContext()
-
-  local split = function(str, sep)
-    local fields = {}
-    local pattern = string.format('([^%s]+)', sep)
-    str:gsub(pattern, function(c) fields[#fields+1] = c end)
-    return fields
-  end
 
   it('basic operations', function()
     local nums = sc:makeRDD({1,2,3,4}, 2)
