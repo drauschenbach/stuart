@@ -3,29 +3,25 @@
 -- @copyright 2012-2017
 -- @license [MIT](http://www.opensource.org/licenses/mit-license.php)
 
--- Unused functions removed for Stuart 
-
-local _MODULEVERSION = '1.6.1'
+-- Unused functions removed for Stuart
 
 -- Internalisation
-local next, type, select, pcall  = next, type, select, pcall
+local next, type, pcall          = next, type, pcall
 local setmetatable, getmetatable = setmetatable, getmetatable
 local t_insert, t_sort           = table.insert, table.sort
-local t_remove,t_concat          = table.remove, table.concat
+local t_concat                   = table.concat
 local randomseed, random, huge   = math.randomseed, math.random, math.huge
 local floor, max, min            = math.floor, math.max, math.min
-local rawget                     = rawget
 local unpack                     = table.unpack or unpack
 local pairs,ipairs               = pairs,ipairs
 local clock                      = os.clock
-local _                          = {}
+local M                          = {}
 
 
 -- ======== Private helpers
 
 local function f_max(a,b) return a>b end
 local function f_min(a,b) return a<b end
-local function clamp(var,a,b) return (var<a) and a or (var>b and b or var) end
 local function isTrue(_,value) return value and true end
 local function iNot(value) return not value end
 
@@ -37,12 +33,12 @@ end
 
 local function extract(list,comp,transform,...) -- extracts value from a list
   local _ans
-  local transform = transform or _.identity
+  transform = transform or M.identity
   for index,value in pairs(list) do
     if not _ans then _ans = transform(value,...)
     else
-      local value = transform(value,...)
-      _ans = comp(_ans,value) and _ans or value
+      local value2 = transform(value,...)
+      _ans = comp(_ans,value2) and _ans or value2
     end
   end
   return _ans
@@ -50,9 +46,9 @@ end
 
 local function partgen(t, n, f, pad) -- generates array partitions
   for i = 0, #t, n do
-    local s = _.slice(t, i+1, i+n)
-    if #s>0 then 
-      while (#s < n and pad) do s[#s+1] = pad end     
+    local s = M.slice(t, i+1, i+n)
+    if #s>0 then
+      while (#s < n and pad) do s[#s+1] = pad end
       f(s)
     end
   end
@@ -68,7 +64,7 @@ local unique_id_counter = -1
 -- @name clear
 -- @param t a table
 -- @return the given table, cleared.
-function _.clear(t)
+function M.clear(t)
   for k in pairs(t) do t[k] = nil end
   return t
 end
@@ -80,14 +76,14 @@ end
 -- @param f a function, prototyped as `f (k, v, ...)`
 -- @param[opt] ... Optional args to be passed to `f`
 -- @see eachi
-function _.each(t, f, ...)
+function M.each(t, f, ...)
   for index,value in pairs(t) do
     f(index,value,...)
   end
 end
 
---- Iterates on integer key-value pairs, calling `f(k, v)` every step. 
--- Only applies to values located at integer keys. The table can be a sparse array. 
+--- Iterates on integer key-value pairs, calling `f(k, v)` every step.
+-- Only applies to values located at integer keys. The table can be a sparse array.
 -- Iteration will start from the lowest integer key found to the highest one.
 -- <br/><em>Aliased as `forEachi`</em>.
 -- @name eachi
@@ -95,9 +91,9 @@ end
 -- @param f a function, prototyped as `f (k, v, ...)`
 -- @param[opt] ... Optional args to be passed to `f`
 -- @see each
-function _.eachi(t, f, ...)
-  local lkeys = _.sort(_.select(_.keys(t), function(k,v)
-    return _.isInteger(v)
+function M.eachi(t, f, ...)
+  local lkeys = M.sort(M.select(M.keys(t), function(_,v)
+    return M.isInteger(v)
   end))
   for k, key in ipairs(lkeys) do
     f(key, t[key],...)
@@ -111,13 +107,13 @@ end
 -- @return the count of occurrences of the given value
 -- @see countf
 -- @see size
-function _.count(t, value)
-  if _.isNil(value) then return _.size(t) end
-  local count = 0
-  _.each(t, function(k,v)
-    if _.isEqual(v, value) then count = count + 1 end
+function M.count(t, value)
+  if M.isNil(value) then return M.size(t) end
+  local r = 0
+  M.each(t, function(_,v)
+    if M.isEqual(v, value) then r = r + 1 end
   end)
-  return count
+  return r
 end
 
 --- Maps `f (k, v)` on key-value pairs, collects and returns the results.
@@ -127,7 +123,7 @@ end
 -- @param f  an iterator function, prototyped as `f (k, v, ...)`
 -- @param[opt] ... Optional args to be passed to `f`
 -- @return a table of results
-function _.map(t, f, ...)
+function M.map(t, f, ...)
   local _t = {}
   for index,value in pairs(t) do
     local k, kv, v = index, f(index,value,...)
@@ -147,7 +143,7 @@ end
 -- @return the final state of reduction
 -- @see reduceRight
 -- @see reduceby
-function _.reduce(t, f, state)
+function M.reduce(t, f, state)
   for __,value in pairs(t) do
     if state == nil then state = value
     else state = f(state,value)
@@ -166,11 +162,11 @@ end
 -- @param[opt] ... optional args to be passed to `pred`
 -- @return the final state of reduction
 -- @see reduce
-function _.reduceby(t, f, state, pred, ...)
-  return _.reduce(_.select(t, pred, ...), f, state)
+function M.reduceby(t, f, state, pred, ...)
+  return M.reduce(M.select(t, pred, ...), f, state)
 end
 
---- Reduces a table, right-to-left. Folds the table from the last element to the first element 
+--- Reduces a table, right-to-left. Folds the table from the last element to the first element
 -- to single value, using a given iterator and an initial state.
 -- The iterator takes a state and a value, and returns a new state.
 -- <br/><em>Aliased as `injectr`, `foldr`</em>.
@@ -180,12 +176,12 @@ end
 -- @param[opt] state an initial state of reduction. Defaults to the last value in the table.
 -- @return the final state of reduction
 -- @see reduce
-function _.reduceRight(t, f, state)
-  return _.reduce(_.reverse(t),f,state)
+function M.reduceRight(t, f, state)
+  return M.reduce(M.reverse(t),f,state)
 end
 
 --- Reduces a table while saving intermediate states. Folds the table left-to-right
--- using a given iterator and an initial state. The iterator takes a state and a value, 
+-- using a given iterator and an initial state. The iterator takes a state and a value,
 -- and returns a new state. The result is an array of intermediate states.
 -- <br/><em>Aliased as `mapr`</em>
 -- @name mapReduce
@@ -194,7 +190,7 @@ end
 -- @param[opt] state an initial state of reduction. Defaults to the first value in the table.
 -- @return an array of states
 -- @see mapReduceRight
-function _.mapReduce(t, f, state)
+function M.mapReduce(t, f, state)
   local _t = {}
   for i,value in pairs(t) do
     _t[i] = not state and value or f(state,value)
@@ -204,7 +200,7 @@ function _.mapReduce(t, f, state)
 end
 
 --- Reduces a table while saving intermediate states. Folds the table right-to-left
--- using a given iterator and an initial state. The iterator takes a state and a value, 
+-- using a given iterator and an initial state. The iterator takes a state and a value,
 -- and returns a new state. The result is an array of intermediate states.
 -- <br/><em>Aliased as `maprr`</em>
 -- @name mapReduceRight
@@ -213,21 +209,21 @@ end
 -- @param[opt] state an initial state of reduction. Defaults to the last value in the table.
 -- @return an array of states
 -- @see mapReduce
-function _.mapReduceRight(t, f, state)
-  return _.mapReduce(_.reverse(t),f,state)
+function M.mapReduceRight(t, f, state)
+  return M.mapReduce(M.reverse(t),f,state)
 end
 
 --- Performs a linear search for a value in a table. It does not work for nested tables.
 -- The given value can be a function prototyped as `f (v, value)` which should return true when
--- any v in the table equals the value being searched. 
+-- any v in the table equals the value being searched.
 -- <br/><em>Aliased as `any`, `some`, `contains`</em>
 -- @name include
 -- @param t a table
 -- @param value a value to search for
 -- @return a boolean : `true` when found, `false` otherwise
 -- @see detect
-function _.include(t, value)
-  local _iter = _.isFunction(value) and value or _.isEqual
+function M.include(t, value)
+  local _iter = M.isFunction(value) and value or M.isEqual
   for __,v in pairs(t) do
     if _iter(v,value) then return true end
   end
@@ -236,14 +232,14 @@ end
 
 --- Performs a linear search for a value in a table. Returns the key of the value if found.
 -- The given value can be a function prototyped as `f (v, value)` which should return true when
--- any v in the table equals the value being searched. 
+-- any v in the table equals the value being searched.
 -- @name detect
 -- @param t a table
 -- @param value a value to search for
 -- @return the key of the value when found or __nil__
 -- @see include
-function _.detect(t, value)
-  local _iter = _.isFunction(value) and value or _.isEqual
+function M.detect(t, value)
+  local _iter = M.isFunction(value) and value or M.isEqual
   for key,arg in pairs(t) do
     if _iter(arg,value) then return key end
   end
@@ -255,8 +251,8 @@ end
 -- @param props a set of keys
 -- @return an array of values from the passed-in table
 -- @see findWhere
-function _.where(t, props)
-  local r = _.select(t, function(__,v)
+function M.where(t, props)
+  local r = M.select(t, function(_,v)
     for key in pairs(props) do
       if v[key] ~= props[key] then return false end
     end
@@ -271,8 +267,8 @@ end
 -- @param props a set of keys
 -- @return a value from the passed-in table
 -- @see where
-function _.findWhere(t, props)
-  local index = _.detect(t, function(v)
+function M.findWhere(t, props)
+  local index = M.detect(t, function(v)
     for key in pairs(props) do
       if props[key] ~= v[key] then return false end
     end
@@ -289,7 +285,7 @@ end
 -- @param[opt] ... Optional args to be passed to `f`
 -- @return the selected values
 -- @see reject
-function _.select(t, f, ...)
+function M.select(t, f, ...)
   local _t = {}
   for index,value in pairs(t) do
     if f(index, value,...) then _t[#_t+1] = value end
@@ -305,8 +301,8 @@ end
 -- @param[opt] ... Optional args to be passed to `f`
 -- @return the remaining values
 -- @see select
-function _.reject(t, f, ...)
-  local _mapped = _.map(t,f,...)
+function M.reject(t, f, ...)
+  local _mapped = M.map(t,f,...)
   local _t = {}
   for index,value in pairs (_mapped) do
     if not value then _t[#_t+1] = t[index] end
@@ -321,8 +317,8 @@ end
 -- @param f an iterator function, prototyped as `f (k, v, ...)`
 -- @param[opt] ... Optional args to be passed to `f`
 -- @return `true` if all values passes the predicate, `false` otherwise
-function _.all(t, f, ...)
-  return ((#_.select(_.map(t,f,...), isTrue)) == count(t))
+function M.all(t, f, ...)
+  return ((#M.select(M.map(t,f,...), isTrue)) == count(t))
 end
 
 --- Extracts values in a table having a given key.
@@ -330,8 +326,8 @@ end
 -- @param t a table
 -- @param key a key, will be used to index in each value: `value[key]`
 -- @return an array of values having the given key
-function _.pluck(t, key)
-  return _.reject(_.map(t,function(__,value)
+function M.pluck(t, key)
+  return M.reject(M.map(t,function(_,value)
       return value[key]
     end), iNot)
 end
@@ -344,7 +340,7 @@ end
 -- @param[optchain] ... Optional args to be passed to `transform`
 -- @return the max value found
 -- @see min
-function _.max(t, transform, ...)
+function M.max(t, transform, ...)
   return extract(t, f_max, transform, ...)
 end
 
@@ -356,7 +352,7 @@ end
 -- @param[optchain] ... Optional args to be passed to `transform`
 -- @return the min value found
 -- @see max
-function _.min(t, transform, ...)
+function M.min(t, transform, ...)
   return extract(t, f_min, transform, ...)
 end
 
@@ -366,10 +362,10 @@ end
 -- @param t a table
 -- @param[opt] seed a seed
 -- @return a shuffled copy of the given table
-function _.shuffle(t, seed)
+function M.shuffle(t, seed)
   if seed then randomseed(seed) end
   local _shuffled = {}
-  _.each(t,function(index,value)
+  M.each(t,function(index,value)
      local randPos = floor(random()*index)+1
     _shuffled[index] = _shuffled[randPos]
     _shuffled[randPos] = value
@@ -383,9 +379,9 @@ end
 -- @param a a table
 -- @param b another table
 -- @return `true` or `false`
-function _.same(a, b)
-  return _.all(a, function (i,v) return _.include(b,v) end) 
-     and _.all(b, function (i,v) return _.include(a,v) end)
+function M.same(a, b)
+  return M.all(a, function (_,v) return M.include(b,v) end)
+     and M.all(b, function (_,v) return M.include(a,v) end)
 end
 
 --- Sorts a table, in-place. If a comparison function is given, it will be used to sort values.
@@ -394,13 +390,13 @@ end
 -- @param[opt] comp a comparison function prototyped as `comp (a, b)`, defaults to <tt><</tt> operator.
 -- @return the initial table, sorted.
 -- @see sortBy
-function _.sort(t, comp)
+function M.sort(t, comp)
   t_sort(t, comp)
   return t
 end
 
 --- Sorts a table in-place using a transform. Values are ranked in a custom order of the results of
--- running `transform (v)` on all values. `transform` may also be a string name property  sort by. 
+-- running `transform (v)` on all values. `transform` may also be a string name property  sort by.
 -- `comp` is a comparison function.
 -- @name sortBy
 -- @param t a table
@@ -408,18 +404,18 @@ end
 -- @param[optchain] comp a comparision function, defaults to the `<` operator
 -- @return a new array of sorted values
 -- @see sort
-function _.sortBy(t, transform, comp)
-  local f = transform or _.identity
-  if _.isString(transform) then
-    f = function(t) return t[transform] end
+function M.sortBy(t, transform, comp)
+  local f = transform or M.identity
+  if M.isString(transform) then
+    f = function(u) return u[transform] end
   end
-  comp = comp or f_min  
+  comp = comp or f_min
   local _t = {}
-  _.each(t, function(__,v)
+  M.each(t, function(_,v)
     _t[#_t+1] = {value = v, transform = f(v)}
   end)
   t_sort(_t, function(a,b) return comp(a.transform, b.transform) end)
-  return _.pluck(_t, 'value')
+  return M.pluck(_t, 'value')
 end
 
 --- Splits a table into subsets groups.
@@ -428,10 +424,10 @@ end
 -- @param iter an iterator function, prototyped as `iter (k, v, ...)`
 -- @param[opt] ... Optional args to be passed to `iter`
 -- @return a table of subsets groups
-function _.groupBy(t, iter, ...)
+function M.groupBy(t, iter, ...)
   local vararg = {...}
   local _t = {}
-  _.each(t, function(i,v)
+  M.each(t, function(i,v)
       local _key = iter(i,v, unpack(vararg))
       if _t[_key] then _t[_key][#_t[_key]+1] = v
       else _t[_key] = {v}
@@ -447,10 +443,10 @@ end
 -- @return a count
 -- @see count
 -- @see countf
-function _.size(...)
+function M.size(...)
   local args = {...}
   local arg1 = args[1]
-  if _.isTable(arg1) then
+  if M.isTable(arg1) then
     return count(args[1])
   else
     return count(args)
@@ -466,24 +462,24 @@ end
 -- @name sample
 -- @param array an array
 -- @param[opt] n a number of elements to be sampled. Defaults to 1.
--- @param[optchain] seed an optional seed for shuffling 
+-- @param[optchain] seed an optional seed for shuffling
 -- @return an array of selected values or a single value when `n` == 1
 -- @see sampleProb
-function _.sample(array, n, seed)
+function M.sample(array, n, seed)
   n = n or 1
   if n < 1 then return end
   if n == 1 then
     if seed then randomseed(seed) end
     return array[random(1, #array)]
   end
-  return _.slice(_.shuffle(array, seed), 1, n)
+  return M.slice(M.shuffle(array, seed), 1, n)
 end
 
 --- Converts a list of arguments to an array.
 -- @name toArray
 -- @param ... a list of arguments
 -- @return an array of all passed-in args
-function _.toArray(...) return {...} end
+function M.toArray(...) return {...} end
 
 --- Looks for the first occurrence of a given value in an array. Returns the value index if found.
 -- Uses @{isEqual} to compare values.
@@ -492,9 +488,9 @@ function _.toArray(...) return {...} end
 -- @param value a value to lookup for
 -- @param[opt] from the index from where the search will start. Defaults to 1.
 -- @return the index of the value if found in the array, `nil` otherwise.
-function _.find(array, value, from)
+function M.find(array, value, from)
   for i = from or 1, #array do
-    if _.isEqual(array[i], value) then return i end
+    if M.isEqual(array[i], value) then return i end
   end
 end
 
@@ -502,7 +498,7 @@ end
 -- @name reverse
 -- @param array an array
 -- @return a reversed array
-function _.reverse(array)
+function M.reverse(array)
   local _array = {}
   for i = #array,1,-1 do
     _array[#_array+1] = array[i]
@@ -519,13 +515,13 @@ end
 -- @param[opt] i the index from which to start replacing values. Defaults to 1.
 -- @param[optchain] j the index where to stop replacing values. Defaults to the array size.
 -- @return the original array with values changed
-function _.fill(array, value, i, j)
-  j = j or _.size(array)
-  for i = i or 1, j do array[i] = value end
+function M.fill(array, value, i, j)
+  j = j or M.size(array)
+  for k = i or 1, j do array[k] = value end
   return array
 end
 
---- Returns the index at which a value should be inserted. This index is evaluated so 
+--- Returns the index at which a value should be inserted. This index is evaluated so
 -- that it maintains the sort. If a comparison function is passed, it will be used to sort
 -- values.
 -- @name sortedIndex
@@ -534,9 +530,9 @@ end
 -- @param[opt] comp an comparison function prototyped as `f (a, b)`, defaults to <tt><</tt> operator.
 -- @param[optchain] sort whether or not the passed-in array should be sorted
 -- @return number the index at which the passed-in value should be inserted
-function _.sortedIndex(array, value, comp, sort)
+function M.sortedIndex(array, value, comp, sort)
   local _comp = comp or f_min
-  if sort then _.sort(array,_comp) end
+  if sort then M.sort(array,_comp) end
   for i = 1,#array do
     if not _comp(array[i],value) then return i end
   end
@@ -549,7 +545,7 @@ end
 -- @param value the value to search for
 -- @return the index of the passed-in value
 -- @see lastIndexOf
-function _.indexOf(array, value)
+function M.indexOf(array, value)
   for k = 1,#array do
     if array[k] == value then return k end
   end
@@ -561,8 +557,8 @@ end
 -- @param value the value to search for
 -- @return the index of the last occurrence of the passed-in value or __nil__
 -- @see indexOf
-function _.lastIndexOf(array, value)
-  local key = _.indexOf(_.reverse(array),value)
+function M.lastIndexOf(array, value)
+  local key = M.indexOf(M.reverse(array),value)
   if key then return #array-key+1 end
 end
 
@@ -573,7 +569,7 @@ end
 -- @param[opt] ... optional arguments to `pred`
 -- @return the index found or __nil__
 -- @see findLastIndex
-function _.findIndex(array, predicate, ...)
+function M.findIndex(array, predicate, ...)
   for k = 1, #array do
     if predicate(k,array[k],...) then return k end
   end
@@ -586,20 +582,20 @@ end
 -- @param[opt] ... optional arguments to `pred`
 -- @return the index found or __nil__
 -- @see findIndex
-function _.findLastIndex(array, predicate, ...)
-  local key = _.findIndex(_.reverse(array),predicate,...)
+function M.findLastIndex(array, predicate, ...)
+  local key = M.findIndex(M.reverse(array),predicate,...)
   if key then return #array-key+1 end
 end
 
 --- Slices values indexed within `[start, finish]` range.
--- <br/><em>Aliased as `_.sub`</em>
+-- <br/><em>Aliased as `M.sub`</em>
 -- @name slice
 -- @param array an array
 -- @param[opt] start the lower bound index, defaults to the first index in the array.
 -- @param[optchain] finish the upper bound index, defaults to the array length.
 -- @return a new array of sliced values
-function _.slice(array, start, finish)
-  return _.select(array, function(index)
+function M.slice(array, start, finish)
+  return M.select(array, function(index)
       return (index >= (start or next(array)) and index <= (finish or #array))
     end)
 end
@@ -613,9 +609,9 @@ end
 -- @see initial
 -- @see last
 -- @see rest
-function _.first(array, n)
-  local n = n or 1
-  return _.slice(array,1, min(n,#array))
+function M.first(array, n)
+  n = n or 1
+  return M.slice(array,1, min(n,#array))
 end
 
 --- Returns all values in an array excluding the last N values.
@@ -626,9 +622,9 @@ end
 -- @see first
 -- @see last
 -- @see rest
-function _.initial(array, n)
+function M.initial(array, n)
   if n and n < 0 then return end
-  return _.slice(array,1, n and #array-(min(n,#array)) or #array-1)
+  return M.slice(array,1, n and #array-(min(n,#array)) or #array-1)
 end
 
 --- Returns the last N values in an array.
@@ -639,9 +635,9 @@ end
 -- @see first
 -- @see initial
 -- @see rest
-function _.last(array, n)
+function M.last(array, n)
   if n and n <= 0 then return end
-  return _.slice(array,n and #array-min(n-1,#array-1) or 2,#array)
+  return M.slice(array,n and #array-min(n-1,#array-1) or 2,#array)
 end
 
 --- Removes all values before index.
@@ -653,17 +649,17 @@ end
 -- @see first
 -- @see initial
 -- @see last
-function _.rest(array,index)
+function M.rest(array,index)
   if index and index > #array then return {} end
-  return _.slice(array,index and max(1,min(index,#array)) or 1,#array)
+  return M.slice(array,index and max(1,min(index,#array)) or 1,#array)
 end
 
 --- Removes all falsy (false and nil) values.
 -- @name compact
 -- @param array an array
 -- @return a new array
-function _.compact(array)
-  return _.reject(array, function (_,value)
+function M.compact(array)
+  return M.reject(array, function (_,value)
     return not value
   end)
 end
@@ -673,14 +669,14 @@ end
 -- @param array an array
 -- @param[opt] shallow specifies the flattening depth
 -- @return a new array, flattened
-function _.flatten(array, shallow)
-  local shallow = shallow or false
+function M.flatten(array, shallow)
+  shallow = shallow or false
   local new_flattened
   local _flat = {}
   for key,value in pairs(array) do
-    if _.isTable(value) then
-      new_flattened = shallow and value or _.flatten (value)
-      _.each(new_flattened, function(_,item) _flat[#_flat+1] = item end)
+    if M.isTable(value) then
+      new_flattened = shallow and value or M.flatten (value)
+      M.each(new_flattened, function(_,item) _flat[#_flat+1] = item end)
     else _flat[#_flat+1] = value
     end
   end
@@ -696,10 +692,10 @@ end
 -- @see union
 -- @see intersection
 -- @see symmetricDifference
-function _.difference(array, array2)
-  if not array2 then return _.clone(array) end
-  return _.select(array,function(i,value)
-      return not _.include(array2,value)
+function M.difference(array, array2)
+  if not array2 then return M.clone(array) end
+  return M.select(array,function(_,value)
+      return not M.include(array2,value)
     end)
 end
 
@@ -710,8 +706,8 @@ end
 -- @see difference
 -- @see intersection
 -- @see symmetricDifference
-function _.union(...)
-  return _.uniq(_.flatten({...}))
+function M.union(...)
+  return M.uniq(M.flatten({...}))
 end
 
 --- Returns the  intersection of all passed-in arrays.
@@ -723,12 +719,12 @@ end
 -- @see difference
 -- @see union
 -- @see symmetricDifference
-function _.intersection(array, ...)
+function M.intersection(array, ...)
   local arg = {...}
   local _intersect = {}
   for i,value in ipairs(array) do
-    if _.all(arg,function(i,v)
-          return _.include(v,value)
+    if M.all(arg,function(_,v)
+          return M.include(v,value)
         end) then
       t_insert(_intersect,value)
     end
@@ -742,10 +738,10 @@ end
 -- @param array an array
 -- @return a new array, duplicate-free
 -- @see isunique
-function _.unique(array)
+function M.unique(array)
   local ret = {}
   for i = 1, #array do
-    if not _.find(ret, array[i]) then
+    if not M.find(ret, array[i]) then
       ret[#ret+1] = array[i]
     end
   end
@@ -758,14 +754,14 @@ end
 -- @name zip
 -- @param ... a variable number of array arguments
 -- @return a new array
-function _.zip(...)
+function M.zip(...)
   local arg = {...}
-  local _len = _.max(_.map(arg,function(i,v)
+  local _len = M.max(M.map(arg,function(_,v)
       return #v
     end))
   local _ans = {}
   for i = 1,_len do
-    _ans[i] = _.pluck(arg,i)
+    _ans[i] = M.pluck(arg,i)
   end
   return _ans
 end
@@ -775,7 +771,7 @@ end
 -- @param array an array
 -- @param other an array
 -- @return a new array
-function _.append(array, other)
+function M.append(array, other)
   local t = {}
   for i,v in ipairs(array) do t[i] = v end
   for i,v in ipairs(other) do t[#t+1] = v end
@@ -790,7 +786,7 @@ end
 -- @param[optchain] to the final value of the range
 -- @param[optchain] step the step of count
 -- @return a new array of numbers
-function _.range(...)
+function M.range(...)
   local arg = {...}
   local _start,_stop,_step
   if #arg==0 then return {}
@@ -816,21 +812,21 @@ end
 -- @param value a value to be repeated
 -- @param n the number of repetitions of value.
 -- @return a new array of `n` values
-function _.rep(value, n)
+function M.rep(value, n)
   local ret = {}
   for i = 1, n do ret[#ret+1] = value end
   return ret
 end
 
---- Iterator returning partitions of an array. It returns arrays of length `n` 
--- made of values from the given array. If the last partition has lower elements than `n` and 
+--- Iterator returning partitions of an array. It returns arrays of length `n`
+-- made of values from the given array. If the last partition has lower elements than `n` and
 -- `pad` is supplied, it will be adjusted to `n` of elements with `pad` value.
 -- @name partition
 -- @param array an array
 -- @param[opt] n the size of partitions. Should be greater than 0. Defaults to 1.
 -- @param[optchain] pad a value to adjust the last subsequence to the `n` elements
 -- @return an iterator function
-function _.partition(array, n, pad)
+function M.partition(array, n, pad)
   if n<=0 then return end
   return coroutine.wrap(function()
     partgen(array, n or 1, coroutine.yield, pad)
@@ -847,8 +843,8 @@ end
 -- @param[optchain] i the starting index, defaults to 1.
 -- @param[optchain] j the final index, defaults to the array length.
 -- @return a string
-function _.concat(array, sep, i, j)
-  local _array = _.map(array,function(i,v)
+function M.concat(array, sep, i, j)
+  local _array = M.map(array,function(_,v)
     return tostring(v)
   end)
   return t_concat(_array,sep,i or 1,j or #array)
@@ -861,20 +857,20 @@ end
 --- The no-operation function.
 -- @name noop
 -- @return nothing
-function _.noop() return end
+function M.noop() return end
 
 --- Returns the passed-in value. This function is used internally
 -- as a default iterator.
 -- @name identity
 -- @param value a value
 -- @return the passed-in value
-function _.identity(value) return value end
+function M.identity(value) return value end
 
 --- Creates a constant function which returns the same output on every call.
 -- @name constant
 -- @param value a constant value
 -- @return a constant function
-function _.constant(value) return function() return value end end
+function M.constant(value) return function() return value end end
 
 --- Binds `v` to be the first argument to `f`. Calling `f (...)` will result to `f (v, ...)`.
 -- @name bind
@@ -884,7 +880,7 @@ function _.constant(value) return function() return value end end
 -- @see bind2
 -- @see bindn
 -- @see bindAll
-function _.bind(f, v)
+function M.bind(f, v)
   return function (...)
       return f(v,...)
     end
@@ -898,13 +894,13 @@ end
 -- @see bind
 -- @see bindn
 -- @see bindAll
-function _.bind2(f, v)
+function M.bind2(f, v)
   return function (t, ...)
     return f(t, v, ...)
   end
 end
 
---- Binds `...` to be the N-first arguments to function `f`. 
+--- Binds `...` to be the N-first arguments to function `f`.
 -- Calling `f (a1, a2, ..., aN)` will result to `f (..., a1, a2, ...,aN)`.
 -- @name bindn
 -- @param f a function
@@ -913,10 +909,10 @@ end
 -- @see bind
 -- @see bind2
 -- @see bindAll
-function _.bindn(f, ...)
+function M.bindn(f, ...)
   local iArg = {...}
   return function (...)
-      return f(unpack(_.append(iArg,{...})))
+      return f(unpack(M.append(iArg,{...})))
     end
 end
 
@@ -928,26 +924,26 @@ end
 -- @param[opt] template either a string or a function template to format the ID
 -- @param[optchain] ... a variable number of arguments to be passed to `template`, in case it is a function.
 -- @return value an ID
-function _.uniqueId(template, ...)
+function M.uniqueId(template, ...)
   unique_id_counter = unique_id_counter + 1
   if template then
-    if _.isString(template) then
+    if M.isString(template) then
       return template:format(unique_id_counter)
-    elseif _.isFunction(template) then
+    elseif M.isFunction(template) then
       return template(unique_id_counter,...)
     end
   end
   return unique_id_counter
 end
 
---- Produces an iterator which repeatedly apply a function `f` onto an input. 
+--- Produces an iterator which repeatedly apply a function `f` onto an input.
 -- Yields x, then f(x), then f(f(x)), continuously.
 -- @name iterator
--- @param f a function 
+-- @param f a function
 -- @param x an initial input to `f`
 -- @return an iterator fnction
 -- <br/><em>Aliased as `iter`</em>.
-function _.iterator(f, x)
+function M.iterator(f, x)
   return function()
     x = f(x)
     return x
@@ -958,7 +954,7 @@ end
 -- @name array
 -- @param ... an iterator (a function, a table and a value)
 -- @return an array of results
-function _.array(...)
+function M.array(...)
   local r = {}
   for v in ... do r[#r+1] = v end
   return r
@@ -969,7 +965,7 @@ end
 -- @param f a function
 -- @param[opt] ... optional args to `f`
 -- @return the execution time and the results of `f (...)`
-function _.time(f, ...)
+function M.time(f, ...)
   local stime = clock()
   local r = {f(...)}
   return clock() - stime, unpack(r)
@@ -982,9 +978,9 @@ end
 -- @name keys
 -- @param obj an object
 -- @return an array
-function _.keys(obj)
+function M.keys(obj)
   local _oKeys = {}
-  _.each(obj,function(key) _oKeys[#_oKeys+1]=key end)
+  M.each(obj,function(key) _oKeys[#_oKeys+1]=key end)
   return _oKeys
 end
 
@@ -992,9 +988,9 @@ end
 -- @name values
 -- @param obj an object
 -- @return an array
-function _.values(obj)
+function M.values(obj)
   local _oValues = {}
-  _.each(obj,function(_,value) _oValues[#_oValues+1]=value end)
+  M.each(obj,function(_,value) _oValues[#_oValues+1]=value end)
   return _oValues
 end
 
@@ -1003,9 +999,9 @@ end
 -- @param obj an object
 -- @return an array list of key-values pairs
 -- @see toObj
-function _.kvpairs(obj)
+function M.kvpairs(obj)
   local t = {}
-  _.each(obj, function(k,v) t[#t+1] = {k,v} end)
+  M.each(obj, function(k,v) t[#t+1] = {k,v} end)
   return t
 end
 
@@ -1016,7 +1012,7 @@ end
 -- @param kvpairs an array-list of `kvpairs`
 -- @return an object
 -- @see kvpairs
-function _.toObj(kvpairs)
+function M.toObj(kvpairs)
   local obj = {}
   for __, v in ipairs(kvpairs) do
     obj[v[1]] = v[2]
@@ -1029,16 +1025,16 @@ end
 -- @param key a key property name
 -- @return a function which should accept an object as argument
 -- @see propertyOf
-function _.property(key)
+function M.property(key)
   return function(obj) return obj[key] end
 end
 
---- Returns a function which will return the value of an object property. 
+--- Returns a function which will return the value of an object property.
 -- @name propertyOf
 -- @param obj an object
 -- @return a function which should accept a key property argument
 -- @see property
-function _.propertyOf(obj)
+function M.propertyOf(obj)
   return function(key) return obj[key] end
 end
 
@@ -1046,7 +1042,7 @@ end
 -- @name toBoolean
 -- @param value a value. Can be of any type
 -- @return `true` if value is true, `false` otherwise (false or nil).
-function _.toBoolean(value)
+function M.toBoolean(value)
   return not not value
 end
 
@@ -1055,13 +1051,13 @@ end
 -- @param obj an object
 -- @param[opt] shallow whether or not nested array-properties should be cloned, defaults to false.
 -- @return a copy of the passed-in object
-function _.clone(obj, shallow)
-  if not _.isTable(obj) then return obj end
+function M.clone(obj, shallow)
+  if not M.isTable(obj) then return obj end
   local _obj = {}
-  _.each(obj,function(i,v)
-    if _.isTable(v) then
+  M.each(obj,function(i,v)
+    if M.isTable(v) then
       if not shallow then
-        _obj[i] = _.clone(v,shallow)
+        _obj[i] = M.clone(v,shallow)
       else _obj[i] = v
       end
     else
@@ -1076,7 +1072,7 @@ end
 -- @param obj an object
 -- @param key a key property to be checked
 -- @return `true` or `false`
-function _.has(obj, key)
+function M.has(obj, key)
   return obj[key]~=nil
 end
 
@@ -1086,11 +1082,11 @@ end
 -- @param obj an object
 -- @param ... a variable number of string keys
 -- @return the filtered object
-function _.pick(obj, ...)
-  local whitelist = _.flatten {...}
+function M.pick(obj, ...)
+  local whitelist = M.flatten {...}
   local _picked = {}
-  _.each(whitelist,function(key,property)
-      if not _.isNil(obj[property]) then
+  M.each(whitelist,function(_,property)
+      if not M.isNil(obj[property]) then
         _picked[property] = obj[property]
       end
     end)
@@ -1103,28 +1099,28 @@ end
 -- @param obj an object
 -- @param ... a variable number of string keys
 -- @return the filtered object
-function _.omit(obj, ...)
-  local blacklist = _.flatten {...}
+function M.omit(obj, ...)
+  local blacklist = M.flatten {...}
   local _picked = {}
-  _.each(obj,function(key,value)
-      if not _.include(blacklist,key) then
+  M.each(obj,function(key,value)
+      if not M.include(blacklist,key) then
         _picked[key] = value
       end
     end)
   return _picked
 end
 
---- Performs a deep comparison test between two objects. Can compare strings, functions 
--- (by reference), nil, booleans. Compares tables by reference or by values. If `useMt` 
--- is passed, the equality operator `==` will be used if one of the given objects has a 
+--- Performs a deep comparison test between two objects. Can compare strings, functions
+-- (by reference), nil, booleans. Compares tables by reference or by values. If `useMt`
+-- is passed, the equality operator `==` will be used if one of the given objects has a
 -- metatable implementing `__eq`.
--- <br/><em>Aliased as `_.compare`</em>
+-- <br/><em>Aliased as `M.compare`</em>
 -- @name isEqual
 -- @param objA an object
 -- @param objB another object
 -- @param[opt] useMt whether or not `__eq` should be used, defaults to false.
 -- @return `true` or `false`
-function _.isEqual(objA, objB, useMt)
+function M.isEqual(objA, objB, useMt)
   local typeObjA = type(objA)
   local typeObjB = type(objB)
 
@@ -1140,16 +1136,16 @@ function _.isEqual(objA, objB, useMt)
     end
   end
 
-  if _.size(objA)~=_.size(objB) then return false end
+  if M.size(objA)~=M.size(objB) then return false end
 
   for i,v1 in pairs(objA) do
     local v2 = objB[i]
-    if _.isNil(v2) or not _.isEqual(v1,v2,useMt) then return false end
+    if M.isNil(v2) or not M.isEqual(v1,v2,useMt) then return false end
   end
 
   for i,v1 in pairs(objB) do
     local v2 = objA[i]
-    if _.isNil(v2) then return false end
+    if M.isNil(v2) then return false end
   end
 
   return true
@@ -1159,7 +1155,7 @@ end
 -- @name isTable
 -- @param t a value to be tested
 -- @return `true` or `false`
-function _.isTable(t)
+function M.isTable(t)
   return type(t) == 'table'
 end
 
@@ -1168,9 +1164,9 @@ end
 -- @name isCallable
 -- @param obj an object
 -- @return `true` or `false`
-function _.isCallable(obj)
-  return (_.isFunction(obj) or
-     (_.isTable(obj) and getmetatable(obj)
+function M.isCallable(obj)
+  return (M.isFunction(obj) or
+     (M.isTable(obj) and getmetatable(obj)
                    and getmetatable(obj).__call~=nil) or false)
 end
 
@@ -1179,14 +1175,14 @@ end
 -- @name isArray
 -- @param obj an object
 -- @return `true` or `false`
-function _.isArray(obj)
-  if not _.isTable(obj) then return false end
+function M.isArray(obj)
+  if not M.isTable(obj) then return false end
   -- Thanks @Wojak and @Enrique García Cota for suggesting this
   -- See : http://love2d.org/forums/viewtopic.php?f=3&t=77255&start=40#p163624
   local i = 0
   for __ in pairs(obj) do
      i = i + 1
-     if _.isNil(obj[i]) then return false end
+     if M.isNil(obj[i]) then return false end
   end
   return true
 end
@@ -1195,8 +1191,8 @@ end
 -- @name isIterable
 -- @param obj an object
 -- @return `true` if the object can be iterated with `pairs` (or `ipairs`), `false` otherwise
-function _.isIterable(obj)
-  return _.toBoolean((pcall(pairs, obj)))
+function M.isIterable(obj)
+  return M.toBoolean((pcall(pairs, obj)))
 end
 
 --- Checks if the given pbject is empty. If `obj` is a string, will return `true`
@@ -1205,10 +1201,10 @@ end
 -- @name isEmpty
 -- @param[opt] obj an object
 -- @return `true` or `false`
-function _.isEmpty(obj)
-  if _.isNil(obj) then return true end
-  if _.isString(obj) then return #obj==0 end
-  if _.isTable(obj) then return next(obj)==nil end
+function M.isEmpty(obj)
+  if M.isNil(obj) then return true end
+  if M.isString(obj) then return #obj==0 end
+  if M.isTable(obj) then return next(obj)==nil end
   return true
 end
 
@@ -1216,7 +1212,7 @@ end
 -- @name isString
 -- @param obj an object
 -- @return `true` or `false`
-function _.isString(obj)
+function M.isString(obj)
   return type(obj) == 'string'
 end
 
@@ -1224,7 +1220,7 @@ end
 -- @name isFunction
 -- @param obj an object
 -- @return `true` or `false`
-function _.isFunction(obj)
+function M.isFunction(obj)
    return type(obj) == 'function'
 end
 
@@ -1232,7 +1228,7 @@ end
 -- @name isNil
 -- @param obj an object
 -- @return `true` or `false`
-function _.isNil(obj)
+function M.isNil(obj)
   return obj==nil
 end
 
@@ -1241,7 +1237,7 @@ end
 -- @param obj an object
 -- @return `true` or `false`
 -- @see isNaN
-function _.isNumber(obj)
+function M.isNumber(obj)
   return type(obj) == 'number'
 end
 
@@ -1250,16 +1246,16 @@ end
 -- @param obj an object
 -- @return `true` or `false`
 -- @see isNumber
-function _.isNaN(obj)
-  return _.isNumber(obj) and obj~=obj
+function M.isNaN(obj)
+  return M.isNumber(obj) and obj~=obj
 end
 
 --- Checks if the given argument is a finite number.
 -- @name isFinite
 -- @param obj an object
 -- @return `true` or `false`
-function _.isFinite(obj)
-  if not _.isNumber(obj) then return false end
+function M.isFinite(obj)
+  if not M.isNumber(obj) then return false end
   return obj > -huge and obj < huge
 end
 
@@ -1267,7 +1263,7 @@ end
 -- @name isBoolean
 -- @param obj an object
 -- @return `true` or `false`
-function _.isBoolean(obj)
+function M.isBoolean(obj)
   return type(obj) == 'boolean'
 end
 
@@ -1275,8 +1271,8 @@ end
 -- @name isInteger
 -- @param obj an object
 -- @return `true` or `false`
-function _.isInteger(obj)
-  return _.isNumber(obj) and floor(obj)==obj
+function M.isInteger(obj)
+  return M.isNumber(obj) and floor(obj)==obj
 end
 
 -- Aliases
@@ -1284,59 +1280,59 @@ end
 do
 
   -- Table functions aliases
-  _.forEach     = _.each
-  _.forEachi    = _.eachi
-  _.loop        = _.cycle
-  _.collect     = _.map
-  _.inject      = _.reduce
-  _.foldl       = _.reduce
-  _.injectr     = _.reduceRight
-  _.foldr       = _.reduceRight
-  _.mapr        = _.mapReduce
-  _.maprr       = _.mapReduceRight
-  _.any         = _.include
-  _.some        = _.include
-  _.contains    = _.include
-  _.filter      = _.select
-  _.discard     = _.reject
-  _.every       = _.all
+  M.forEach     = M.each
+  M.forEachi    = M.eachi
+  M.loop        = M.cycle
+  M.collect     = M.map
+  M.inject      = M.reduce
+  M.foldl       = M.reduce
+  M.injectr     = M.reduceRight
+  M.foldr       = M.reduceRight
+  M.mapr        = M.mapReduce
+  M.maprr       = M.mapReduceRight
+  M.any         = M.include
+  M.some        = M.include
+  M.contains    = M.include
+  M.filter      = M.select
+  M.discard     = M.reject
+  M.every       = M.all
   
   -- Array functions aliases
-  _.takeWhile   = _.selectWhile
-  _.rejectWhile = _.dropWhile
-  _.shift       = _.pop
-  _.remove      = _.pull
-  _.rmRange     = _.removeRange
-  _.chop        = _.removeRange
-  _.sub         = _.slice
-  _.head        = _.first
-  _.take        = _.first
-  _.tail        = _.rest
-  _.skip        = _.last
-  _.without     = _.difference
-  _.diff        = _.difference
-  _.symdiff     = _.symmetricDifference
-  _.xor         = _.symmetricDifference
-  _.uniq        = _.unique
-  _.isuniq      = _.isunique
-  _.transpose   = _.zip
-  _.part        = _.partition
-  _.perm        = _.permutation
-  _.mirror      = _.invert
-  _.join        = _.concat
+  M.takeWhile   = M.selectWhile
+  M.rejectWhile = M.dropWhile
+  M.shift       = M.pop
+  M.remove      = M.pull
+  M.rmRange     = M.removeRange
+  M.chop        = M.removeRange
+  M.sub         = M.slice
+  M.head        = M.first
+  M.take        = M.first
+  M.tail        = M.rest
+  M.skip        = M.last
+  M.without     = M.difference
+  M.diff        = M.difference
+  M.symdiff     = M.symmetricDifference
+  M.xor         = M.symmetricDifference
+  M.uniq        = M.unique
+  M.isuniq      = M.isunique
+  M.transpose   = M.zip
+  M.part        = M.partition
+  M.perm        = M.permutation
+  M.mirror      = M.invert
+  M.join        = M.concat
   
   -- Utility functions aliases
-  _.cache       = _.memoize
-  _.juxt        = _.juxtapose
-  _.uid         = _.uniqueId
-  _.iter        = _.iterator
+  M.cache       = M.memoize
+  M.juxt        = M.juxtapose
+  M.uid         = M.uniqueId
+  M.iter        = M.iterator
   
   -- Object functions aliases
-  _.methods     = _.functions
-  _.choose      = _.pick
-  _.drop        = _.omit
-  _.defaults    = _.template
-  _.compare     = _.isEqual
+  M.methods     = M.functions
+  M.choose      = M.pick
+  M.drop        = M.omit
+  M.defaults    = M.template
+  M.compare     = M.isEqual
   
 end
 
@@ -1358,8 +1354,8 @@ do
   end
 
   setmetatable(__,{
-    __call  = function(self,v) return new(v) end, -- Calls returns to instantiation
-    __index = function(t,key,...) return f[key] end  -- Redirects to the wrapper
+    __call  = function(_,v) return new(v) end, -- Calls returns to instantiation
+    __index = function(_,key) return f[key] end  -- Redirects to the wrapper
   })
 
   --- Returns a wrapped object. Calling library functions as methods on this object
@@ -1384,9 +1380,9 @@ do
   f.chain, f.value = __.chain, __.value
 
   -- Register all functions into the wrapper
-  for fname,fct in pairs(_) do
+  for fname,fct in pairs(M) do
     f[fname] = function(v, ...)
-      local wrapped = _.isTable(v) and v._wrapped or false
+      local wrapped = M.isTable(v) and v._wrapped or false
       if wrapped then
         local _arg = v._value
         local _rslt = fct(_arg,...)
@@ -1395,26 +1391,6 @@ do
         return fct(v,...)
       end
     end
-  end
-
-  --- Imports all library functions into a context.
-  -- @name import
-  -- @param[opt] context a context. Defaults to `_G` (global environment) when not given.
-  -- @param[optchain] noConflict if supplied, will not import functions having a key existing in the destination context.
-  -- @return the passed-in context
-  f.import = function(context, noConflict)
-    context = context or _ENV or _G
-    local funcs = _.functions()
-    _.each(funcs, function(k, fname)  
-      if rawget(context, fname) then
-        if not noConflict then
-          context[fname] = _[fname]        
-        end
-      else
-        context[fname] = _[fname]
-      end
-    end)
-    return context
   end
 
   return __
