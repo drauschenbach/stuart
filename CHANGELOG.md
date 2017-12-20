@@ -8,6 +8,8 @@
 - Dropped formal dependency on moses, and instead embed a copy that is trimmed of unused functions (~27% reduction).
 - Reduced memory usage due to JSON decoding by directly using its decode module instead of its parent module which references other unused features.
 - Removed mandatory dependence on `os` module, for eLua compatibility
+- Don't reference unused Spark Streaming modules from Spark Pi, for eLua
+- Defer loading of WebHdfsFileSystem or LocalFileSystem modules until they are required
 
 ### Fixed
 - `fileSystemFactory`, `StreamingContext`, and `WebHdfsFileSystem` modules failed to load in an eLua environment, where LuaSocket is not present.

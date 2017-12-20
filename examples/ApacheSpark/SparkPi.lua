@@ -1,9 +1,8 @@
 -- https://github.com/apache/spark/blob/v2.2.0/examples/src/main/scala/org/apache/spark/examples/SparkPi.scala
-
 local moses = require 'stuart.util.moses'
-local stuart = require 'stuart'
+local SparkContext = require 'stuart.Context'
 
-local sc = stuart.NewContext('local[1]', 'Spark Pi')
+local sc = SparkContext:new('local[1]', 'Spark Pi')
 local slices = 2
 if arg ~= nil and #arg > 0 then slices = arg[1] end
 

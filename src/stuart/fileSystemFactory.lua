@@ -2,9 +2,6 @@ local moses = require 'stuart.util.moses'
 local netUrl = require 'net.url'
 local split = require 'stuart.util.split'
 
-local LocalFileSystem = require 'stuart.LocalFileSystem'
-local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
-
 local FileSystemFactory = {}
 
 -- ============================================================================
@@ -37,6 +34,7 @@ FileSystemFactory.createForOpenPath = function(path)
       constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/webhdfs/'
       openPath = table.concat(segments, '/')
     end
+    local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
     local fs = WebHdfsFileSystem:new(constructorUri)
     return fs, openPath
   elseif parsedUri.scheme ~= nil then
@@ -55,6 +53,7 @@ FileSystemFactory.createForOpenPath = function(path)
     constructorUri = table.concat(moses.first(segments, #segments - 1), '/') .. '/'
     openPath = segments[#segments]
   end
+  local LocalFileSystem = require 'stuart.LocalFileSystem'
   local fs = LocalFileSystem:new(constructorUri)
   return fs, openPath
   
