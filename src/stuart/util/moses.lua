@@ -14,7 +14,6 @@ local randomseed, random, huge   = math.randomseed, math.random, math.huge
 local floor, max, min            = math.floor, math.max, math.min
 local unpack                     = table.unpack or unpack
 local pairs,ipairs               = pairs,ipairs
-local clock                      = os.clock
 local M                          = {}
 
 
@@ -958,17 +957,6 @@ function M.array(...)
   local r = {}
   for v in ... do r[#r+1] = v end
   return r
-end
-
---- Returns the execution time of `f (...)` and its returned values.
--- @name time
--- @param f a function
--- @param[opt] ... optional args to `f`
--- @return the execution time and the results of `f (...)`
-function M.time(f, ...)
-  local stime = clock()
-  local r = {f(...)}
-  return clock() - stime, unpack(r)
 end
 
 --- Object functions
