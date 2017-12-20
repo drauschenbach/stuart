@@ -167,34 +167,50 @@ Modules named `stuart.interface.*` provide interfaces to hardware or a host OS, 
 
 ### stuart.interface.clock
 
-Used by Stuart to measure time, which is required by the `StreamingContext` cooperative multitasking. On an OS, implementation defaults to LuaSocket `gettime()` with 4 decimals of precision. Falls back on Lua `os.time(os.clock('*t'))` with 0 digits of precision (whole seconds).
+Used to measure time, which is required by the `StreamingContext` cooperative multitasking. On an OS, implementation defaults to LuaSocket `gettime()` with 4 decimals of precision. Falls back on Lua `os.time(os.clock('*t'))` with 0 digits of precision (whole seconds).
+
+### stuart.interface.sleep
+
+Function used to sleep, when all receivers don't use their full timeslice allotments. Used to prevent pegging the CPU on systems where that makes sense, such as a host OS.
 
 ## Dependencies
 
-* [LuaSocket](https://luarocks.org/modules/luarocks/luasocket), where networking or system time are required.
-* [lunajson](https://luarocks.org/modules/grafi/lunajson), the pure-Lua JSON parser. If the [cjson](https://luarocks.org/modules/luarocks/lua-cjson) module is detected, it is used first for performance. But otherwise Lunajson is the portable fall-back.
-* [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and allow for literal adaptation of many Apache Spark APIs.
+### Required Dependencies
+
+All required dependencies are pure Lua:
+
+* [lunajson](https://luarocks.org/modules/grafi/lunajson) JSON parser.
+* [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and literal adaptation of many Apache Spark classes.
 * [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
 * [net-url](https://luarocks.org/modules/golgote/net-url), a URL and query string parser/builder/normalizer.
+
+### Optional Dependencies
+
+The following modules are used when present:
+
+* [lua-cjson](https://luarocks.org/modules/openresty/lua-cjson), for higher performance JSON parsing.
+* [luasocket](https://luarocks.org/modules/luarocks/luasocket), for networking, system time, and sleep capabilities in operating system environments.
 
 ## Compatibility
 
 Stuart is compatible with:
 
+* [eLua](http://www.eluaproject.net) (aka "Embedded Lua"), a 5.1 baremetal VM for microcontrollers
 * [GopherLua](https://github.com/yuin/gopher-lua)
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
 
-Use [gluasocket](https://github.com/BixData/gluasocket) to embed Stuart in a Go app.
-
-Stuart is incompatible with:
-
-* [Shopify/go-lua](https://github.com/Shopify/go-lua), due to its lack of `coroutine` and `debug.getinfo()` capabilities.
+See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
 
 ## Libraries for Stuart
 
 * [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html), for support of DataFrames and Parquet files
-* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html), for loading and evaluating models such as KMeansModel
+* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html), for loading and evaluating models such as `KMeansModel`
+
+To embed Stuart into a Go app, use:
+
+* [gluabit32](https://github.com/BixData/gluabit32)
+* [gluasocket](https://github.com/BixData/gluasocket)
 
 ## Roadmap
 

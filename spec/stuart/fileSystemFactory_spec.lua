@@ -1,6 +1,7 @@
 local fileSystemFactory = require 'stuart.fileSystemFactory'
 local LocalFileSystem = require 'stuart.LocalFileSystem'
 local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
+local has_luasocket = pcall(require, 'socket')
 
 describe('fileSystemFactory', function()
 
@@ -28,6 +29,7 @@ describe('fileSystemFactory', function()
     end)
   
     it('returns a WebHdfsFileSystem for a webhdfs URL', function()
+      if not has_luasocket then return pending('luasocket not installed') end
       local fs, openPath = fileSystemFactory.createForOpenPath('webhdfs://127.0.0.1:50070/webhdfs/v1/a/b/foo.txt?op=OPEN')
       assert.is_true(fs:isInstanceOf(WebHdfsFileSystem))
       assert.equals('webhdfs://127.0.0.1:50070/webhdfs/v1/', fs:getUri())
@@ -35,6 +37,7 @@ describe('fileSystemFactory', function()
     end)
 
     it('injects /webhdfs/v1 for a WebHDFS URL that omits then', function()
+      if not has_luasocket then return pending('luasocket not installed') end
       local fs, openPath = fileSystemFactory.createForOpenPath('webhdfs://127.0.0.1:50070/a/b/foo.txt?op=OPEN')
       assert.is_true(fs:isInstanceOf(WebHdfsFileSystem))
       assert.equals('webhdfs://127.0.0.1:50070/webhdfs/', fs:getUri())
