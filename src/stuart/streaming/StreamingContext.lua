@@ -2,16 +2,12 @@ local class = require 'middleclass'
 local clock = require 'stuart.interface.clock'
 local isInstanceOf = require 'stuart.util.isInstanceOf'
 local moses = require 'moses'
-local socket = require 'socket'
+local sleep = require 'stuart.interface.sleep'
 
 local RDD = require 'stuart.RDD'
 local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
 local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
 local SocketInputDStream = require 'stuart.streaming.SocketInputDStream'
-
-local function sleep(timeout)
-  socket.select(nil, nil, timeout)
-end
 
 -------------------------------------------------------------------------------
 

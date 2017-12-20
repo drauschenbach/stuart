@@ -1,12 +1,13 @@
 local class = require 'middleclass'
 local clock = require 'stuart.interface.clock'
 local log = require 'stuart.internal.logging'.log
-local socket = require 'socket'
+local has_luasocket, socket = pcall(require, 'socket')
 local Receiver = require 'stuart.streaming.Receiver'
 
 local SocketReceiver = class('SocketReceiver', Receiver)
 
 function SocketReceiver:initialize(ssc, hostname, port)
+  assert(has_luasocket)
   Receiver.initialize(self, ssc)
   self.hostname = hostname
   self.port = port or 0

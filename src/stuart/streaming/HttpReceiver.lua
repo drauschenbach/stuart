@@ -1,8 +1,8 @@
 local class = require 'middleclass'
 local clock = require 'stuart.interface.clock'
 local log = require 'stuart.internal.logging'.log
-local socket = require 'socket'
-local socketUrl = require 'socket.url'
+local has_luasocket, socket = pcall(require, 'socket')
+local _, socketUrl = pcall(require, 'socket.url')
 
 local Receiver = require 'stuart.streaming.Receiver'
 
@@ -22,6 +22,7 @@ function HttpReceiver:onHeadersReceived()
 end
 
 function HttpReceiver:onStart()
+  assert(has_luasocket)
   local parsedUrl = socketUrl.parse(self.url)
   log:info(string.format('Connecting to %s:%d', parsedUrl.host, parsedUrl.port))
   self.conn, self.err = socket.connect(parsedUrl.host, parsedUrl.port)

@@ -1,6 +1,16 @@
-## [0.1.5-1] - 2017-12-11
+## [Unreleased]
 ### Added
 - Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
+- New `stuart.interface.sleep` module that can be preloaded with a function that sleeps to prevent pegging the CPU in multithreaded environments. Defaults to LuaSocket sleep() when present.
+
+### Changed
+- Dropped formal dependency on LuaSocket. It is used when present, like `cjson`, but no longer required. This change is required for eLua support.
+
+### Fixed
+- `fileSystemFactory`, `StreamingContext`, and `WebHdfsFileSystem` modules failed to load in an eLua environment, where LuaSocket is not present.
+
+## [0.1.5-1] - 2017-12-11
+### Added
 - New Hadoop `Path` class, which introduces new [net-url](https://luarocks.org/modules/golgote/net-url) module dependency
 
 ### Fixed
@@ -8,7 +18,7 @@
 
 ## [0.1.4] - 2017-11-27
 ### Added
-- Support a `stuart.interface.clock` module that can be preloaded with a custom implementation that binds Stuart to a proprietary hardware clock, instead of always depending on LuaSocket for time which may be unavailable in microcontroller environments
+- New `stuart.interface.clock` module that can be preloaded with a custom implementation that binds Stuart to a proprietary hardware clock, instead of always depending on LuaSocket for time which may be unavailable in microcontroller environments
 - Support `Context` `stop()` and `isStopped()`, and `StreamingContext` `stop(stopSparkContext)` param
 - Support `SparkConf` class
 - Support `logging` module and `Logger` class, and add logging to RDD, Context, DStream, and Receiver classes. Connect/disconnect info now shown.
