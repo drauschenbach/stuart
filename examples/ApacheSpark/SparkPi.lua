@@ -1,6 +1,6 @@
 -- https://github.com/apache/spark/blob/v2.2.0/examples/src/main/scala/org/apache/spark/examples/SparkPi.scala
 
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 local stuart = require 'stuart'
 
 local sc = stuart.NewContext('local[1]', 'Spark Pi')
