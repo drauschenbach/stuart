@@ -42,8 +42,9 @@ Create a "Stuart Context", then count the number of lines in this README:
 $ lua
 Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
 
-sc = require 'stuart'.NewContext() 
-rdd = sc:textFile('README.md')
+local SparkContext = require 'stuart.Context'
+local sc = SparkContext:new() 
+local rdd = sc:textFile('README.md')
 print(rdd:count())
 151
 ```
@@ -79,13 +80,14 @@ $ nc -lk 9999
 Start a Spark Streaming job to read from the netcat server:
 
 ```lua
-sc = require 'stuart'.NewContext()
-ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
+local sc = require 'stuart'.NewContext()
+local ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
 
-dstream = ssc:socketTextStream('localhost', 9999)
+local dstream = ssc:socketTextStream('localhost', 9999)
 dstream:foreachRDD(function(rdd)
   print('Received RDD: ' .. rdd:collect())
 end)
+
 ssc:start()
 ssc:awaitTerminationOrTimeout(10)
 ssc:stop()
