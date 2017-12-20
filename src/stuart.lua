@@ -1,6 +1,6 @@
 local Context = require 'stuart.Context'
 local isInstanceOf = require 'stuart.util.isInstanceOf'
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 local SparkConf = require 'stuart.SparkConf'
 local StreamingContext = require 'stuart.streaming.StreamingContext'
 

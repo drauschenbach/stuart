@@ -1,5 +1,5 @@
 local class = require 'middleclass'
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 
 local Partition = class('Partition')
 

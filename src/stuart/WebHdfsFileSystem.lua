@@ -1,7 +1,7 @@
 local class = require 'middleclass'
 local has_luasocket, http = pcall(require, 'socket.http')
 local jsonutil = require 'stuart.util.json'
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 local _, socketUrl = pcall(require, 'socket.url')
 
 local FileSystem = require 'stuart.FileSystem'

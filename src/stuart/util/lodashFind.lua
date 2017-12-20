@@ -6,7 +6,7 @@
 -- adapted to moses for the Stuart project
 ---
 
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 
 local callIteratee = function (predicate, selfArg, ...)
   local result

@@ -1,4 +1,4 @@
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 local netUrl = require 'net.url'
 local split = require 'stuart.util.split'
 

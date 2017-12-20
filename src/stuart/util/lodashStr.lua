@@ -6,7 +6,7 @@
 -- adapted to moses for the Stuart project
 ---
 
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 
 local dblQuote = function (v)
   return '"'..v..'"'

@@ -1,6 +1,6 @@
 local class = require 'middleclass'
 local log = require 'stuart.internal.logging'.log
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
 local samplingUtils = require 'stuart.util.spark.samplingUtils'
 
