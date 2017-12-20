@@ -1,5 +1,4 @@
 local class = require 'middleclass'
-local moses = require 'stuart.util.moses'
 
 local Partition = class('Partition')
 
@@ -13,11 +12,13 @@ function Partition:_count()
 end
 
 function Partition:_flatten()
+  local moses = require 'stuart.util.moses'
   self.data = moses.flatten(self.data)
   return self
 end
 
 function Partition:_flattenValues()
+  local moses = require 'stuart.util.moses'
   self.data = moses.reduce(self.data, function(r, e)
     local x = e[2]
     if moses.isString(x) then

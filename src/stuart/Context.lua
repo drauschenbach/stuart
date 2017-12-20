@@ -1,15 +1,13 @@
 local class = require 'middleclass'
-local isInstanceOf = require 'stuart.util.isInstanceOf'
 local logging = require 'stuart.internal.logging'
 local moses = require 'stuart.util.moses'
-local Partition = require 'stuart.Partition'
-local RDD = require 'stuart.RDD'
-local SparkConf = require 'stuart.SparkConf'
 
 local Context = class('Context')
 Context.SPARK_VERSION = '2.2.0'
 
 function Context:initialize(arg1, arg2, arg3, arg4)
+  local isInstanceOf = require 'stuart.util.isInstanceOf'
+  local SparkConf = require 'stuart.SparkConf'
   if arg1 == nil and arg2 == nil then
     self.conf = SparkConf:new()
   elseif isInstanceOf(arg1, SparkConf) then
@@ -84,6 +82,8 @@ end
 function Context:parallelize(x, numPartitions)
   assert(not self.stopped)
   if not moses.isNumber(numPartitions) then numPartitions = self.defaultParallelism end
+  local Partition = require 'stuart.Partition'
+  local RDD = require 'stuart.RDD'
   if numPartitions == 1 then
     local p = Partition:new(x, 0)
     return RDD:new(self, {p})
