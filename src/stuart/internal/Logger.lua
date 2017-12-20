@@ -42,10 +42,7 @@ function Logger:info(msg)
 end
 
 function Logger:log(event)
-  local s = {
-    [1]=os.date('%y/%m/%d %H:%M:%S'),
-    [2]=levelName[event.level],
-    [3]=event.message}
+  local s = {levelName[event.level], event.message}
   io.stderr:write(table.concat(s,' ') .. '\n')
 end
 
