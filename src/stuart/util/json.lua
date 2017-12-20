@@ -3,12 +3,10 @@ local lunajsonDecoder = require 'lunajson.decoder'
 
 local M = {}
 
-M.decode = function(text)
-  if has_cjson then
-    return cjson.decode(text)
-  else
-    return lunajsonDecoder(text)
-  end
+if has_cjson then
+  M.decode = cjson.decode
+else
+  M.decode = lunajsonDecoder()
 end
 
 return M
