@@ -1,5 +1,4 @@
 local class = require 'middleclass'
-local log = require 'stuart.internal.logging'.log
 local moses = require 'stuart.util.moses'
 
 local RDD = class('RDD')
@@ -574,6 +573,7 @@ function RDD:takeSample(withReplacement, num, seed)
   -- this shouldn't happen often because we use a big multiplier for the initial size
   local numIters = 0
   while #samples < num do
+    local log = require 'stuart.internal.logging'.log
     log:warn('Needed to re-sample due to insufficient sample size. Repeat #' .. numIters)
     samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
     numIters = numIters + 1
