@@ -1,8 +1,6 @@
 local class = require 'middleclass'
 local log = require 'stuart.internal.logging'.log
 local moses = require 'stuart.util.moses'
-local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
-local samplingUtils = require 'stuart.util.spark.samplingUtils'
 
 local RDD = class('RDD')
 
@@ -563,10 +561,12 @@ function RDD:takeSample(withReplacement, num, seed)
   
   if seed ~= nil then math.randomseed(seed) end
 
+  local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
   if not withReplacement and num >= initialCount then
     return randomizeInPlace(self:collect())
   end
   
+  local samplingUtils = require 'stuart.util.spark.samplingUtils'
   local fraction = samplingUtils.computeFractionForSampleSize(num, initialCount, withReplacement)
   local samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
 

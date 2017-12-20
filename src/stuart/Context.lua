@@ -1,5 +1,4 @@
 local class = require 'middleclass'
-local fileSystemFactory = require 'stuart.fileSystemFactory'
 local isInstanceOf = require 'stuart.util.isInstanceOf'
 local logging = require 'stuart.internal.logging'
 local moses = require 'stuart.util.moses'
@@ -44,6 +43,7 @@ function Context:getNextId()
 end
 
 function Context:hadoopFile(path, minPartitions)
+  local fileSystemFactory = require 'stuart.fileSystemFactory'
   local fs, openPath = fileSystemFactory.createForOpenPath(path)
   if fs:isDirectory(openPath) then
     local fileStatuses = fs:listStatus(openPath)
