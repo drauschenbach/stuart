@@ -6,7 +6,7 @@
 -- adapted to moses for the Stuart project
 ---
 
-local moses = require 'moses'
+local moses = require 'stuart.util.moses'
 
 ---
 -- Checks if n is between start and up to but not including, end.

@@ -5,6 +5,7 @@
 
 ### Changed
 - Dropped formal dependency on LuaSocket. It is used when present, like `cjson`, but no longer required. This change is required for eLua support.
+- Dropped formal dependency on moses, and instead embed a copy that is trimmed of unused functions (~27% reduction).
 
 ### Fixed
 - `fileSystemFactory`, `StreamingContext`, and `WebHdfsFileSystem` modules failed to load in an eLua environment, where LuaSocket is not present.
