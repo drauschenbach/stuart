@@ -5,5 +5,5 @@ if has_luasocket then
 end
 
 -- This environment is not capable of sleeping. Spark Streaming control loops
--- will peg the CPU. 
+-- will peg the CPU.
 return function() end
