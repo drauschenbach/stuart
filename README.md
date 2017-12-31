@@ -2,7 +2,7 @@
 
 <img src="http://downloadicons.net/sites/default/files/mouse-icon-86497.png" width="100">
 
-(He's little). A native Lua implementation of [Apache Spark 2.2.0](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
+(He's little). A pure Lua rewrite of [Apache Spark 2.2.0](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
 
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 
@@ -16,7 +16,6 @@
 	* [Streaming with a socket text datasource](#streaming-with-a-socket-text-datasource)
 	* [Streaming with a custom receiver](#streaming-with-a-custom-receiver)
 * [Embedding](#embedding)
-* [Dependencies](#dependencies)
 * [Compatibility](#compatibility)
 * [Libraries for Stuart](#libraries-for-stuart)
 * [Design](#design)
@@ -175,29 +174,11 @@ Used to measure time, which is required by the `StreamingContext` cooperative mu
 
 Function used to sleep, when all receivers don't use their full timeslice allotments. Used to prevent pegging the CPU on systems where that makes sense, such as a host OS.
 
-## Dependencies
-
-### Required Dependencies
-
-All required dependencies are pure Lua:
-
-* [lunajson](https://luarocks.org/modules/grafi/lunajson) JSON parser.
-* [middleclass](https://luarocks.org/modules/kikito/middleclass) to streamline inheritance and literal adaptation of many Apache Spark classes.
-* [moses](https://luarocks.org/modules/yonaba/moses), the underscore-inspired Lua-optimized workhorse.
-* [net-url](https://luarocks.org/modules/golgote/net-url), a URL and query string parser/builder/normalizer.
-
-### Optional Dependencies
-
-The following modules are used when present:
-
-* [lua-cjson](https://luarocks.org/modules/openresty/lua-cjson), for higher performance JSON parsing.
-* [luasocket](https://luarocks.org/modules/luarocks/luasocket), for networking, system time, and sleep capabilities in operating system environments.
-
 ## Compatibility
 
 Stuart is compatible with:
 
-* [eLua](http://www.eluaproject.net) (aka "Embedded Lua"), a 5.1 baremetal VM for microcontrollers
+* [eLua](http://www.eluaproject.net) ("Embedded Lua"), a 5.1 baremetal VM for microcontrollers
 * [GopherLua](https://github.com/yuin/gopher-lua)
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
@@ -209,6 +190,8 @@ See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project fo
 * [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html), for support of DataFrames and Parquet files
 * [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html), for loading and evaluating models such as `KMeansModel`
 
+These companion libraries, unlike Stuart, do not yet support Lua 5.3.
+
 To embed Stuart into a Go app, use:
 
 * [gluabit32](https://github.com/BixData/gluabit32)
@@ -216,7 +199,6 @@ To embed Stuart into a Go app, use:
 
 ## Roadmap
 
-* Support [eLua Boards](http://wiki.eluaproject.net/Boards) by supporting user-defined modules for I/O and clock mechanisms
 * Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) via a `stuart-pmml` companion library
 * Support a Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis for execution.
 * Support [OpenCL](https://en.wikipedia.org/wiki/OpenCL) or [CUDA](https://en.wikipedia.org/wiki/CUDA) schedulers that send Lua closures into a GPU for execution.

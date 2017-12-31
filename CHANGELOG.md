@@ -1,15 +1,16 @@
-## [Unreleased]
+## [0.1.6] - 2017-12-31
 ### Added
+- Support [eLua](http://www.eluaproject.net).
 - Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
-- New `stuart.interface.sleep` module that can be preloaded with a function that sleeps to prevent pegging the CPU in multithreaded environments. Defaults to LuaSocket sleep() when present.
+- New `stuart.interface.sleep` module can be preloaded with a function that sleeps to prevent pegging the CPU in multithreaded environments. Defaults to LuaSocket sleep() when present.
 
 ### Changed
-- Dropped formal dependency on LuaSocket. It is used when present, like `cjson`, but no longer required. This change is required for eLua support.
-- Dropped formal dependency on moses, and instead embed a copy that is trimmed of unused functions (~27% reduction).
-- Reduced memory usage due to JSON decoding by directly using its decode module instead of its parent module which references other unused features.
-- Removed mandatory dependence on `os` module, for eLua compatibility
-- Don't reference unused Spark Streaming modules from Spark Pi, for eLua
-- Defer loading of WebHdfsFileSystem or LocalFileSystem modules until they are required
+- Dropped formal LuaSocket dependency. It is used when present, like `cjson`, but no longer required. This change is required for eLua support.
+- Dropped formal moses dependency, and instead embed a copy that is trimmed of unused functions (~27% reduction).
+- Reduced memory usage due to JSON decoding by directly using lunajson's decode module instead of its parent module which references other unused features.
+- Removed mandatory dependence on `os` module, since it does not exist in eLua environments.
+- Don't reference unused Spark Streaming modules from Spark Pi, which bloats the amalg cache and generated eLua image.
+- Defer loading of WebHdfsFileSystem or LocalFileSystem modules until they are used, so that they don't bloat the alamg cache and generated eLua image.
 
 ### Fixed
 - `fileSystemFactory`, `StreamingContext`, and `WebHdfsFileSystem` modules failed to load in an eLua environment, where LuaSocket is not present.
