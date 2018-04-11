@@ -178,7 +178,6 @@ Function used to sleep, when all receivers don't use their full timeslice allotm
 
 Stuart is compatible with:
 
-* [eLua](http://www.eluaproject.net) ("Embedded Lua"), a 5.1 baremetal VM for microcontrollers
 * [GopherLua](https://github.com/yuin/gopher-lua)
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
@@ -199,6 +198,7 @@ To embed Stuart into a Go app, use:
 
 ## Roadmap
 
+* [eLua](http://www.eluaproject.net) ("Embedded Lua") compatibility. eLua is a 5.1 baremetal VM for microcontrollers. An eLua scheduler is required that avoids coroutines, because large eLua jobs require being [transpiled to C](https://github.com/davidm/lua2c) to execute from firmware, and coroutines are impractical to transpile.
 * Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) via a `stuart-pmml` companion library
 * Support a Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis for execution.
 * Support [OpenCL](https://en.wikipedia.org/wiki/OpenCL) or [CUDA](https://en.wikipedia.org/wiki/CUDA) schedulers that send Lua closures into a GPU for execution.
