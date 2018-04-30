@@ -21,7 +21,6 @@
 * [Design](#design)
 	* [Why Spark?](#why-spark)
 	* [Why Lua?](#why-lua)
-* [Contributing](#contributing)
 * [Building](#building)
 * [Testing](#testing)
 
@@ -229,17 +228,6 @@ While many frameworks deliver streaming analytics capabilities, Spark leads the 
 **GPUs.** If you are thinking about pushing closures into a GPU, Lua seems like a reasonable choice, and one of the easier languages to transpile into OpenCL or CUDA.
 
 **Torch.** [Torch](http://torch.ch) is the original deep-learning library ecosystem, 15+ years mature, and with deep ties to university and leading commercial interests. It runs on mobile phones, and serves as a fantastic case in point for why Lua makes sense for analytics jobs. A data scientist should be able to use Spark and Torch side-by-side, and maybe even from the same Spark Streaming control loop.
-
-## Contributing
-
-### Contribution Guidelines
-
-* [Busted](https://olivinelabs.com/busted/)-based [TDD](https://en.wikipedia.org/wiki/Test-driven_development)
-* Class modules begin with an uppercase letter, and end up in their own file that begins with an uppercase letter (e.g. `RDD.lua`)
-* Modules begin with a lowercase letter (e.g. `stuart.lua`, `fileSystemFactory.lua`)
-* Two spaces for indents.
-* The `_` global variable is the unused variable stand-in.
-* Companion libraries such as [Stuart ML](https://github.com/BixData/stuart-ml) (a Lua port of Spark MLlib) will end up in their own separate Git repo and [LuaRocks module](http://luarocks.org/modules/drauschenbach/stuart-ml).
 
 ## Building
 
