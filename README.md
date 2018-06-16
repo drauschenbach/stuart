@@ -69,13 +69,19 @@ print(countsByKey[5])
 
 ### Streaming with a socket text datasource
 
-Start a local server with netcat:
+Start by installing network support:
+
+```sh
+$ luarocks install luasocket
+```
+
+Next, start a local network service with netcat:
 
 ```bash
 $ nc -lk 9999
 ```
 
-Start a Spark Streaming job to read from the netcat server:
+Start a Spark Streaming job to read from the network service:
 
 ```lua
 local sc = require 'stuart'.NewContext()
@@ -91,7 +97,7 @@ ssc:awaitTerminationOrTimeout(10)
 ssc:stop()
 ```
 
-Then type some input into the netcat server:
+Then type some input into netcat:
 
 ```
 abc
@@ -245,6 +251,7 @@ Testing with `lua-cjson`:
 ```
 $ luarocks install busted
 $ luarocks install lua-cjson
+$ luarocks intall moses
 $ busted -v --defer-print
 17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0 
 ...
