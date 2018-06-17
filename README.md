@@ -281,3 +281,18 @@ Testing with a WebHDFS endpoint:
 ```
 $ WEBHDFS_URL=webhdfs://localhost:50075/webhdfs busted -v --defer-print
 ```
+
+### Testing with a Specific Lua Version
+
+Various Dockerfiles are made available in the root directory to provide a specific Lua VM for the test suite:
+
+* `Test-Lua5.1.Dockerfile`
+* `Test-Lua5.2.Dockerfile`
+* `Test-Lua5.3.Dockerfile`
+
+```sh
+$ docker build -f Test-Lua5.3.Dockerfile -t test .
+$ docker run -it test busted -v --defer-print
+●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
+159 successes / 0 failures / 0 errors / 5 pending : 10.246418 seconds
+```
