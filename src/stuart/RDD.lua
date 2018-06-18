@@ -51,7 +51,7 @@ function RDD:aggregateByKey(zeroValue, seqOp, combOp)
     end, {})
     return z
   end, zeroValue)
-  
+
   local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
   local t = moses.reduce(keys, function(r,key)
     local valuesForKey = moses.reduce(y, function(r2,e)
@@ -124,7 +124,7 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
     end, {})
     return z
   end)
-  
+
   local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
   local t = moses.reduce(keys, function(r,key)
     local valuesForKey = moses.reduce(y, function(r2,e)
@@ -489,31 +489,52 @@ end
 
 function RDD:stats()
   local x = self:collect()
+
+  -- calculate mean
   local r = moses.reduce(x, function(r, v)
     r.count = r.count + 1
     r.sum = r.sum + v
     return r
   end, {count=0, sum=0})
   r.mean = r.sum / r.count
-  
-  local sumOfSquares = moses.reduce(x, function(acc, v) return acc + v*v end, 0)
-  r.stdev = math.sqrt((r.count * sumOfSquares - r.sum * r.sum) / (r.count * (r.count-1)))
   r.sum = nil
+
+  -- calculate sum of distances from mean squared
+  local sumDistances = moses.reduce(x, function(p, v)
+    local distance = v - r.mean
+    p = p + distance * distance
+    return p
+  end, 0)
+
+  if r.count < 2 then
+    -- avoid divide by zero and answer is zero for 1 item
+    r.stddev = 0
+    r.stddev_pop = 0
+    r.variance = 0
+    r.variance_pop = 0
+    return r
+  end
+
+  -- 'Sample' variance/stddev divide sum by N - 1 (Bessel's correction)
+  r.variance = sumDistances/(r.count - 1)
+  r.stddev = math.sqrt(r.variance)
+
+  -- 'Population' variance/stddev divide sum by number of data points
+  r.variance_pop = sumDistances/r.count
+  r.stddev_pop = math.sqrt(r.variance_pop)
   return r
 end
 
-function RDD:stdev()
-  local m = self:stats().mean
-  local vm
-  local sum = 0
-  local count = 0
-  for _,v in pairs(self:collect()) do
-    vm = v - m
-    sum = sum + vm * vm
-    count = count + 1
-  end
-  local result = math.sqrt(sum / (count-1))
-  return result
+function RDD:stddev()
+  return self:stats().stddev
+end
+
+function RDD:stddev_pop()
+  return self:stats().stddev_pop
+end
+
+function RDD:stddev_samp()
+  return self:stats().stddev
 end
 
 function RDD:subtract(other)
@@ -557,14 +578,14 @@ function RDD:takeSample(withReplacement, num, seed)
   if num == 0 then return {} end
   local initialCount = self:count()
   if initialCount == 0 then return {} end
-  
+
   if seed ~= nil then math.randomseed(seed) end
 
   local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
   if not withReplacement and num >= initialCount then
     return randomizeInPlace(self:collect())
   end
-  
+
   local samplingUtils = require 'stuart.util.spark.samplingUtils'
   local fraction = samplingUtils.computeFractionForSampleSize(num, initialCount, withReplacement)
   local samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
@@ -595,7 +616,7 @@ function RDD:toLocalIterator()
       if pIndex > #self.partitions then return nil end
       partitionData = self.partitions[pIndex].data
     end
-    
+
     if pIndex <= #self.partitions and i <= #partitionData then
       return partitionData[i]
     end
@@ -619,6 +640,18 @@ end
 function RDD:values()
   local t = moses.map(self:collect(), function(_,e) return e[2] end)
   return self.context:parallelize(t)
+end
+
+function RDD:var_pop()
+  return self:stats().variance_pop
+end
+
+function RDD:var_samp()
+  return self:stats().variance
+end
+
+function RDD:variance()
+  return self:stats().variance
 end
 
 function RDD:zip(other)

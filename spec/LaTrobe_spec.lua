@@ -10,7 +10,7 @@ registerAsserts(assert)
 describe('La Trobe University Spark 1.4 Examples', function()
 
   local sc = stuart.NewContext()
-  
+
   it('aggregate() Examples 1', function()
     local z = sc:parallelize({1,2,3,4,5,6}, 2)
     local seqOp = function(x,y) return math.max(x,y) end
@@ -18,24 +18,24 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local actual = z:aggregate(0, seqOp, combOp)
     assert.equals(9, actual)
   end)
-  
+
   it('aggregateByKey()', function()
     local pairRDD = sc:parallelize({{'cat',2}, {'cat',5}, {'mouse',4}, {'cat',12}, {'dog',12}, {'mouse',2}}, 2)
-    
+
     local seqOp = function(x,y) return math.max(x,y) end
     local combOp = function(x,y) return x+y end
-    
+
     local actual = pairRDD:aggregateByKey(0, seqOp, combOp):collect()
     assert.contains_pair(actual, {'dog',12})
     assert.contains_pair(actual, {'cat',17})
     assert.contains_pair(actual, {'mouse',6})
-    
+
     actual = pairRDD:aggregateByKey(100, seqOp, combOp):collect()
     assert.contains_pair(actual, {'dog',100})
     assert.contains_pair(actual, {'cat',200})
     assert.contains_pair(actual, {'mouse',200})
   end)
-  
+
   it('cartesian()', function()
     local x = sc:parallelize({1,2,3,4,5})
     local y = sc:parallelize({6,7,8,9,10})
@@ -91,12 +91,12 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local mergeCombiners = function(x, y) return moses.append(x, y) end
     local d = c:combineByKey(createCombiner, mergeValue, mergeCombiners)
     local actual = d:collect()
-    
+
     local valuesForKey1 = moses.reduce(actual, function(r,e) if e[1]==1 then r=e[2] end; return r end, {})
     assert.contains(valuesForKey1, 'cat')
     assert.contains(valuesForKey1, 'dog')
     assert.contains(valuesForKey1, 'turkey')
-    
+
     local valuesForKey2 = moses.reduce(actual, function(r,e) if e[1]==2 then r=e[2] end; return r end, {})
     assert.contains(valuesForKey2, 'gnu')
     assert.contains(valuesForKey2, 'rabbit')
@@ -155,7 +155,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local b = sc:parallelize(moses.range(1,8))
     local actual = b:filter(function(x) return x < 4 end):collect()
     assert.same({1,2,3}, actual)
-    
+
     local a = sc:parallelize({'cat', 'horse', 4.0, 3.5, 2, 'dog'})
     assert.has_error(function()
       a:filter(function(x) return x < 4 end):collect()
@@ -181,7 +181,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local actual = a:flatMap(function(x) return moses.range(1,x) end):collect()
     local expected = {1, 1, 2, 1, 2, 3, 1, 2, 3, 4, 1, 2, 3, 4, 5, 1, 2, 3, 4, 5, 6, 1, 2, 3, 4, 5, 6, 7, 1, 2, 3, 4, 5, 6, 7, 8, 1, 2, 3, 4, 5, 6, 7, 8, 9, 1, 2, 3, 4, 5, 6, 7, 8, 9, 10}
     assert.same(expected, actual)
-    
+
     actual = sc:parallelize({1,2,3}, 2):flatMap(function(x) return {x,x,x} end):collect()
     expected = {1, 1, 1, 2, 2, 2, 3, 3, 3}
     assert.same(expected, actual)
@@ -278,7 +278,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local buckets, counts = a:histogram(5)
     assert.same({1.1, 2.68, 4.26, 5.84, 7.42, 9.0}, buckets)
     assert.same({5, 0, 0, 1, 4}, counts)
-    
+
     a = sc:parallelize({9.1, 1.0, 1.2, 2.1, 1.3, 5.0, 2.0, 2.1, 7.4, 7.5, 7.6, 8.8, 10.0, 8.9, 5.5}, 3)
     buckets, counts = a:histogram(6)
     assert.same({1.0, 2.5, 4.0, 5.5, 7.0, 8.5, 10.0}, buckets)
@@ -289,11 +289,11 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local a = sc:parallelize({1.1, 1.2, 1.3, 2.0, 2.1, 7.4, 7.5, 7.6, 8.8, 9.0}, 3)
     local counts = a:histogram({0.0, 3.0, 8.0})
     assert.same({5, 3}, counts)
-    
+
     a = sc:parallelize({9.1, 1.0, 1.2, 2.1, 1.3, 5.0, 2.0, 2.1, 7.4, 7.5, 7.6, 8.8, 10.0, 8.9, 5.5}, 3)
     counts = a:histogram({0.0, 5.0, 10.0})
     assert.same({6, 9}, counts)
-    
+
     counts = a:histogram({0.0, 5.0, 10.0, 15.0})
     assert.same({6, 8, 1}, counts)
   end)
@@ -302,7 +302,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local y = sc:parallelize(moses.range(1,10), 10)
     assert.is_true(y.id > 0)
   end)
-  
+
   it('intersection()', function()
     local x = sc:parallelize(moses.range(1,20))
     local y = sc:parallelize(moses.range(10,30))
@@ -484,7 +484,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     y:setName("Fancy RDD Name")
     assert.equals("Fancy RDD Name", y.name)
   end)
-  
+
   it('partitions', function()
     local b = sc:parallelize({'gnu', 'cat', 'rat', 'dog', 'gnu', 'rat'}, 2)
     local partitions = b.partitions
@@ -496,7 +496,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local a = sc:parallelize(moses.range(1,100), 3)
     local actual = a:reduce(function(r,x) return r+x end)
     assert.equals(5050, actual)
-    
+
     a = sc:parallelize({'dog', 'tiger', 'lion', 'cat', 'panther', 'eagle'})
     local b = a:map(function(x) return {string.len(x), x} end)
     actual = b:reduceByKey(function(r, x) return r .. x end):collect()
@@ -512,7 +512,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local actual = b:reduceByKey(function(r,x) return r .. x end):collect()
     local expected = {{3,'dogcatowlgnuant'}}
     assert.same(expected, actual)
-    
+
     a = sc:parallelize({'dog', 'tiger', 'lion', 'cat', 'panther', 'eagle'})
     b = a:map(function(x) return {string.len(x), x} end)
     actual = b:reduceByKey(function(r, x) return r .. x end):collect()
@@ -533,27 +533,27 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local a = sc:parallelize(moses.range(10000), 3)
     local res24 = a:sample(false, 0.1, 0):count()
     assert.equal_relTol(960, res24, 60)
-    
+
     local res25 = a:sample(true, 0.3, 0):count()
     assert.equal_relTol(2888, res25, 180)
-    
+
     local res26 = a:sample(true, 0.3, 13):count()
     assert.equal_relTol(2985, res26, 180)
   end)
-  
+
   it('sortBy()', function()
     local y = sc:parallelize({5, 7, 1, 3, 2, 1})
-    
+
     local rdd = y:sortBy(moses.identity, true)
     assert.same({1, 1, 2, 3, 5, 7}, rdd:collect())
-    
+
     rdd = y:sortBy(moses.identity, false)
     assert.same({7, 5, 3, 2, 1, 1}, rdd:collect())
-    
+
     local z = sc:parallelize({{'H',10}, {'A',26}, {'Z',1}, {'L',5}})
     rdd = z:sortBy(function(e) return e[1] end, true)
     assert.same({{'A',26}, {'H',10}, {'L',5}, {'Z',1}}, rdd:collect())
-    
+
     rdd = z:sortBy(function(e) return e[2] end, true)
     assert.same({{'Z',1}, {'L',5}, {'H',10}, {'A',26}}, rdd:collect())
   end)
@@ -573,23 +573,72 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local stats = x:stats()
     assert.equals(9, stats.count)
     assert.is_in_range(stats.mean, 11.26, 11.27)
-    assert.is_in_range(stats.stdev, 8, 9)
+    assert.is_in_range(stats.stddev, 8.619836135, 8.619836137)
+    assert.is_in_range(stats.stddev_pop, 8.126859445, 8.126859447)
+    assert.is_in_range(stats.variance, 74.30157500, 74.30157502)
+    assert.is_in_range(stats.variance_pop, 66.04584444, 66.04584446)
+
+    -- empty should yield zeroes
+    x = sc:parallelize({}, 2)
+    stats = x:stats()
+    assert.equals(0, stats.count)
+    assert.equals(0, stats.stddev)
+    assert.equals(0, stats.stddev_pop)
+    assert.equals(0, stats.variance)
+    assert.equals(0, stats.variance_pop)
+
+    -- only one item, should yield zeroes
+    x = sc:parallelize({22.0}, 2)
+    stats = x:stats()
+    assert.equals(1, stats.count)
+    assert.equals(0, stats.stddev)
+    assert.equals(0, stats.stddev_pop)
+    assert.equals(0, stats.variance)
+    assert.equals(0, stats.variance_pop)
+
+    x = sc:parallelize({600, 470, 170, 430, 300}, 3)
+    stats = x:stats()
+    assert.equals(5, stats.count)
+    assert.is_in_range(stats.stddev, 164, 165)
+    assert.is_in_range(stats.stddev_pop, 147, 148)
+    assert.equals(stats.variance, 27130)
+    assert.equals(stats.variance_pop, 21704)
+
+    x = sc:parallelize({9, 2, 5, 4, 12, 7, 8, 11, 9, 3, 7, 4, 12, 5, 4, 10, 9, 6, 9, 4}, 2)
+    stats = x:stats()
+    assert.equals(20, stats.count)
+    assert.is_in_range(stats.stddev, 3.060787652325, 3.060787652327)
+    assert.is_in_range(stats.stddev_pop, 2.9832867780352, 2.9832867780354)
+    assert.is_in_range(stats.variance, 9.3684210526315, 9.3684210526316)
+    assert.equals(stats.variance_pop, 8.9)
   end)
 
---  it('stdev()', function()
---    local d = sc:parallelize({0.0, 0.0, 0.0}, 3)
---    local res10 = d:stdev()
---    assert.equals(0.0, res10)
---
---    d = sc:parallelize({0.0, 1.0}, 3)
---    local res18 = d:stdev()
---    assert.equals(0.5, res18)
---
---    d = sc:parallelize({0.0, 0.0, 1.0}, 3)
---    local res14 = d:stdev()
---    assert.equals(0.4714045207910317, res14)
---  end)
-  
+  it('stddev()', function()
+    local d = sc:parallelize({0.0, 0.0, 0.0}, 3)
+    local res10 = d:stddev_pop()
+    assert.equals(0.0, res10)
+
+    d = sc:parallelize({0.0, 1.0}, 3)
+    local res18 = d:stddev_pop()
+    local res19 = d:stddev_samp()
+    local res20 = d:stddev()
+    assert.equals(0.5, res18)
+    assert.equals(res19, res20)
+    assert.is_in_range(res20, 0.7071067811864, 0.7071067811866)
+
+    d = sc:parallelize({0.0, 0.0, 1.0}, 3)
+    local res14 = d:stddev_pop()
+    assert.equals(0.4714045207910317, res14)
+
+    d = sc:parallelize({1.0, 2.0, 3.0, 5.0, 20.0, 19.02, 19.29, 11.09, 21.0}, 2)
+    local res15 = d:stddev_pop()
+    assert.equals(8.1268594453481508566, res15)
+
+    d = sc:parallelize({9, 2, 5, 4, 12, 7}, 3)
+    res10 = d:stddev_samp()
+    assert.equals(3.6193922141707712825, res10)
+  end)
+
   it('subtract()', function()
     local a = sc:parallelize(moses.range(1,9), 3)
     local b = sc:parallelize(moses.range(1,3), 3)
@@ -614,18 +663,18 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local result = b:subtractByKey(d):collect()
     assert.contains_pair(result, {4,'lion'})
   end)
-  
+
   it('sum()', function()
     local x = sc:parallelize({1.0, 2.0, 3.0, 5.0, 20.0, 19.02, 19.29, 11.09, 21.0}, 2)
     local res17 = x:sum()
     assert.equal_relTol(res17, 101.39999999999999, 0.01)
   end)
-  
+
   it('take()', function()
     local b = sc:parallelize({'dog', 'cat', 'ape', 'salmon', 'gnu'}, 2)
     local actual = b:take(2)
     assert.same({'dog', 'cat'}, actual)
-    
+
     b = sc:parallelize(moses.range(1,10000), 5000)
     actual = b:take(100)
     local expected = {
@@ -643,7 +692,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local res3 = x:takeSample(true, 100, 1)
     assert.equal(100, #res3)
   end)
-  
+
   it('toLocalIterator()', function()
     local z = sc:parallelize({1,2,3,4,5,6}, 2)
     local iter = z:toLocalIterator()
@@ -681,6 +730,24 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.same({'dog', 'tiger', 'lion', 'cat', 'panther', 'eagle'}, actual)
   end)
 
+  it('variance()', function()
+    local d = sc:parallelize({1.0, 2.0, 3.0, 5.0, 20.0, 19.02, 19.29, 11.09, 21.0}, 2)
+    local res15 = d:var_pop()
+    local res16 = d:var_samp()
+    local res17 = d:variance()
+    assert.is_in_range(res15, 66.0458444, 66.0458445)
+    assert.is_in_range(res16, 74.3015749, 74.3015751)
+    assert.equals(res17, res16)
+
+    d = sc:parallelize({9, 2, 5, 4, 12, 7}, 3)
+    local res10 = d:var_pop()
+    local res11 = d:var_samp()
+    local res12 = d:variance()
+    assert.is_in_range(res10, 10.9166666, 10.91666668)
+    assert.equals(13.1, res11)
+    assert.equals(res12, res11)
+  end)
+
   it('zip()', function()
     local a = sc:parallelize(moses.range(1,100), 3)
     local b = sc:parallelize(moses.range(101,200), 3)
@@ -698,7 +765,7 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(r, {'B',1})
     assert.contains_pair(r, {'C',2})
     assert.contains_pair(r, {'D',3})
-    
+
     z = sc:parallelize(moses.range(100,120), 5)
     r = z:zipWithIndex():collect()
     assert.contains_pair(r, {100,0})
@@ -707,5 +774,5 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.contains_pair(r, {119,19})
     assert.contains_pair(r, {120,20})
   end)
-  
+
 end)

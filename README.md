@@ -41,7 +41,7 @@ $ lua
 Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
 
 local SparkContext = require 'stuart.Context'
-local sc = SparkContext:new() 
+local sc = SparkContext:new()
 local rdd = sc:textFile('README.md')
 print(rdd:count())
 151
@@ -248,22 +248,22 @@ stuart <version> is now built and installed in /usr/local (license: Apache 2.0)
 
 Testing with `lua-cjson`:
 
-```
+```sh
 $ luarocks install busted
 $ luarocks install lua-cjson
 $ luarocks intall moses
 $ busted -v --defer-print
-17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0 
+17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0
 ...
 141 successes / 0 failures / 0 errors / 0 pending : 12.026833 seconds
 ```
 
 Testing with `lunajson`:
 
-```
+```sh
 $ luarocks remove lua-cjson
 $ busted -v --defer-print
-17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0 
+17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0
 ...
 139 successes / 0 failures / 0 errors / 2 pending : 12.026833 seconds
 
@@ -278,7 +278,7 @@ util.json can decode an object using cjson
 
 Testing with a WebHDFS endpoint:
 
-```
+```sh
 $ WEBHDFS_URL=webhdfs://localhost:50075/webhdfs busted -v --defer-print
 ```
 
