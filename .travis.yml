@@ -18,10 +18,10 @@ install:
   - luarocks install luacheck
   - luarocks install luafilesystem
   - luarocks install luasocket
-  - luarocks install lunajson
-  - luarocks install middleclass
-  - luarocks install moses
-  - luarocks install net-url
+  - luarocks install lunajson 1.2
+  - luarocks install middleclass 4.1
+  - luarocks install moses 1.6.1
+  - luarocks install net-url 0.9
 
 script:
   - luacheck --std max+busted --codes src spec --no-self --ignore 213 311 611 631

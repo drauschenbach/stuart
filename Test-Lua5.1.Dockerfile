@@ -11,10 +11,10 @@ RUN apt-get update && apt-get install -y \
 # Install LuaRocks modules required for testing
 RUN luarocks install busted
 RUN luarocks install luasocket
-RUN luarocks install lunajson
-RUN luarocks install middleclass
-RUN luarocks install moses
-RUN luarocks install net-url
+RUN luarocks install lunajson 1.2
+RUN luarocks install middleclass 4.1
+RUN luarocks install moses 1.6.1
+RUN luarocks install net-url 0.9
 
 # Add this project
 ADD . /app
