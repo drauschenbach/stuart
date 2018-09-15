@@ -47,7 +47,7 @@ function Context:hadoopFile(path, minPartitions)
     local fileStatuses = fs:listStatus(openPath)
     local lines = {}
     for _,fileStatus in ipairs(fileStatuses) do
-      if fileStatus.pathSuffix:sub(1,1) ~= '.' and fileStatus.pathSuffix:sub(1,1) ~= '_' then
+      if fileStatus.type == 'FILE' and fileStatus.pathSuffix:sub(1,1) ~= '.' and fileStatus.pathSuffix:sub(1,1) ~= '_' then
         local uri = openPath .. '/' .. fileStatus.pathSuffix
         local content, status = fs:open(uri)
         if status and status >= 400 then error(content) end
