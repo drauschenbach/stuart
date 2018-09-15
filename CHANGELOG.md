@@ -4,6 +4,7 @@
 
 ### Fixed
 - Travis CI builds fail due to new release of Moses 2.x
+- `Context:hadoopFile()` error reading a directory containing a nested directory
 - La Trobe Univ RDD `stdev()` unit test fails
 
 ## [0.1.6] - 2017-12-31
