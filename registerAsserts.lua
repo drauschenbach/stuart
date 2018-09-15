@@ -11,7 +11,7 @@ local registerAsserts = function(assert)
   assert:register('assertion', 'contains', function(state, arguments)
     local collection = arguments[1]
     local searchFor = arguments[2]
-    return moses.findIndex(collection, function(i,v) return v == searchFor end) ~= nil
+    return moses.findIndex(collection, function(v,i) return v == searchFor end) ~= nil
   end, 'assertion.contains.positive', 'assertion.contains.negative')
   
   -----------------------------------------------------------------------------
