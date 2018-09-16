@@ -13,7 +13,7 @@ RUN luarocks install busted
 RUN luarocks install luasocket
 RUN luarocks install lunajson 1.2
 RUN luarocks install middleclass 4.1
-RUN luarocks install moses 2.0.0
+RUN luarocks install moses 2.1.0
 RUN luarocks install net-url 0.9
 
 # Add this project

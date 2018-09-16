@@ -20,7 +20,7 @@ install:
   - luarocks install luasocket
   - luarocks install lunajson 1.2
   - luarocks install middleclass 4.1
-  - luarocks install moses 2.0.0
+  - luarocks install moses 2.1.0
   - luarocks install net-url 0.9
 
 script:

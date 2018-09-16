@@ -86,7 +86,7 @@ function RDD:coalesce(numPartitions, shuffle)
 end
 
 function RDD:collect(f)
-  local t = moses.array(self:toLocalIterator())
+  local t = moses.tabulate(self:toLocalIterator())
   if moses.isFunction(f) then
     -- reduce, not map, because Lua arrays cannot contain nil
     t = moses.reduce(t, function(r, v)
@@ -99,7 +99,7 @@ function RDD:collect(f)
 end
 
 function RDD:collectAsMap()
-  local t = moses.array(self:toLocalIterator())
+  local t = moses.tabulate(self:toLocalIterator())
   -- now ensure keys are unique, since we are observing the Java Map (non-multimap) contract
   t = moses.reduce(t, function(r, v)
     r[v[1]] = v[2]

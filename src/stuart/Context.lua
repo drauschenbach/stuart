@@ -92,7 +92,7 @@ function Context:parallelize(x, numPartitions)
   local chunks = {}
   local chunkSize = math.ceil(#x / numPartitions)
   if chunkSize > 0 then
-    chunks = moses.array(moses.partition(x, chunkSize))
+    chunks = moses.tabulate(moses.partition(x, chunkSize))
   end
   while #chunks < numPartitions do chunks[#chunks+1] = {} end -- pad-right empty partitions
   local partitions = moses.map(chunks, function(chunk, i)

@@ -18,7 +18,7 @@ dependencies = {
    "lua >= 5.1",
    "lunajson ~> 1.2",
    "middleclass ~> 4.1",
-   "moses ~> 2.0.0",
+   "moses ~> 2.1.0",
    "net-url ~> 0.9"
 }
 build = {
