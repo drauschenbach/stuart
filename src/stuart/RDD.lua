@@ -1,5 +1,5 @@
 local class = require 'middleclass'
-local moses = require 'stuart.util.moses'
+local moses = require 'moses'
 
 local RDD = class('RDD')
 
@@ -39,8 +39,8 @@ function RDD:aggregate(zeroValue, seqOp, combOp)
 end
 
 function RDD:aggregateByKey(zeroValue, seqOp, combOp)
-  local y = moses.map(self.partitions, function(_,p)
-    local keys = moses.uniq(moses.map(p.data, function(_,e) return e[1] end))
+  local y = moses.map(self.partitions, function(p)
+    local keys = moses.uniq(moses.map(p.data, function(e) return e[1] end))
     local z = moses.reduce(keys, function(r,key)
       local valuesForKey = moses.reduce(p.data, function(r2,e)
         if e[1] == key then r2[#r2+1] = e[2] end
@@ -72,8 +72,8 @@ end
 
 function RDD:cartesian(other)
   local t = {}
-  moses.forEach(self:collect(), function(_,x)
-    moses.forEach(other:collect(), function(_,y)
+  moses.forEach(self:collect(), function(x)
+    moses.forEach(other:collect(), function(y)
       t[#t+1] = {x, y}
     end)
   end)
@@ -112,8 +112,8 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
   assert(moses.isFunction(createCombiner))
   assert(moses.isFunction(mergeValue))
   assert(moses.isFunction(mergeCombiners))
-  local y = moses.map(self.partitions, function(_,p)
-    local keys = moses.uniq(moses.map(p.data, function(_,e) return e[1] end))
+  local y = moses.map(self.partitions, function(p)
+    local keys = moses.uniq(moses.map(p.data, function(e) return e[1] end))
     local z = moses.reduce(keys, function(r,key)
       local valuesForKey = moses.reduce(p.data, function(r2,e)
         if e[1] == key then r2[#r2+1] = e[2] end
@@ -176,7 +176,7 @@ function RDD:distinct(numPartitions)
 end
 
 function RDD:filter(f)
-  local t = moses.filter(self:collect(), function(_,v) return f(v) end)
+  local t = moses.filter(self:collect(), function(v) return f(v) end)
   return self.context:parallelize(t)
 end
 
@@ -205,9 +205,9 @@ function RDD:fold(zeroValue, op)
 end
 
 function RDD:foldByKey(zeroValue, op)
-  local keys = moses.unique(moses.map(self:collect(), function(_,e) return e[1] end))
-  local t = moses.map(keys, function(_,k)
-    local c = moses.map(self:collect(), function(_,e)
+  local keys = moses.unique(moses.map(self:collect(), function(e) return e[1] end))
+  local t = moses.map(keys, function(k)
+    local c = moses.map(self:collect(), function(e)
       if e[1] == k then return e[2] end
     end)
     return {k, moses.reduce(c, op, zeroValue)}
@@ -230,14 +230,14 @@ function RDD:foreachPartition(f)
 end
 
 function RDD:glom()
-  local t = moses.map(self.partitions, function(_,p) return p.data end)
+  local t = moses.map(self.partitions, function(p) return p.data end)
   return self.context:parallelize(t)
 end
 
 function RDD:groupBy(f)
   local x = self:collect()
-  local keys = moses.unique(moses.map(x, function(_,v) return f(v) end))
-  local t = moses.map(keys, function(_,k)
+  local keys = moses.unique(moses.map(x, function(v) return f(v) end))
+  local t = moses.map(keys, function(k)
     local v = moses.reduce(x, function(r, e)
       if f(e) == k then r[#r+1] = e end
       return r
@@ -250,7 +250,7 @@ end
 function RDD:groupByKey(numPartitions)
   numPartitions = numPartitions or #self.partitions
   local keys = moses.keys(self:_dict())
-  local t = moses.map(keys, function(_,k)
+  local t = moses.map(keys, function(k)
     local v = moses.reduce(self:collect(), function(r, e)
       if e[1] == k then r[#r+1] = e[2] end
       return r
@@ -265,7 +265,7 @@ function RDD:histogram(buckets)
     local num_buckets = buckets
     local min_v = self:min()
     local max_v = self:max()
-    buckets = moses.map(moses.range(0, num_buckets), function(_,v)
+    buckets = moses.map(moses.range(0, num_buckets), function(v)
       return min_v + v*(max_v-min_v)/num_buckets
     end)
     local h = self:_histogram(buckets)
@@ -278,7 +278,7 @@ end
 function RDD:_histogram(buckets)
   local num_buckets = #buckets - 1
   local h = {}; moses.fill(h, 0, 1, num_buckets)
-  moses.forEach(self:collect(), function(_,x)
+  moses.forEach(self:collect(), function(x)
     for i = 1, num_buckets, 1 do
       local shouldAdd
       local lastBucket = i == num_buckets
@@ -308,9 +308,9 @@ end
 function RDD:join(other)
   local keys = moses.intersection(moses.keys(self:_dict()), moses.keys(other:_dict()))
   local t = moses.reduce(keys, function(r, key)
-    moses.forEach(self:collect(), function(_,x)
+    moses.forEach(self:collect(), function(x)
       if x[1] == key then
-        moses.forEach(other:collect(), function(_,y)
+        moses.forEach(other:collect(), function(y)
           if y[1] == key then
             r[#r+1] = {key, {x[2], y[2]}}
           end
@@ -323,12 +323,12 @@ function RDD:join(other)
 end
 
 function RDD:keyBy(f)
-  local t = moses.map(self:collect(), function(_,e) return {f(e), e} end)
+  local t = moses.map(self:collect(), function(e) return {f(e), e} end)
   return self.context:parallelize(t)
 end
 
 function RDD:keys()
-  local t = moses.map(self:collect(), function(_,e) return e[1] end)
+  local t = moses.map(self:collect(), function(e) return e[1] end)
   return self.context:parallelize(t)
 end
 
@@ -337,13 +337,13 @@ function RDD:leftOuterJoin(other)
   --local d2 = other:_dict()
   local t = moses.reduce(self:collect(), function(r, e)
       local right = {}
-      moses.forEach(other:collect(), function(_,y)
+      moses.forEach(other:collect(), function(y)
         if y[1] == e[1] then right[#right+1] = y[2] end
       end)
       if #right == 0 then
         r[#r+1] = {e[1], {e[2], nil}}
       else
-        moses.forEach(right, function(_,z)
+        moses.forEach(right, function(z)
           r[#r+1] = {e[1], {e[2], z}}
         end)
       end
@@ -388,7 +388,7 @@ function RDD:mapPartitionsWithIndex(iter)
 end
 
 function RDD:mapValues(f)
-  local t = moses.map(self:collect(), function(_,e) return {e[1], f(e[2])} end)
+  local t = moses.map(self:collect(), function(e) return {e[1], f(e[2])} end)
   return self.context:parallelize(t)
 end
 
@@ -431,13 +431,13 @@ end
 function RDD:rightOuterJoin(other)
   local t = moses.reduce(other:collect(), function(r, e)
       local left = {}
-      moses.forEach(self:collect(), function(_,y)
+      moses.forEach(self:collect(), function(y)
         if y[1] == e[1] then left[#left+1] = y[2] end
       end)
       if #left == 0 then
         r[#r+1] = {e[1], {nil, e[2]}}
       else
-        moses.forEach(left, function(_,z)
+        moses.forEach(left, function(z)
           r[#r+1] = {e[1], {z, e[2]}}
         end)
       end
@@ -638,7 +638,7 @@ function RDD:union(other)
 end
 
 function RDD:values()
-  local t = moses.map(self:collect(), function(_,e) return e[2] end)
+  local t = moses.map(self:collect(), function(e) return e[2] end)
   return self.context:parallelize(t)
 end
 
@@ -660,7 +660,7 @@ function RDD:zip(other)
 end
 
 function RDD:zipWithIndex()
-  local t = moses.map(self:collect(), function(i,x)
+  local t = moses.map(self:collect(), function(x,i)
     return {x,i-1}
   end)
   return self.context:parallelize(t)

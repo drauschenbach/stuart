@@ -1,6 +1,6 @@
 local class = require 'middleclass'
 local logging = require 'stuart.internal.logging'
-local moses = require 'stuart.util.moses'
+local moses = require 'moses'
 
 local Context = class('Context')
 Context.SPARK_VERSION = '2.2.0'
@@ -95,7 +95,7 @@ function Context:parallelize(x, numPartitions)
     chunks = moses.array(moses.partition(x, chunkSize))
   end
   while #chunks < numPartitions do chunks[#chunks+1] = {} end -- pad-right empty partitions
-  local partitions = moses.map(chunks, function(i, chunk)
+  local partitions = moses.map(chunks, function(chunk, i)
     return Partition:new(chunk, i)
   end)
 	return RDD:new(self, partitions)

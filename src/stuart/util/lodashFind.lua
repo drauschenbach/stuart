@@ -3,10 +3,10 @@
 -- @author Daniel Moghimi (daniel.mogimi@gmail.com)
 -- @license MIT
 --
--- adapted to moses for the Stuart project
+-- adapted to Moses for the Stuart project
 ---
 
-local moses = require 'stuart.util.moses'
+local moses = require 'moses'
 
 local callIteratee = function (predicate, selfArg, ...)
   local result

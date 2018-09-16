@@ -2,6 +2,9 @@
 ### Added
 - Dockerfiles provided for testing with specific versions of Lua 5.1, 5.2, 5.3
 
+### Changed
+- Upgrade to Moses 2.0.0, which now has cleaner function chaining semantics that more closely resembles lodash/underscore
+
 ### Fixed
 - Travis CI builds fail due to new release of Moses 2.x
 - `Context:hadoopFile()` error reading a directory containing a nested directory
