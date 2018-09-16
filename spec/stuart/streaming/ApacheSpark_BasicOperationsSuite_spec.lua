@@ -39,7 +39,7 @@ describe('Apache Spark 2.2.0 Streaming BasicOperationsSuite', function()
  
     --local sc = stuart.NewContext(master, appName)
     local ssc = stuart.NewStreamingContext(master, appName, batchDuration)
-    local rdds = moses.map(input, function(_,data) return ssc.sc:makeRDD(data) end)
+    local rdds = moses.map(input, function(data) return ssc.sc:makeRDD(data) end)
     local inputStream = ssc:queueStream(rdds)
     local operatedStream = inputStream:transform(operation)
     

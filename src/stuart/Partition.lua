@@ -1,4 +1,5 @@
 local class = require 'middleclass'
+local moses = require 'moses'
 
 local Partition = class('Partition')
 
@@ -12,13 +13,11 @@ function Partition:_count()
 end
 
 function Partition:_flatten()
-  local moses = require 'stuart.util.moses'
   self.data = moses.flatten(self.data)
   return self
 end
 
 function Partition:_flattenValues()
-  local moses = require 'stuart.util.moses'
   self.data = moses.reduce(self.data, function(r, e)
     local x = e[2]
     if moses.isString(x) then
@@ -26,7 +25,7 @@ function Partition:_flattenValues()
       x:gsub('.', function(c) t[#t+1] = c end)
       x = t
     end
-    moses.map(x, function(_, v)
+    moses.map(x, function(v)
       table.insert(r, {e[1], v})
     end)
     return r

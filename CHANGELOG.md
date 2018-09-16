@@ -1,6 +1,10 @@
-## [Unreleased]
+## [0.1.7] - 2018-09-15
 ### Added
 - Dockerfiles provided for testing with specific versions of Lua 5.1, 5.2, 5.3
+
+### Changed
+- Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
+- Moses is no longer embedded, and is now once again a LuaRocks dependency. Embedding a trimmed down version did not help with eLua support, which instead requires transpiling modules to C to remove memory pressure
 
 ### Fixed
 - Travis CI builds fail due to new release of Moses 2.x

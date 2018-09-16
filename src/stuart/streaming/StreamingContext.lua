@@ -1,7 +1,7 @@
 local class = require 'middleclass'
 local clock = require 'stuart.interface.clock'
 local isInstanceOf = require 'stuart.util.isInstanceOf'
-local moses = require 'stuart.util.moses'
+local moses = require 'moses'
 local sleep = require 'stuart.interface.sleep'
 
 local RDD = require 'stuart.RDD'
@@ -70,7 +70,7 @@ end
 
 function StreamingContext:queueStream(rdds, oneAtATime)
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  rdds = moses.map(rdds, function(_,rdd)
+  rdds = moses.map(rdds, function(rdd)
     if not isInstanceOf(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
     return rdd
   end)
