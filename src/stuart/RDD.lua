@@ -404,9 +404,7 @@ function RDD:mean()
   return self:stats().mean
 end
 
-function RDD:meanApprox()
-  return self:mean()
-end
+RDD.meanApprox = RDD.mean
 
 function RDD:min()
   local r = self:first()
@@ -414,6 +412,14 @@ function RDD:min()
     if n < r then r = n end
   end
   return r
+end
+
+function RDD:popStdev()
+  return self:stats().popStdev
+end
+
+function RDD:popVariance()
+  return self:stats().popVariance
 end
 
 function RDD:reduce(f)
@@ -453,6 +459,14 @@ function RDD:sample(_, fraction, seed)
   if n > #t then return {} end
   local r = moses.sample(self:collect(), n, seed)
   return self.context:parallelize(r)
+end
+
+function RDD:sampleStdev()
+  return self:stats().stdev
+end
+
+function RDD:sampleVariance()
+  return self:stats().variance
 end
 
 function RDD:setName(name)
@@ -508,34 +522,24 @@ function RDD:stats()
 
   if r.count < 2 then
     -- avoid divide by zero and answer is zero for 1 item
-    r.stddev = 0
-    r.stddev_pop = 0
+    r.popStdev = 0
+    r.popVariance = 0
+    r.stdev = 0
     r.variance = 0
-    r.variance_pop = 0
     return r
   end
 
-  -- 'Sample' variance/stddev divide sum by N - 1 (Bessel's correction)
+  -- 'Sample' variance/stdev divide sum by N - 1 (Bessel's correction)
   r.variance = sumDistances/(r.count - 1)
-  r.stddev = math.sqrt(r.variance)
+  r.stdev = math.sqrt(r.variance)
 
-  -- 'Population' variance/stddev divide sum by number of data points
-  r.variance_pop = sumDistances/r.count
-  r.stddev_pop = math.sqrt(r.variance_pop)
+  -- 'Population' variance/stdev divide sum by number of data points
+  r.popVariance = sumDistances/r.count
+  r.popStdev = math.sqrt(r.popVariance)
   return r
 end
 
-function RDD:stddev()
-  return self:stats().stddev
-end
-
-function RDD:stddev_pop()
-  return self:stats().stddev_pop
-end
-
-function RDD:stddev_samp()
-  return self:stats().stddev
-end
+RDD.stdev = RDD.popStdev
 
 function RDD:subtract(other)
   local t = moses.without(self:collect(), other:collect())
@@ -642,17 +646,7 @@ function RDD:values()
   return self.context:parallelize(t)
 end
 
-function RDD:var_pop()
-  return self:stats().variance_pop
-end
-
-function RDD:var_samp()
-  return self:stats().variance
-end
-
-function RDD:variance()
-  return self:stats().variance
-end
+RDD.variance = RDD.popVariance
 
 function RDD:zip(other)
   local t = moses.zip(self:collect(), other:collect())
