@@ -1,0 +1,6 @@
+amalg.cache
+package/
+package.json
+stuart.lua
+stuart-min.lua
+*.tgz
