@@ -1,3 +1,7 @@
+## [Unreleased]
+### Added
+- Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart).
+
 ## [0.1.7] - 2018-09-15
 ### Added
 - Dockerfiles provided for testing with specific versions of Lua 5.1, 5.2, 5.3

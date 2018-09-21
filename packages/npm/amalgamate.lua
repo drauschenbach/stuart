@@ -65,3 +65,25 @@ os.execute('amalg.lua -s empty.lua -o stuart.lua -c')
 
 -- Produce a stuart-min.lua file
 -- TODO
+
+
+-- Update package.json with latest values from rockspec
+local file = io.open('package.json', 'w')
+file:write('{\n')
+file:write('  "name": "lua-stuart",\n')
+file:write('  "version": "' .. version .. '",\n')
+file:write('  "description": "' .. description.summary .. '",\n')
+file:write('  "main": "stuart.lua",\n')
+file:write('  "keywords": ["spark", "lua", "embedded", "edge", "compute"],\n')
+file:write('  "homepage": "' .. description.homepage .. '",\n')
+file:write('  "author": "' .. description.maintainer .. '",\n')
+file:write('  "license": "Apache-2.0"\n')
+file:write('}\n')
+file:close()
+
+
+-- Create tgz with only pertinent files
+os.execute('rm -rf package')
+os.execute('mkdir package')
+os.execute('cp -v package.json stuart.lua package/')
+os.execute('tar zcf lua-stuart.tgz package/*')
