@@ -43,7 +43,11 @@ end
 
 function Logger:log(event)
   local s = {levelName[event.level], event.message}
-  io.stderr:write(table.concat(s,' ') .. '\n')
+  if io ~= nil then
+    io.stderr:write(table.concat(s,' ') .. '\n')
+  else
+    print(table.concat(s,' ') .. '\n')
+  end
 end
 
 function Logger:setLevel(level)
