@@ -1,6 +1,8 @@
 ## [Unreleased]
 ### Added
-- Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart).
+- Added [Fengari](https://github.com/fengari-lua/fengari) to list of supported VMs
+- New `examples/web` demonstrates Spark Pi example running in a browser using the Fengari VM
+- Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
 
 ### Fixed
 - [Fengari Web](https://github.com/fengari-lua/fengari-web) interop fails because Stuart assumes an 'io' module is always present for logging

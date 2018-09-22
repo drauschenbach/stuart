@@ -1,0 +1,73 @@
+<html>
+  <head>
+    <title>Stuart :: Embedded Spark Pi</title>
+    <link href="https://stackpath.bootstrapcdn.com/bootstrap/4.1.3/css/bootstrap.min.css" rel="stylesheet" integrity="sha384-MCw98/SFnGE8fJT3GXwEOngsV7Zt27NXFoaoApmYm81iuXoPkFOJwJ8ERdknLPMO" crossorigin="anonymous">
+  </head>
+  <body>
+    <nav class="navbar navbar-expand-lg navbar-light bg-light">
+      <img style="height:100px" src="https://camo.githubusercontent.com/8f51fc7c1f73784fc4855f823b7ca2060521349b/687474703a2f2f646f776e6c6f616469636f6e732e6e65742f73697465732f64656661756c742f66696c65732f6d6f7573652d69636f6e2d38363439372e706e67"/>
+      <span style="color:black; font-size:3.5em; padding-left:20px">Spark Pi</span>
+    </nav>
+    
+    <br/>
+    
+    <div class="row">
+      <div class="col-sm-4"/>
+      <div class="col-sm-4">
+        <div class="card" style="width: 24rem">
+          <div class="card-body">
+            <h5 class="card-title">Result:</h5>
+              <p class="card-text">After <span id="iterations">?</span> iterations,
+              &pi; is estimated to be <span id="pi">?</span>.</p>
+            </ul>
+          </div>
+        </div>
+      <div class="col-sm-4"/>
+    </div>
+
+    <br/>
+
+    <div style="white-space:nowrap">
+      <small>
+        Powered by
+        <img style="height:25px; margin-top:-5px" src="https://camo.githubusercontent.com/8f51fc7c1f73784fc4855f823b7ca2060521349b/687474703a2f2f646f776e6c6f616469636f6e732e6e65742f73697465732f64656661756c742f66696c65732f6d6f7573652d69636f6e2d38363439372e706e67"/>
+        <a href="https://github.com/BixData/stuart" target="_blank">Stuart</a>, the Embedded Spark
+      </small>
+    </div>
+
+    
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.2/dist/fengari-web.js"></script>
+    <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@0.1.7-2/stuart.lua"></script>
+  
+<script type="application/lua">
+
+-- begin Stuart Spark Pi
+local moses = require 'moses'
+local SparkContext = require 'stuart.Context'
+
+local sc = SparkContext:new('local[1]', 'Spark Pi')
+local slices = 2
+if arg ~= nil and #arg > 0 then slices = arg[1] end
+
+local NUM_SAMPLES = 8000
+local n = NUM_SAMPLES * slices
+local count = sc:parallelize(moses.range(1,n), slices):map(function(_,i)
+  local x = math.random() * 2 - 1
+  local y = math.random() * 2 - 1
+  if x*x + y*y <= 1 then return 1 else return 0 end
+end):reduce(function(r,x) return r+x end)
+local pi = 4 * count / (n-1)
+print('Pi is roughly ' .. pi)
+-- end Stuart Spark Pi
+
+
+-- begin Fengari Web integration for output of results
+local js = require 'js'
+js.global:eval('document.getElementById("iterations").innerHTML = String(' .. NUM_SAMPLES .. ')')
+js.global:eval('document.getElementById("pi").innerHTML = String(' .. pi .. ')')
+-- end Fengari Web integration for output of results
+
+</script>
+    
+  </body>
+</html>

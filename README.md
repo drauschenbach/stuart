@@ -183,7 +183,8 @@ Function used to sleep, when all receivers don't use their full timeslice allotm
 
 Stuart is compatible with:
 
-* [GopherLua](https://github.com/yuin/gopher-lua)
+* [Fengari](https://github.com/fengari-lua/fengari) (a JavaScript-based Lua 5.3 VM)
+* [GopherLua](https://github.com/yuin/gopher-lua) (a Go-based Lua 5.1 VM)
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
 
