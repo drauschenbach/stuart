@@ -26,8 +26,28 @@
 
 ## Installation
 
+To install on an operating system:
+
 ```bash
 $ luarocks install stuart
+```
+
+To load into a web page:
+
+```html
+<html>
+  <body>
+    <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.2/dist/fengari-web.js"></script>
+    <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@0.1.7-2/stuart.lua"></script>
+  
+    <script type="application/lua">
+      local SparkContext = require 'stuart.Context'
+      local sc = SparkContext:new('local[1]', 'My Spark job')
+      ...
+    </script>
+    
+  </body>
+</html>
 ```
 
 ## Usage
