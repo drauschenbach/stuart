@@ -5,6 +5,9 @@
 (He's little). A pure Lua rewrite of [Apache Spark 2.2.0](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
 
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
+[![License](http://img.shields.io/badge/Licence-Apache%202.0-brightgreen.svg)](LICENSE)
+[![](https://data.jsdelivr.com/v1/package/npm/lua-stuart/badge)](https://www.jsdelivr.com/package/npm/lua-stuart)
+[![Lua](https://img.shields.io/badge/Lua-5.1%2C%205.2%2C%205.3%2C%20JIT%202.0%2C%20JIT%202.1%2C%20Fengari%2C%20GopherLua-blue.svg)]()
 
 ### Contents
 
