@@ -9,6 +9,8 @@ describe('internal.Logger', function()
   end)
   
   it('can log() when no io module is present (regression test issue-73)', function()
+    local savedIO = _G.io
+    finally(function() _G.io = savedIO end)
     _G.io = nil
     logger:error('Harmless test of error logging')
   end)
