@@ -24,11 +24,14 @@ function DStream:count()
   return self:transform(transformFunc)
 end
 
+function DStream:countByWindow(windowDuration, slideDuration)
+  return self:window(windowDuration, slideDuration):count()
+end
+
 function DStream:foreachRDD(foreachFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
-  return self
 end
 
 function DStream:groupByKey()
@@ -36,9 +39,25 @@ function DStream:groupByKey()
   return self:transform(transformFunc)
 end
 
+function DStream:map(f)
+  local transformFunc = function(rdd)
+    return rdd:map(f)
+  end
+  return self:transform(transformFunc)
+end
+
 function DStream:mapValues(f)
   local transformFunc = function(rdd)
     return rdd:mapValues(f)
+  end
+  return self:transform(transformFunc)
+end
+
+function DStream:reduce(f)
+  local transformFunc = function(rdd)
+    return rdd:map(function(x) return {0, x} end)
+      :reduceByKey(f)
+      :map(function(e) return e[2] end)
   end
   return self:transform(transformFunc)
 end
@@ -52,6 +71,13 @@ end
 function DStream:transform(transformFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, transformFunc)
+  self.inputs[#self.inputs+1] = dstream
+  return dstream
+end
+
+function DStream:window(windowDuration, slideDuration)
+  local WindowedDStream = require 'stuart.streaming.WindowedDStream'
+  local dstream = WindowedDStream:new(self.ssc, windowDuration, slideDuration)
   self.inputs[#self.inputs+1] = dstream
   return dstream
 end
