@@ -24,6 +24,10 @@ function DStream:count()
   return self:transform(transformFunc)
 end
 
+function DStream:countByWindow(windowDuration, slideDuration)
+  return self:window(windowDuration, slideDuration):count()
+end
+
 function DStream:foreachRDD(foreachFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, foreachFunc)

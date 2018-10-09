@@ -5,9 +5,27 @@ registerAsserts(assert)
 
 describe('Pysparkling DStream examples', function()
 
-  local sc = stuart.NewContext()
-
+  it('countByWindow() Applies count() after window().', function()
+    local sc = stuart.NewContext()
+    local ssc = stuart.NewStreamingContext(sc, .1)
+    local results = {}
+    ssc:queueStream({sc:makeRDD({1,1,5}), sc:makeRDD({5,5,2,4}), sc:makeRDD({1,2})})
+      :countByWindow(0.2)
+      :foreachRDD(function(rdd)
+        results[#results+1] = rdd:collect()
+      end)
+    
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(.35)
+    ssc:stop()
+    
+    assert.same({3}, results[1])
+    assert.same({7}, results[2])
+    assert.same({6}, results[3])
+  end)
+  
   it('window() Windowed RDD.', function()
+    local sc = stuart.NewContext()
     local ssc = stuart.NewStreamingContext(sc, .2)
     local results = {}
     ssc:queueStream({sc:makeRDD({1}), sc:makeRDD({2}), sc:makeRDD({3}), sc:makeRDD({4}), sc:makeRDD({5}), sc:makeRDD({6})})

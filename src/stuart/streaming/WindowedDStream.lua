@@ -20,14 +20,14 @@ function WindowedDStream:_notify(validTime, rdd)
   -- add current rdd to the window
   rdd._validTime = validTime
   self.window[#self.window+1] = rdd
+  local unioned = self.ssc.sc:union(self.window)
   
   for _, dstream in ipairs(self.inputs) do
-    rdd = dstream:_notify(validTime, rdd)
+    rdd = dstream:_notify(validTime, unioned)
   end
 
-  local unionedRDDs = self.ssc.sc:union(self.window)
   for _, dstream in ipairs(self.outputs) do
-    dstream:_notify(validTime, unionedRDDs)
+    dstream:_notify(validTime, unioned)
   end
   
   return rdd
