@@ -1,11 +1,12 @@
 ## [Unreleased]
 ### Added
-- Added [Fengari](https://github.com/fengari-lua/fengari) to list of supported VMs
-- New `examples/web` demonstrates Spark Pi example running in a browser using the Fengari VM
+- Added Fengari to list of supported VMs
+- New examples/web demonstrates Spark Pi example running in a browser using the Fengari VM
 - [issue-71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
 
 ### Fixed
-- [issue-73](https://github.com/BixData/stuart/issues/73) `github.com/fengari-lua/fengari-web` interop fails because Stuart assumes an 'io' module is always present for logging
+- [issue-73](https://github.com/BixData/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
+- [issue-75](https://github.com/BixData/stuart/issues/75) Context\_spec.lua ignores WEBHDFS_URL
 - [issue-76](https://github.com/BixData/stuart/issues/76) RDD:foreach() modifies RDD
 
 ## [0.1.7] - 2018-09-15
