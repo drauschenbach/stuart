@@ -28,7 +28,6 @@ function DStream:foreachRDD(foreachFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
-  return self
 end
 
 function DStream:groupByKey()
@@ -52,6 +51,13 @@ end
 function DStream:transform(transformFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
   local dstream = TransformedDStream:new(self.ssc, transformFunc)
+  self.inputs[#self.inputs+1] = dstream
+  return dstream
+end
+
+function DStream:window(windowDuration, slideDuration)
+  local WindowedDStream = require 'stuart.streaming.WindowedDStream'
+  local dstream = WindowedDStream:new(self.ssc, windowDuration, slideDuration)
   self.inputs[#self.inputs+1] = dstream
   return dstream
 end
