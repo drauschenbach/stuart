@@ -53,6 +53,15 @@ function DStream:mapValues(f)
   return self:transform(transformFunc)
 end
 
+function DStream:reduce(f)
+  local transformFunc = function(rdd)
+    return rdd:map(function(x) return {0, x} end)
+      :reduceByKey(f)
+      :map(function(e) return e[2] end)
+  end
+  return self:transform(transformFunc)
+end
+
 function DStream:start()
 end
 
