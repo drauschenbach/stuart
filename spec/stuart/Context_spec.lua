@@ -42,9 +42,7 @@ describe('Context', function()
   it('can textFile() a WebHDFS directory', function()
     local webhdfsUrl = os.getenv('WEBHDFS_URL')
     if not webhdfsUrl then return pending('No WEBHDFS_URL is configured') end
-    local rdd = sc:textFile('webhdfs://localhost:17072/model2/metadata')
-    local lines = rdd:collect()
-    assert.equal(1, #lines)
+    sc:textFile(webhdfsUrl)
   end)
   
 end)
