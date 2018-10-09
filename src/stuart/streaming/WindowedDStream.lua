@@ -3,10 +3,9 @@ local DStream = require 'stuart.streaming.DStream'
 
 local WindowedDStream = class('WindowedDStream', DStream)
 
-function WindowedDStream:initialize(ssc, windowDuration, slideDuration)
+function WindowedDStream:initialize(ssc, windowDuration)
   DStream.initialize(self, ssc)
   self.windowDuration = windowDuration
-  self.slideDuration = slideDuration
   self.window = {}
 end
 

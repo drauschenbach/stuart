@@ -24,6 +24,25 @@ describe('Pysparkling DStream examples', function()
     assert.same({6}, results[3])
   end)
   
+  it('map() Apply function f', function()
+    local sc = stuart.NewContext()
+    local ssc = stuart.NewStreamingContext(sc, .1)
+    local results = {}
+    ssc:queueStream({sc:makeRDD({4}), sc:makeRDD({2}), sc:makeRDD({7})})
+      :map(function(e) return e+1 end)
+      :foreachRDD(function(rdd)
+        results[#results+1] = rdd:collect()
+      end)
+    
+    ssc:start()
+    ssc:awaitTerminationOrTimeout(.35)
+    ssc:stop()
+    
+    assert.same({5}, results[1])
+    assert.same({3}, results[2])
+    assert.same({8}, results[3])
+  end)
+  
   it('window() Windowed RDD.', function()
     local sc = stuart.NewContext()
     local ssc = stuart.NewStreamingContext(sc, .2)

@@ -39,6 +39,13 @@ function DStream:groupByKey()
   return self:transform(transformFunc)
 end
 
+function DStream:map(f)
+  local transformFunc = function(rdd)
+    return rdd:map(f)
+  end
+  return self:transform(transformFunc)
+end
+
 function DStream:mapValues(f)
   local transformFunc = function(rdd)
     return rdd:mapValues(f)

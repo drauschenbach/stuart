@@ -2,7 +2,7 @@
 ### Added
 - Added Fengari to list of supported VMs
 - New examples/web demonstrates Spark Pi example running in a browser using the Fengari VM
-- [issue-15](https://github.com/BixData/stuart/issues/15) Support `DStream` countByWindow(), window()
+- [issue-15](https://github.com/BixData/stuart/issues/15) Support `DStream` countByWindow(), map(), and window()
 - [issue-71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
 
 ### Fixed
