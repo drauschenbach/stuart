@@ -2,23 +2,24 @@
 ### Added
 - Added [Fengari](https://github.com/fengari-lua/fengari) to list of supported VMs
 - New `examples/web` demonstrates Spark Pi example running in a browser using the Fengari VM
-- Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
+- [issue-71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npm.js as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
 
 ### Fixed
-- [Fengari Web](https://github.com/fengari-lua/fengari-web) interop fails because Stuart assumes an 'io' module is always present for logging
+- [issue-73](https://github.com/BixData/stuart/issues/73) `github.com/fengari-lua/fengari-web` interop fails because Stuart assumes an 'io' module is always present for logging
+- [issue-76](https://github.com/BixData/stuart/issues/76) RDD:foreach() modifies RDD
 
 ## [0.1.7] - 2018-09-15
 ### Added
 - Dockerfiles provided for testing with specific versions of Lua 5.1, 5.2, 5.3
 
 ### Changed
-- Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
+- [issue-68](https://github.com/BixData/stuart/issues/68) Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
 - Moses is no longer embedded, and is now once again a LuaRocks dependency. Embedding a trimmed down version did not help with eLua support, which instead requires transpiling modules to C to remove memory pressure
 
 ### Fixed
-- Travis CI builds fail due to new release of Moses 2.x
-- `Context:hadoopFile()` error reading a directory containing a nested directory
-- La Trobe Univ RDD `stdev()` unit test fails
+- [issue-66](https://github.com/BixData/stuart/issues/66) Travis CI builds fail due to new release of Moses 2.x
+- [issue-64](https://github.com/BixData/stuart/issues/64) `Context:hadoopFile()` error reading a directory containing a nested directory
+- [issue-2](https://github.com/BixData/stuart/issues/2) La Trobe Univ RDD `stdev()` unit test fails
 
 ## [0.1.6] - 2017-12-31
 ### Added

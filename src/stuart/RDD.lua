@@ -218,7 +218,7 @@ end
 function RDD:foreach(f)
   for _, p in ipairs(self.partitions) do
     for i, _ in ipairs(p.data) do
-      p.data[i] = f(p.data[i])
+      f(p.data[i])
     end
   end
 end
