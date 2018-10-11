@@ -98,7 +98,7 @@ function Context:parallelize(x, numPartitions)
   local partitions = moses.map(chunks, function(chunk, i)
     return Partition:new(chunk, i)
   end)
-	return RDD:new(self, partitions)
+  return RDD:new(self, partitions)
 end
 
 function Context:setLogLevel(level)
