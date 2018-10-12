@@ -9,7 +9,7 @@ function TransformedDStream:initialize(ssc, transformFunc)
 end
 
 function TransformedDStream:_notify(validTime, rdd)
-  rdd = self.transformFunc(rdd)
+  rdd = self.transformFunc(rdd, validTime)
   for _, dstream in ipairs(self.inputs) do
     rdd = dstream:_notify(validTime, rdd)
   end
