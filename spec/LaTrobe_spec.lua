@@ -659,6 +659,44 @@ describe('La Trobe University Spark 1.4 Examples', function()
     assert.is_not_nil(string.find(actual, '[' .. z.id .. ']'))
   end)
 
+  it('treeAggregate()', function()
+    local z = sc:parallelize({1,2,3,4,5,6}, 2)
+    
+    -- lets first print out the contents of the RDD with partition labels
+    local myfunc = function(index, iter)
+      local res = {}
+      for x in iter do
+        res[#res+1] = string.format('[partID:%d, val: %d]', index, x)
+      end
+      local i = 0
+      return function()
+        i = i + 1
+        if i <= #res then return res[i] end
+      end
+    end
+    local res28 = z:mapPartitionsWithIndex(myfunc):collect()
+    assert.contains(res28, '[partID:0, val: 1]')
+    assert.contains(res28, '[partID:0, val: 2]')
+    assert.contains(res28, '[partID:0, val: 3]')
+    assert.contains(res28, '[partID:1, val: 4]')
+    assert.contains(res28, '[partID:1, val: 5]')
+    assert.contains(res28, '[partID:1, val: 6]')
+    
+    local seqOp = function(x,y) return math.max(x,y) end
+    local combOp = function(x,y) return x+y end
+    local res40 = z:treeAggregate(0, seqOp, combOp)
+    assert.equal(9, res40)
+    
+    -- Note unlike normal aggregrate. Tree aggregate does not apply the initial value for the second reduce
+    -- This example returns 11 since the initial value is 5
+    -- reduce of partition 0 will be max(5, 1, 2, 3) = 5
+    -- reduce of partition 1 will be max(4, 5, 6) = 6
+    -- final reduce across partitions will be 5 + 6 = 11
+    -- note the final reduce does not include the initial value
+    local res42 = z:treeAggregate(5, seqOp, combOp)
+    assert.equal(11, res42)
+  end)
+
   it('union()', function()
     local a = sc:parallelize(moses.range(1,3), 1)
     local b = sc:parallelize(moses.range(5,7), 1)

@@ -5,6 +5,7 @@
 - [issue-15](https://github.com/BixData/stuart/issues/15) Support `DStream` countByWindow(), map(), reduce(), and window()
 - [issue-71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npmjs.com and jsDelivr as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
 - [issue-82](https://github.com/BixData/stuart/issues/82) Support `DStream` foreachRDD() timestamp 2nd argument
+- Support `RDD` treeAggregate()
 
 ### Changed
 - Removed `stuart.util.mosesPatchedRange`, fixed in Moses 2.0.0
