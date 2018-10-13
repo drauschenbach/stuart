@@ -1,6 +1,5 @@
 local Context = require 'stuart.Context'
 local moses = require 'moses'
-moses.range = require 'stuart.util.mosesPatchedRange'
 local registerAsserts = require 'registerAsserts'
 local SparkConf = require 'stuart.SparkConf'
 local StreamingContext = require 'stuart.streaming.StreamingContext'
