@@ -6,6 +6,9 @@
 - [issue-71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npmjs.com and jsDelivr as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
 - [issue-82](https://github.com/BixData/stuart/issues/82) Support `DStream` foreachRDD() timestamp 2nd argument
 
+### Changed
+- Removed `stuart.util.mosesPatchedRange`, fixed in Moses 2.0.0
+
 ### Fixed
 - [issue-73](https://github.com/BixData/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
 - [issue-75](https://github.com/BixData/stuart/issues/75) Context\_spec.lua ignores WEBHDFS_URL

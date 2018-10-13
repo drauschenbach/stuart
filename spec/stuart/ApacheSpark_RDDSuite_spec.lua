@@ -3,8 +3,6 @@ local registerAsserts = require 'registerAsserts'
 local split = require 'stuart.util.split'
 local stuart = require 'stuart'
 
-moses.range = require 'stuart.util.mosesPatchedRange'
-
 registerAsserts(assert)
 
 describe('Apache Spark 2.2.0 RDDSuite', function()

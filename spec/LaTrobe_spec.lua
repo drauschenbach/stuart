@@ -2,8 +2,6 @@ local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
-moses.range = require 'stuart.util.mosesPatchedRange'
-
 registerAsserts(assert)
 
 -- http://homepage.cs.latrobe.edu.au/zhe/ZhenHeSparkRDDAPIExamples.html
