@@ -636,6 +636,13 @@ function RDD:toString()
   return tostring(self)
 end
 
+function RDD:treeAggregate(zeroValue, seqOp, combOp)
+  return moses.reduce(self.partitions, function(r, p)
+    local y = moses.reduce(p.data, seqOp, moses.clone(zeroValue))
+    return combOp(r, y)
+  end, 0)
+end
+
 function RDD:union(other)
   local t = moses.append(self:collect(), other:collect())
   return self.context:parallelize(t)
