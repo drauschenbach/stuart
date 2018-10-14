@@ -1,4 +1,4 @@
-## [Unreleased]
+## [0.1.8] - 2018-10-14
 ### Added
 - Added Fengari to list of supported VMs
 - New examples/web demonstrates Spark Pi example running in a browser using the Fengari VM
