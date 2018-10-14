@@ -643,6 +643,8 @@ function RDD:treeAggregate(zeroValue, seqOp, combOp)
   end, 0)
 end
 
+RDD.treeReduce = RDD.reduce
+
 function RDD:union(other)
   local t = moses.append(self:collect(), other:collect())
   return self.context:parallelize(t)
