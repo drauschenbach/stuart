@@ -9,6 +9,7 @@
 
 ### Changed
 - Removed `stuart.util.mosesPatchedRange`, fixed in Moses 2.0.0
+- `RDD` aggregate() and treeAggregate() now have the ability to clone a complex zeroValue by calling a clone() function when present
 
 ### Fixed
 - [issue-73](https://github.com/BixData/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
