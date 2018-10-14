@@ -1,6 +1,20 @@
 local class = require 'middleclass'
 local moses = require 'moses'
 
+local function cloneZeroValue(zeroValue)
+  if type(zeroValue) ~= 'table' then
+    return moses.clone(zeroValue)
+  end
+  if type(zeroValue.clone) == 'function' then
+    return zeroValue:clone()
+  end
+  if zeroValue.class == nil then
+    -- try cloning any table besides a middleclass class
+    return moses.clone(zeroValue)
+  end
+  return zeroValue
+end
+
 local RDD = class('RDD')
 
 function RDD:initialize(context, partitions)
@@ -33,9 +47,9 @@ end
 
 function RDD:aggregate(zeroValue, seqOp, combOp)
   return moses.reduce(self.partitions, function(r, p)
-    local y = moses.reduce(p.data, seqOp, moses.clone(zeroValue))
+    local y = moses.reduce(p.data, seqOp, cloneZeroValue(zeroValue))
     return combOp(r, y)
-  end, moses.clone(zeroValue))
+  end, cloneZeroValue(zeroValue))
 end
 
 function RDD:aggregateByKey(zeroValue, seqOp, combOp)
@@ -638,7 +652,7 @@ end
 
 function RDD:treeAggregate(zeroValue, seqOp, combOp)
   local partiallyAggregated = moses.map(self.partitions, function(p)
-    return moses.reduce(p.data, seqOp, zeroValue)
+    return moses.reduce(p.data, seqOp, cloneZeroValue(zeroValue))
   end)
   return moses.reduce(partiallyAggregated, combOp)
 end
