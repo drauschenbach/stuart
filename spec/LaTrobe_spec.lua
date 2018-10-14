@@ -11,10 +11,49 @@ describe('La Trobe University Spark 1.4 Examples', function()
 
   it('aggregate() Examples 1', function()
     local z = sc:parallelize({1,2,3,4,5,6}, 2)
-    local seqOp = function(x,y) return math.max(x,y) end
-    local combOp = function(x,y) return x+y end
-    local actual = z:aggregate(0, seqOp, combOp)
-    assert.equals(9, actual)
+    
+    local maxOp = function(x,y) return math.max(x,y) end
+    local sumOp = function(x,y) return x+y end
+    local res40 = z:aggregate(0, maxOp, sumOp)
+    assert.equals(9, res40)
+    
+    -- This example returns 16 since the initial value is 5
+    -- reduce of partition 0 will be max(5, 1, 2, 3) = 5
+    -- reduce of partition 1 will be max(5, 4, 5, 6) = 6
+    -- final reduce across partitions will be 5 + 5 + 6 = 16
+    -- note the final reduce include the initial value
+    local res29 = z:aggregate(5, maxOp, sumOp)
+    assert.equals(16, res29)
+    
+    z = sc:parallelize({'a','b','c','d','e','f'},2)
+    local concatOp = function(x,y) return x..y end
+    local res115 = z:aggregate('', concatOp, concatOp)
+    assert.equals('abcdef', res115)
+
+    -- See here how the initial value "x" is applied three times.
+    --  - once for each partition
+    --  - once when combining all the partitions in the second reduce function.
+    local res116 = z:aggregate('x', concatOp, concatOp)
+    assert.is_true(res116 == 'xxdefxabc' or res116 == 'xxabcxdef')
+    
+    -- Below are some more advanced examples. Some are quite tricky to work out.
+    
+    z = sc:parallelize({'12','23','345','4567'},2)
+    local res141 = z:aggregate('', function(x,y) return tostring(math.max(x:len(), y:len())) end, concatOp)
+    assert.is_true(res141 == '42' or res141 == '24')
+    
+    local res142 = z:aggregate('', function(x,y) return tostring(math.min(x:len(), y:len())) end, concatOp)
+    assert.equals('11', res142)
+    
+    z = sc:parallelize({'12','23','345',''},2)
+    local res143 = z:aggregate('', function(x,y) return tostring(math.min(x:len(), y:len())) end, concatOp)
+    assert.is_true(res143 == '10' or res143 == '01')
+  end)
+
+  it('aggregate() Examples 2', function()
+    local z = sc:parallelize({'12','23','','345'}, 2)
+    local res144 = z:aggregate('', function(x,y) return tostring(math.min(x:len(), y:len())) end, function(x,y) return x..y end)
+    assert.equals('11', res144)
   end)
 
   it('aggregateByKey()', function()
@@ -23,15 +62,15 @@ describe('La Trobe University Spark 1.4 Examples', function()
     local seqOp = function(x,y) return math.max(x,y) end
     local combOp = function(x,y) return x+y end
 
-    local actual = pairRDD:aggregateByKey(0, seqOp, combOp):collect()
-    assert.contains_pair(actual, {'dog',12})
-    assert.contains_pair(actual, {'cat',17})
-    assert.contains_pair(actual, {'mouse',6})
+    local res3 = pairRDD:aggregateByKey(0, seqOp, combOp):collect()
+    assert.contains_pair(res3, {'dog',12})
+    assert.contains_pair(res3, {'cat',17})
+    assert.contains_pair(res3, {'mouse',6})
 
-    actual = pairRDD:aggregateByKey(100, seqOp, combOp):collect()
-    assert.contains_pair(actual, {'dog',100})
-    assert.contains_pair(actual, {'cat',200})
-    assert.contains_pair(actual, {'mouse',200})
+    local res4 = pairRDD:aggregateByKey(100, seqOp, combOp):collect()
+    assert.contains_pair(res4, {'dog',100})
+    assert.contains_pair(res4, {'cat',200})
+    assert.contains_pair(res4, {'mouse',200})
   end)
 
   it('cartesian()', function()
@@ -695,6 +734,12 @@ describe('La Trobe University Spark 1.4 Examples', function()
     -- note the final reduce does not include the initial value
     local res42 = z:treeAggregate(5, seqOp, combOp)
     assert.equal(11, res42)
+  end)
+
+  it('treeReduce()', function()
+    local z = sc:parallelize({1,2,3,4,5,6}, 2)
+    local res49 = z:treeReduce(function(x,y) return x+y end)
+    assert.equal(21, res49)
   end)
 
   it('union()', function()
