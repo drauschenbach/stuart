@@ -211,19 +211,17 @@ Stuart is compatible with:
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
 
-See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
-
-## Libraries for Stuart
-
-* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html), for support of DataFrames and Parquet files
-* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html), for loading and evaluating models such as `KMeansModel`
-
-These companion libraries, unlike Stuart, do not yet support Lua 5.3.
-
 To embed Stuart into a Go app, use:
 
 * [gluabit32](https://github.com/BixData/gluabit32)
 * [gluasocket](https://github.com/BixData/gluasocket)
+
+See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
+
+## Libraries for Stuart
+
+* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
+* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html) (NOTE: this module, and many of its dependencies, do not yet support Lua 5.3)
 
 ## Roadmap
 
