@@ -8,11 +8,10 @@ local function cloneZeroValue(zeroValue)
   if type(zeroValue.clone) == 'function' then
     return zeroValue:clone()
   end
-  if zeroValue.class == nil then
-    -- try cloning any table besides a middleclass class
-    return moses.clone(zeroValue)
+  if zeroValue.class ~= nil then
+    error('Cannot clone a middleclass class; you must provide it a clone() function')
   end
-  return zeroValue
+  return moses.clone(zeroValue)
 end
 
 local RDD = class('RDD')
