@@ -637,10 +637,10 @@ function RDD:toString()
 end
 
 function RDD:treeAggregate(zeroValue, seqOp, combOp)
-  return moses.reduce(self.partitions, function(r, p)
-    local y = moses.reduce(p.data, seqOp, moses.clone(zeroValue))
-    return combOp(r, y)
-  end, 0)
+  local partiallyAggregated = moses.map(self.partitions, function(p)
+    return moses.reduce(p.data, seqOp, zeroValue)
+  end)
+  return moses.reduce(partiallyAggregated, combOp)
 end
 
 RDD.treeReduce = RDD.reduce
