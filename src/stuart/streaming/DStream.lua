@@ -53,6 +53,9 @@ function DStream:mapValues(f)
   return self:transform(transformFunc)
 end
 
+function DStream:poll()
+end
+
 function DStream:reduce(f)
   local transformFunc = function(rdd)
     return rdd:map(function(x) return {0, x} end)

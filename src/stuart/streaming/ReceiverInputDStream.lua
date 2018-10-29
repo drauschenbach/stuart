@@ -8,8 +8,8 @@ function ReceiverInputDStream:initialize(ssc, receiver)
   self.receiver = receiver
 end
 
-function ReceiverInputDStream:compute(durationBudget)
-  self.receiver:run(durationBudget)
+function ReceiverInputDStream:poll(durationBudget)
+  return self.receiver:poll(durationBudget)
 end
 
 function ReceiverInputDStream:start()

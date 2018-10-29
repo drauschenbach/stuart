@@ -10,19 +10,11 @@ function QueueInputDStream:initialize(ssc, rdds, oneAtATime)
   self.oneAtATime = oneAtATime
 end
 
-function QueueInputDStream:compute()
-  while true do
-  
-    if self.oneAtATime then
-      local rdd = table.remove(self.queue, 1)
-      coroutine.yield({rdd})
-    
-    else
-      local rdds = self.queue
-      self.queue = {}
-      coroutine.yield(rdds)
-    end
-    
+function QueueInputDStream:poll()
+  if self.oneAtATime then
+    return {table.remove(self.queue, 1)}
+  else
+    return self.queue
   end
 end
 
