@@ -12,7 +12,7 @@ end
 function Receiver:onStop()
 end
 
-function Receiver:run()
+function Receiver:poll()
 end
 
 return Receiver

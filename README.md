@@ -5,7 +5,7 @@
 (He's little). A pure Lua rewrite of [Apache Spark 2.2.0](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
 
 [![License](http://img.shields.io/badge/Licence-Apache%202.0-blue.svg)](LICENSE)
-[![Lua](https://img.shields.io/badge/Lua-5.1%20|%205.2%20|%205.3%20|%20JIT%202.0%20|%20JIT%202.1%20|%20Fengari%20|%20GopherLua-blue.svg)]()
+[![Lua](https://img.shields.io/badge/Lua-5.1%20|%205.2%20|%205.3%20|%20JIT%202.0%20|%20JIT%202.1%20|%20Fengari%20|%20GopherLua|%20eLua-blue.svg)]()
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 [![](https://data.jsdelivr.com/v1/package/npm/lua-stuart/badge?style=rounded)](https://www.jsdelivr.com/package/npm/lua-stuart)
 
@@ -136,6 +136,7 @@ local class = require 'middleclass'
 local socket = require 'socket'
 local stuart = require 'stuart'
 local Receiver = require 'stuart.streaming.Receiver'
+local clock = require 'stuart.interface.clock'
 
 -- MyReceiver ------------------------------
 
@@ -155,24 +156,18 @@ function MyReceiver:onStop()
   if self.conn ~= nil then self.conn:close() end
 end
 
-function MyReceiver:run(durationBudget)
-  local timeOfLastYield = socket.gettime()
+function MyReceiver:poll(durationBudget)
+  local startTime = clock.now()
   local rdds = {}
-  local minWait = 0.02 -- never block less than 20ms
-  while true do
-    local elapsed = socket.gettime() - timeOfLastYield
-    if elapsed > durationBudget then
-      coroutine.yield(rdds)
-      rdds = {}
-      timeOfLastYield = socket.gettime()
-    else
-      self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
-      local line, err = self.conn:receive('*l')
-      if not err then
-        rdds[#rdds+1] = self.ssc.sc:makeRDD({line})
-      end
+  local minWait = 0.02
+  while clock.now() - startTime < durationBudget do
+    self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
+    local line, err = self.conn:receive('*l')
+    if not err then
+      rdds[#rdds+1] = self.ssc.sc:makeRDD({line})
     end
   end
+  return rdds
 end
 
 -- Spark Streaming Job ------------------------------
@@ -206,6 +201,7 @@ Function used to sleep, when all receivers don't use their full timeslice allotm
 
 Stuart is compatible with:
 
+* [eLua](http://www.eluaproject.net) (a C-based 5.1 baremetal VM that runs on a breadth of microcontroller families in as little as 32k of RAM)
 * [Fengari](https://github.com/fengari-lua/fengari) (a JavaScript-based Lua 5.3 VM)
 * [GopherLua](https://github.com/yuin/gopher-lua) (a Go-based Lua 5.1 VM)
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
@@ -221,11 +217,10 @@ See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project fo
 ## Libraries for Stuart
 
 * [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
-* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html) (NOTE: this module, and many of its dependencies, do not yet support Lua 5.3)
+* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html) (NOTE: this module, and many of its dependencies such as Parquet and Thrift, do not yet support Lua 5.3)
 
 ## Roadmap
 
-* [eLua](http://www.eluaproject.net) ("Embedded Lua") compatibility. eLua is a 5.1 baremetal VM for microcontrollers. An eLua scheduler is required that avoids coroutines, because large eLua jobs require being [transpiled to C](https://github.com/davidm/lua2c) to execute from firmware, and coroutines are impractical to transpile.
 * Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) via a `stuart-pmml` companion library
 * Support a Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis for execution.
 * Support [OpenCL](https://en.wikipedia.org/wiki/OpenCL) or [CUDA](https://en.wikipedia.org/wiki/CUDA) schedulers that send Lua closures into a GPU for execution.

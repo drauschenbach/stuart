@@ -44,44 +44,6 @@ function HttpReceiver:onStop()
   if self.conn ~= nil then self.conn:close() end
 end
 
-function HttpReceiver:run(durationBudget)
-  local timeOfLastYield = clock.now()
-  local data = {}
-  local minWait = 0.02 -- never block less than 20ms
-  while true do
-    local elapsed = clock.now() - timeOfLastYield
-    if elapsed > durationBudget then
-      local rdd = self.ssc.sc:makeRDD(data)
-      coroutine.yield({rdd})
-      data = {}
-      timeOfLastYield = clock.now()
-    else
-      self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
-      if self.mode == 'text' then
-        local line, err = self.conn:receive('*l')
-        if not err then
-          if self.state == 0 then
-            self.status, self.statusLine = self:parseStatusLine(line)
-            self.state = 1
-          elseif self.state == 1 then
-            if line ~= '' then
-              self:parseHeaderLine(line)
-            else
-              pcall(function() self:onHeadersReceived(self.responseHeaders) end)
-              self.state = 2 -- blank line indicates last header received
-            end
-          else
-            line = self:transform(line)
-            data[#data+1] = line
-          end
-        end
-      else
-        error('binary mode not implemented yet')
-      end
-    end
-  end
-end
-
 function HttpReceiver:parseStatusLine(line)
   local i = line:find(' ')
   local statusLine = line:sub(i+1)
@@ -97,6 +59,40 @@ function HttpReceiver:parseHeaderLine(line)
     local value = line:sub(i+2)
     self.responseHeaders[name] = value
   end
+end
+
+function HttpReceiver:poll(durationBudget)
+  local startTime = clock.now()
+  local data = {}
+  local minWait = 0.01
+  while true do
+    local elapsed = clock.now() - startTime
+    if elapsed > durationBudget then break end
+    
+    self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
+    if self.mode == 'text' then
+      local line, err = self.conn:receive('*l')
+      if not err then
+        if self.state == 0 then
+          self.status, self.statusLine = self:parseStatusLine(line)
+          self.state = 1
+        elseif self.state == 1 then
+          if line ~= '' then
+            self:parseHeaderLine(line)
+          else
+            pcall(function() self:onHeadersReceived(self.responseHeaders) end)
+            self.state = 2 -- blank line indicates last header received
+          end
+        else
+          line = self:transform(line)
+          data[#data+1] = line
+        end
+      end
+    else
+      error('binary mode not implemented yet')
+    end
+  end
+  return self.ssc.sc:makeRDD(data)
 end
 
 function HttpReceiver:transform(data)

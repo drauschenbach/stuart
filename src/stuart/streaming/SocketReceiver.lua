@@ -27,29 +27,21 @@ function SocketReceiver:onStop()
   if self.conn ~= nil then self.conn:close() end
 end
 
-function SocketReceiver:run(durationBudget)
-  
-  -- run loop. Read multiple lines until the duration budget has elapsed
-  local timeOfLastYield = clock.now()
+function SocketReceiver:poll(durationBudget)
+  local startTime = clock.now()
   local data = {}
-  local minWait = 0.02 -- never block less than a 20ms "average context switch"
+  local minWait = 0.01
   while true do
-    local elapsed = clock.now() - timeOfLastYield
-    if elapsed > durationBudget then
-      local rdd = nil
-      if #data > 0 then rdd = self.ssc.sc:makeRDD(data) end
-      coroutine.yield({rdd})
-      data = {}
-      timeOfLastYield = clock.now()
-    else
-      self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
-      local line, err = self.conn:receive('*l')
-      if not err then
-        data[#data+1] = line
-      end
+    local elapsed = clock.now() - startTime
+    if elapsed > durationBudget then break end
+    
+    self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
+    local line, err = self.conn:receive('*l')
+    if not err then
+      data[#data+1] = line
     end
   end
-  
+  return self.ssc.sc:makeRDD(data)
 end
 
 return SocketReceiver

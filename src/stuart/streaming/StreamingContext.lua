@@ -29,10 +29,6 @@ end
 function StreamingContext:awaitTerminationOrTimeout(timeout)
   if not moses.isNumber(timeout) or timeout < 0 then error('Invalid timeout') end
   
-  local coroutines = {}
-  for _,dstream in ipairs(self.dstreams) do
-    coroutines[#coroutines+1] = {coroutine.create(dstream.compute), dstream}
-  end
   
   -- run loop
   local startTime = clock.now()
@@ -47,15 +43,13 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
       if elapsed > timeout then break end
     end
     
-    -- Run each dstream compute() function, until it yields
-    for _,copair in ipairs(coroutines) do
-      local co = copair[1]
-      local dstream = copair[2]
-      if coroutine.status(co) == 'suspended' then
-        local ok, rdds = coroutine.resume(co, dstream, individualDStreamDurationBudget)
-        if ok and (rdds ~= nil) and (#rdds > 0) then
-          for _, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
-        end
+    -- Run each dstream poll() function, until it returns
+    for _, dstream in ipairs(self.dstreams) do
+      local rdds = dstream:poll(individualDStreamDurationBudget)
+      for _, rdd in ipairs(rdds) do
+      end
+      if rdds ~= nil and #rdds > 0 then
+        for _, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
       end
     end
     

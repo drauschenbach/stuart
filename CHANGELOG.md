@@ -1,3 +1,7 @@
+## [Unreleased]
+### Changed
+- Removed all use of coroutines, allowing transpiling of Spark Streaming to C. This enables eLua interop for Spark Streaming.
+
 ## [0.1.8] - 2018-10-14
 ### Added
 - Added Fengari to list of supported VMs
