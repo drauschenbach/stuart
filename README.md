@@ -158,16 +158,18 @@ end
 
 function MyReceiver:poll(durationBudget)
   local startTime = clock.now()
-  local rdds = {}
+  local data = {}
   local minWait = 0.02
-  while clock.now() - startTime < durationBudget do
+  while true do
+    local elapsed = clock.now() - startTime
+    if elapsed > durationBudget then break end
     self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
     local line, err = self.conn:receive('*l')
     if not err then
-      rdds[#rdds+1] = self.ssc.sc:makeRDD({line})
+      data[#data+1] = line
     end
   end
-  return rdds
+  return self.ssc.sc:makeRDD(data)
 end
 
 -- Spark Streaming Job ------------------------------
