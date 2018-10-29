@@ -223,7 +223,6 @@ See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project fo
 
 ## Roadmap
 
-* Support [PMML Import](https://spark.apache.org/docs/2.2.0/mllib-pmml-model-export.html) via a `stuart-pmml` companion library
 * Support a Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis for execution.
 * Support [OpenCL](https://en.wikipedia.org/wiki/OpenCL) or [CUDA](https://en.wikipedia.org/wiki/CUDA) schedulers that send Lua closures into a GPU for execution.
 
@@ -234,6 +233,7 @@ Stuart is designed for real-time and embedding, and so it follows some rules:
 * It does not perform deferred evaluation of anything; all compute costs are paid upfront for predictable throughput.
 * It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be cross-compiled. Any potential C code optimizations are externally sourced through the module loader. For example, Stuart links to `lunajson`, but it also detects and uses `cjson` when that native module is present.
 * It does not execute programs (like `ls` or `dir` to list files), because there may not even be an OS.
+* It does not make use of coroutines, in order to ensure easy transpiling to C.
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
 
 ### Why Spark?
