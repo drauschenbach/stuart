@@ -1,14 +1,14 @@
 ## [Unreleased]
 ### Changed
-- Removed all use of coroutines, allowing transpiling of Spark Streaming to C. This enables eLua interop for Spark Streaming.
+- [#89](https://github.com/BixData/stuart/issues/89) Removed all use of coroutines, allowing transpiling of Spark Streaming to C (eLua interop)
 
 ## [0.1.8] - 2018-10-14
 ### Added
 - Added Fengari to list of supported VMs
 - New examples/web demonstrates Spark Pi example running in a browser using the Fengari VM
-- [issue-15](https://github.com/BixData/stuart/issues/15) Support `DStream` countByWindow(), map(), reduce(), and window()
-- [issue-71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npmjs.com and jsDelivr as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
-- [issue-82](https://github.com/BixData/stuart/issues/82) Support `DStream` foreachRDD() timestamp 2nd argument
+- [#15](https://github.com/BixData/stuart/issues/15) Support `DStream` countByWindow(), map(), reduce(), and window()
+- [#71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npmjs.com and jsDelivr as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
+- [#82](https://github.com/BixData/stuart/issues/82) Support `DStream` foreachRDD() timestamp 2nd argument
 - Support `RDD` treeAggregate() and treeReduce()
 
 ### Changed
@@ -16,27 +16,27 @@
 - `RDD` aggregate() and treeAggregate() now have the ability to clone a complex zeroValue by calling a clone() function when present
 
 ### Fixed
-- [issue-73](https://github.com/BixData/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
-- [issue-75](https://github.com/BixData/stuart/issues/75) Context\_spec.lua ignores WEBHDFS_URL
-- [issue-76](https://github.com/BixData/stuart/issues/76) RDD:foreach() modifies RDD
+- [#73](https://github.com/BixData/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
+- [#75](https://github.com/BixData/stuart/issues/75) Context\_spec.lua ignores WEBHDFS_URL
+- [#76](https://github.com/BixData/stuart/issues/76) RDD:foreach() modifies RDD
 
 ## [0.1.7] - 2018-09-15
 ### Added
 - Dockerfiles provided for testing with specific versions of Lua 5.1, 5.2, 5.3
 
 ### Changed
-- [issue-68](https://github.com/BixData/stuart/issues/68) Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
+- [#68](https://github.com/BixData/stuart/issues/68) Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
 - Moses is no longer embedded, and is now once again a LuaRocks dependency. Embedding a trimmed down version did not help with eLua support, which instead requires transpiling modules to C to remove memory pressure
 
 ### Fixed
-- [issue-66](https://github.com/BixData/stuart/issues/66) Travis CI builds fail due to new release of Moses 2.x
-- [issue-64](https://github.com/BixData/stuart/issues/64) `Context:hadoopFile()` error reading a directory containing a nested directory
-- [issue-2](https://github.com/BixData/stuart/issues/2) La Trobe Univ RDD `stdev()` unit test fails
+- [#66](https://github.com/BixData/stuart/issues/66) Travis CI builds fail due to new release of Moses 2.x
+- [#64](https://github.com/BixData/stuart/issues/64) `Context:hadoopFile()` error reading a directory containing a nested directory
+- [#2](https://github.com/BixData/stuart/issues/2) La Trobe Univ RDD `stdev()` unit test fails
 
 ## [0.1.6] - 2017-12-31
 ### Added
 - Support [eLua](http://www.eluaproject.net).
-- Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
+- [#43](https://github.com/BixData/stuart/issues/43) Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
 - New `stuart.interface.sleep` module can be preloaded with a function that sleeps to prevent pegging the CPU in multithreaded environments. Defaults to LuaSocket sleep() when present.
 
 ### Changed
@@ -55,13 +55,13 @@
 - New Hadoop `Path` class, which introduces new [net-url](https://luarocks.org/modules/golgote/net-url) module dependency
 
 ### Fixed
-- `util.isInstanceOf` fails for non-table arguments such as nil
+- [#40](https://github.com/BixData/stuart/issues/40) `util.isInstanceOf` fails for non-table arguments such as nil
 
 ## [0.1.4] - 2017-11-27
 ### Added
 - New `stuart.interface.clock` module that can be preloaded with a custom implementation that binds Stuart to a proprietary hardware clock, instead of always depending on LuaSocket for time which may be unavailable in microcontroller environments
 - Support `Context` `stop()` and `isStopped()`, and `StreamingContext` `stop(stopSparkContext)` param
-- Support `SparkConf` class
+- [#9](https://github.com/BixData/stuart/issues/9) Support `SparkConf` class
 - Support `logging` module and `Logger` class, and add logging to RDD, Context, DStream, and Receiver classes. Connect/disconnect info now shown.
 
 ## [0.1.3] - 2017-11-11
@@ -82,7 +82,7 @@
 - Travis-based Luacheck source code static analysis now also applies to specs
 
 ### Fixed
-- `RDD:takeSample()` fails to return any results when RDD contains middleclass classes
+- [#26](https://github.com/BixData/stuart/issues/26) `RDD:takeSample()` fails to return any results when RDD contains middleclass classes
 
 ### Changed
 - Support random seed 3rd argument to `RDD:takeSample()`
