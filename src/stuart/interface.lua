@@ -1,7 +1,7 @@
 local M = {}
 
 M.clockPrecision = function()
-  local has_luasocket, socket = pcall(require, 'socket')
+  local has_luasocket, _ = pcall(require, 'socket')
   if has_luasocket then
     return 4
   elseif os ~= nil then

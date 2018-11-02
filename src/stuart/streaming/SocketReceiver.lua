@@ -4,6 +4,7 @@ local Receiver = require 'stuart.streaming.Receiver'
 local SocketReceiver = class('SocketReceiver', Receiver)
 
 function SocketReceiver:initialize(ssc, hostname, port)
+  local has_luasocket, _ = pcall(require, 'socket')
   assert(has_luasocket)
   Receiver.initialize(self, ssc)
   self.hostname = hostname
@@ -13,7 +14,7 @@ end
 function SocketReceiver:onStart()
   local log = require 'stuart.internal.logging'.log
   log:info(string.format('Connecting to %s:%d', self.hostname, self.port))
-  local has_luasocket, socket = pcall(require, 'socket')
+  local socket = require 'socket'
   self.conn, self.err = socket.connect(self.hostname, self.port)
   if self.err then
     log:error(string.format('Error connecting to %s:%d: %s', self.hostname, self.port, self.err))

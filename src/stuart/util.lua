@@ -78,7 +78,7 @@ end
 ---
 -- Cast anything to string. If any function detected, call and cast its
 -- result.
--- 
+--
 -- @usage print(_.str({1, 2, 3, 4, {k=2, {'x', 'y'}}}))
 -- --> {1, 2, 3, 4, {{"x", "y"}, ["k"]=2}}
 -- print(_.str({1, 2, 3, 4, function(a) return a end}, 5))
@@ -89,7 +89,7 @@ end
 -- @license MIT
 --
 -- Adapted to Moses for the Stuart project.
--- 
+--
 -- @param value value to cast
 -- @param ... The parameters to pass to any detected function
 -- @return casted value

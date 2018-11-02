@@ -14,7 +14,6 @@ M.NewStreamingContext = function(arg1, arg2, arg3, arg4)
     return StreamingContext:new(sc, arg3)
   end
   local isInstanceOf = require 'stuart.util'.isInstanceOf
-  local moses = require 'moses'
   local SparkConf = require 'stuart.SparkConf'
   if (moses.isString(arg1) or isInstanceOf(arg1, SparkConf)) and moses.isNumber(arg2) and arg3 == nil then
     local sc = Context:new(arg1)

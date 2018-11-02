@@ -29,9 +29,9 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   while self.state == 'active' do
   
     -- Decide whether to timeout
-    local now = now()
+    local currentTime = now()
     if timeout > 0 then
-      local elapsed = now - startTime
+      local elapsed = currentTime - startTime
       if elapsed > timeout then break end
     end
     
@@ -41,7 +41,7 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
       for _, rdd in ipairs(rdds) do
       end
       if rdds ~= nil and #rdds > 0 then
-        for _, rdd in ipairs(rdds) do dstream:_notify(now, rdd) end
+        for _, rdd in ipairs(rdds) do dstream:_notify(currentTime, rdd) end
       end
     end
     

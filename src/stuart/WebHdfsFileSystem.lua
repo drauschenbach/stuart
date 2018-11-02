@@ -4,11 +4,11 @@ local FileSystem = require 'stuart.FileSystem'
 local WebHdfsFileSystem = class('WebHdfsFileSystem', FileSystem)
 
 function WebHdfsFileSystem:initialize(uri)
-  local has_luasocket, http = pcall(require, 'socket.http')
-  assert(has_luasocket)
+  local has_luasocketHttp, _ = pcall(require, 'socket.http')
+  assert(has_luasocketHttp)
   FileSystem.initialize(self, uri)
-  local has_socketUrl, socketUrl = pcall(require, 'socket.url')
-  assert(has_socketUrl)
+  local has_luasocketUrl, socketUrl = pcall(require, 'socket.url')
+  assert(has_luasocketUrl)
   self.parsedUri = socketUrl.parse(uri)
 end
 
@@ -69,6 +69,7 @@ function WebHdfsFileSystem:open(path)
   urlSegments.query = 'op=OPEN'
   local socketUrl = require 'socket.url'
   local uri = socketUrl.build(urlSegments)
+  local http = require 'socket.http'
   local data, status, headers = http.request(uri)
   return data, status, headers
 end
