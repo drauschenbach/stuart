@@ -44,8 +44,8 @@ To load into a web page:
     <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@0.1.7-2/stuart.lua"></script>
   
     <script type="application/lua">
-      local SparkContext = require 'stuart.Context'
-      local sc = SparkContext:new('local[1]', 'My Spark job')
+      local stuart = require 'stuart'
+      local sc = stuart.NewContext('local[1]', 'My Spark job')
       ...
     </script>
     
@@ -63,8 +63,8 @@ Create a "Stuart Context", then count the number of lines in this README:
 $ lua
 Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
 
-local SparkContext = require 'stuart.Context'
-local sc = SparkContext:new()
+local stuart = require 'stuart'
+local sc = stuart.NewContext()
 local rdd = sc:textFile('README.md')
 print(rdd:count())
 151
@@ -107,8 +107,9 @@ $ nc -lk 9999
 Start a Spark Streaming job to read from the network service:
 
 ```lua
-local sc = require 'stuart'.NewContext()
-local ssc = require 'stuart'.NewStreamingContext(sc, 0.5)
+local stuart = require 'stuart'
+local sc = stuart.NewContext()
+local ssc = stuart.NewStreamingContext(sc, 0.5)
 
 local dstream = ssc:socketTextStream('localhost', 9999)
 dstream:foreachRDD(function(rdd)
@@ -133,10 +134,10 @@ This custom receiver acts like a `SocketInputDStream`, and reads lines of text f
 
 ```lua
 local class = require 'middleclass'
+local now = require 'stuart.interface'.now
 local socket = require 'socket'
 local stuart = require 'stuart'
 local Receiver = require 'stuart.streaming.Receiver'
-local clock = require 'stuart.interface.clock'
 
 -- MyReceiver ------------------------------
 
@@ -157,11 +158,11 @@ function MyReceiver:onStop()
 end
 
 function MyReceiver:poll(durationBudget)
-  local startTime = clock.now()
+  local startTime = now()
   local data = {}
   local minWait = 0.02
   while true do
-    local elapsed = clock.now() - startTime
+    local elapsed = now() - startTime
     if elapsed > durationBudget then break end
     self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
     local line, err = self.conn:receive('*l')
@@ -189,15 +190,7 @@ ssc:stop()
 
 ## Embedding
 
-Modules named `stuart.interface.*` provide interfaces to hardware or a host OS, designed to make it easy for you to preload your own custom module that is specific to your host application or device. These interfaces are seen as a public API, and so any changes to them will increment the SemVer versioning accordingly.
-
-### stuart.interface.clock
-
-Used to measure time, which is required by the `StreamingContext` cooperative multitasking. On an OS, implementation defaults to LuaSocket `gettime()` with 4 decimals of precision. Falls back on Lua `os.time(os.clock('*t'))` with 0 digits of precision (whole seconds).
-
-### stuart.interface.sleep
-
-Function used to sleep, when all receivers don't use their full timeslice allotments. Used to prevent pegging the CPU on systems where that makes sense, such as a host OS.
+The `stuart.interface` module provide interfaces to hardware or a host OS, designed to make it easy for you to preload your own custom module that is specific to your host application or device.
 
 ## Compatibility
 
@@ -234,6 +227,7 @@ Stuart is designed for real-time and embedding, and so it follows some rules:
 * It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be cross-compiled. Any potential C code optimizations are externally sourced through the module loader. For example, Stuart links to `lunajson`, but it also detects and uses `cjson` when that native module is present.
 * It does not execute programs (like `ls` or `dir` to list files), because there may not even be an OS.
 * It does not make use of coroutines, in order to ensure easy transpiling to C.
+* It does not use upvalues in module export scripts, so that module tables can be burned into ROM and chipsets (see [eLua LTR](http://www.eluaproject.net/doc/v0.9/en_arch_ltr.html))
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
 
 ### Why Spark?

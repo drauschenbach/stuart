@@ -1,5 +1,5 @@
 local class = require 'middleclass'
-local isInstanceOf = require 'stuart.util.isInstanceOf'
+local isInstanceOf = require 'stuart.util'.isInstanceOf
 local netUrl = require 'net.url'
 
 local function lastIndexOf(haystack, needle)

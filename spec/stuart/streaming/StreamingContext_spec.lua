@@ -1,5 +1,5 @@
-local clock = require 'stuart.interface.clock'
 local moses = require 'moses'
+local now = require 'stuart.interface'.now
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -24,10 +24,10 @@ describe('StreamingContext', function()
   it('can timeout from awaitTerminationOrTimeout()', function()
     local timeoutSecs = .1
     local ssc = stuart.NewStreamingContext(sc)
-    local startTime = clock.now() * 1000
+    local startTime = now() * 1000
     ssc:start()
     ssc:awaitTerminationOrTimeout(timeoutSecs)
-    local endTime = clock.now() * 1000
+    local endTime = now() * 1000
     local elapsedTime = endTime - startTime
     assert.is_in_range(elapsedTime, 100, 5000)
   end)

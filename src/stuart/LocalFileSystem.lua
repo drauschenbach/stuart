@@ -1,6 +1,5 @@
 local class = require 'middleclass'
 local FileSystem = require 'stuart.FileSystem'
-local has_lfs, lfs = pcall(require, 'lfs')
 
 local LocalFileSystem = class('LocalFileSystem', FileSystem)
 
@@ -9,7 +8,7 @@ function LocalFileSystem:initialize(uri)
 end
 
 function LocalFileSystem:isDirectory(path)
-
+  local has_lfs, lfs = pcall(require, 'lfs')
   if has_lfs then
     local attr, err = lfs.attributes(self.uri .. (path or ''))
     if err then error(err) end
@@ -23,7 +22,7 @@ function LocalFileSystem:isDirectory(path)
 end
 
 function LocalFileSystem:listStatus(path)
-
+  local has_lfs, lfs = pcall(require, 'lfs')
   if has_lfs then
     local fileStatuses = {}
     for file in lfs.dir(self.uri .. (path or '')) do

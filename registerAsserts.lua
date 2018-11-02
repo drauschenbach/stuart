@@ -1,5 +1,5 @@
-local lodashInRange = require 'stuart.util.lodashInRange'
-local lodashStr = require 'stuart.util.lodashStr'
+local lodashInRange = require 'stuart.util'.lodashInRange
+local lodashStr = require 'stuart.util'.lodashStr
 local moses = require 'moses'
 local say = require 'say'
 

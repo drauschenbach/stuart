@@ -1,6 +1,6 @@
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
-local split = require 'stuart.util.split'
+local split = require 'stuart.util'.split
 local stuart = require 'stuart'
 
 registerAsserts(assert)

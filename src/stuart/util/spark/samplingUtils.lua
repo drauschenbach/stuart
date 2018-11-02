@@ -1,20 +1,19 @@
 local M = {}
 
-local binomialMinSamplingRate = 1e-10
-
-local binomialGetUpperBound = function(delta, n, fraction)
+local function binomialGetUpperBound(delta, n, fraction)
+  local binomialMinSamplingRate = 1e-10
   local gamma = - math.log(delta) / n
   return math.min(1,
     math.max(binomialMinSamplingRate, fraction + gamma + math.sqrt(gamma * gamma + 2 * gamma * fraction)))
 end
 
-local poissonNumStd = function(s)
+local function poissonNumStd(s)
   if s < 6.0 then return 12.0 end
   if s < 16.0 then return 9.0 end
   return 6.0
 end
 
-local poissonGetUpperBound = function(s)
+local function poissonGetUpperBound(s)
   return math.max(s + poissonNumStd(s) * math.sqrt(s), 1e-10)
 end
 
