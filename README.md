@@ -253,7 +253,7 @@ While many frameworks deliver streaming analytics capabilities, Spark leads the 
 The LuaRocks built-in build system is used for packaging.
 
 ```bash
-$ luarocks make rockspecs/stuart-<version>.rockspec
+$ luarocks make stuart-<version>.rockspec
 stuart <version> is now built and installed in /usr/local (license: Apache 2.0)
 ```
 
