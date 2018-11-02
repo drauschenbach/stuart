@@ -1,5 +1,19 @@
 local M = {}
 
+M.clone = function(zeroValue)
+  local moses = require 'moses'
+  if type(zeroValue) ~= 'table' then
+    return moses.clone(zeroValue)
+  end
+  if type(zeroValue.clone) == 'function' then
+    return zeroValue:clone()
+  end
+  if zeroValue.class ~= nil then
+    error('Cannot clone a middleclass class; you must provide it a clone() function')
+  end
+  return moses.clone(zeroValue)
+end
+
 M.isInstanceOf = function(obj, class)
   return type(obj) == 'table' and obj.isInstanceOf and obj:isInstanceOf(class)
 end

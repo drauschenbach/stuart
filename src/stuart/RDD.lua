@@ -1,18 +1,4 @@
 local class = require 'middleclass'
-local moses = require 'moses'
-
-local function cloneZeroValue(zeroValue)
-  if type(zeroValue) ~= 'table' then
-    return moses.clone(zeroValue)
-  end
-  if type(zeroValue.clone) == 'function' then
-    return zeroValue:clone()
-  end
-  if zeroValue.class ~= nil then
-    error('Cannot clone a middleclass class; you must provide it a clone() function')
-  end
-  return moses.clone(zeroValue)
-end
 
 local RDD = class('RDD')
 
@@ -24,6 +10,7 @@ function RDD:initialize(context, partitions)
 end
 
 function RDD:_dict()
+  local moses = require 'moses'
   return moses.reduce(self:collect(), function(r, e)
     r[e[1]] = e[2]
     return r
@@ -45,13 +32,16 @@ function RDD:__tostring()
 end
 
 function RDD:aggregate(zeroValue, seqOp, combOp)
+  local moses = require 'moses'
+  local clone = require 'stuart.util'.clone
   return moses.reduce(self.partitions, function(r, p)
-    local y = moses.reduce(p.data, seqOp, cloneZeroValue(zeroValue))
+    local y = moses.reduce(p.data, seqOp, clone(zeroValue))
     return combOp(r, y)
-  end, cloneZeroValue(zeroValue))
+  end, clone(zeroValue))
 end
 
 function RDD:aggregateByKey(zeroValue, seqOp, combOp)
+  local moses = require 'moses'
   local y = moses.map(self.partitions, function(p)
     local keys = moses.uniq(moses.map(p.data, function(e) return e[1] end))
     local z = moses.reduce(keys, function(r,key)
@@ -84,6 +74,7 @@ function RDD:cache()
 end
 
 function RDD:cartesian(other)
+  local moses = require 'moses'
   local t = {}
   moses.forEach(self:collect(), function(x)
     moses.forEach(other:collect(), function(y)
@@ -94,11 +85,13 @@ function RDD:cartesian(other)
 end
 
 function RDD:coalesce(numPartitions, shuffle)
+  local moses = require 'moses'
   if not moses.isBoolean(shuffle) then shuffle = false end
   return self.context:parallelize(self:collect(), numPartitions)
 end
 
 function RDD:collect(f)
+  local moses = require 'moses'
   local t = moses.tabulate(self:toLocalIterator())
   if moses.isFunction(f) then
     -- reduce, not map, because Lua arrays cannot contain nil
@@ -112,6 +105,7 @@ function RDD:collect(f)
 end
 
 function RDD:collectAsMap()
+  local moses = require 'moses'
   local t = moses.tabulate(self:toLocalIterator())
   -- now ensure keys are unique, since we are observing the Java Map (non-multimap) contract
   t = moses.reduce(t, function(r, v)
@@ -122,6 +116,7 @@ function RDD:collectAsMap()
 end
 
 function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
+  local moses = require 'moses'
   assert(moses.isFunction(createCombiner))
   assert(moses.isFunction(mergeValue))
   assert(moses.isFunction(mergeCombiners))
@@ -153,6 +148,7 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
 end
 
 function RDD:count()
+  local moses = require 'moses'
   return moses.reduce(self.partitions, function(r, p) return r + p:_count() end, 0)
 end
 
@@ -161,6 +157,7 @@ function RDD:countApprox()
 end
 
 function RDD:countByKey()
+  local moses = require 'moses'
   return moses.reduce(self:collect(), function(r, e)
     local k = e[1]
     if r[k] == nil then
@@ -173,6 +170,7 @@ function RDD:countByKey()
 end
 
 function RDD:countByValue()
+  local moses = require 'moses'
   return moses.reduce(self:collect(), function(r, n)
     if r[n] == nil then
       r[n] = 1
@@ -184,16 +182,19 @@ function RDD:countByValue()
 end
 
 function RDD:distinct(numPartitions)
+  local moses = require 'moses'
   local t = moses.uniq(self:collect())
   return self.context:parallelize(t, numPartitions)
 end
 
 function RDD:filter(f)
+  local moses = require 'moses'
   local t = moses.filter(self:collect(), function(v) return f(v) end)
   return self.context:parallelize(t)
 end
 
 function RDD:filterByRange(lower, upper)
+  local moses = require 'moses'
   local f = function(x)
     if moses.isTable(x) then return x[1] >= lower and x[1] <= upper end
     return false
@@ -214,10 +215,12 @@ function RDD:flatMapValues(f)
 end
 
 function RDD:fold(zeroValue, op)
+  local moses = require 'moses'
   return moses.reduce(self:collect(), op, zeroValue)
 end
 
 function RDD:foldByKey(zeroValue, op)
+  local moses = require 'moses'
   local keys = moses.unique(moses.map(self:collect(), function(e) return e[1] end))
   local t = moses.map(keys, function(k)
     local c = moses.map(self:collect(), function(e)
@@ -243,12 +246,14 @@ function RDD:foreachPartition(f)
 end
 
 function RDD:glom()
+  local moses = require 'moses'
   local t = moses.map(self.partitions, function(p) return p.data end)
   return self.context:parallelize(t)
 end
 
 function RDD:groupBy(f)
   local x = self:collect()
+  local moses = require 'moses'
   local keys = moses.unique(moses.map(x, function(v) return f(v) end))
   local t = moses.map(keys, function(k)
     local v = moses.reduce(x, function(r, e)
@@ -262,6 +267,7 @@ end
 
 function RDD:groupByKey(numPartitions)
   numPartitions = numPartitions or #self.partitions
+  local moses = require 'moses'
   local keys = moses.keys(self:_dict())
   local t = moses.map(keys, function(k)
     local v = moses.reduce(self:collect(), function(r, e)
@@ -274,6 +280,7 @@ function RDD:groupByKey(numPartitions)
 end
 
 function RDD:histogram(buckets)
+  local moses = require 'moses'
   if moses.isNumber(buckets) then
     local num_buckets = buckets
     local min_v = self:min()
@@ -290,6 +297,7 @@ end
 
 function RDD:_histogram(buckets)
   local num_buckets = #buckets - 1
+  local moses = require 'moses'
   local h = {}; moses.fill(h, 0, 1, num_buckets)
   moses.forEach(self:collect(), function(x)
     for i = 1, num_buckets, 1 do
@@ -307,6 +315,7 @@ function RDD:_histogram(buckets)
 end
 
 function RDD:intersection(other)
+  local moses = require 'moses'
   return self.context:parallelize(moses.intersection(moses.unique(self:collect()), moses.unique(other:collect())))
 end
 
@@ -319,6 +328,7 @@ function RDD:isEmpty()
 end
 
 function RDD:join(other)
+  local moses = require 'moses'
   local keys = moses.intersection(moses.keys(self:_dict()), moses.keys(other:_dict()))
   local t = moses.reduce(keys, function(r, key)
     moses.forEach(self:collect(), function(x)
@@ -336,18 +346,19 @@ function RDD:join(other)
 end
 
 function RDD:keyBy(f)
+  local moses = require 'moses'
   local t = moses.map(self:collect(), function(e) return {f(e), e} end)
   return self.context:parallelize(t)
 end
 
 function RDD:keys()
+  local moses = require 'moses'
   local t = moses.map(self:collect(), function(e) return e[1] end)
   return self.context:parallelize(t)
 end
 
 function RDD:leftOuterJoin(other)
-  --local d1 = self:_dict()
-  --local d2 = other:_dict()
+  local moses = require 'moses'
   local t = moses.reduce(self:collect(), function(r, e)
       local right = {}
       moses.forEach(other:collect(), function(y)
@@ -366,6 +377,7 @@ function RDD:leftOuterJoin(other)
 end
 
 function RDD:lookup(key)
+  local moses = require 'moses'
   return moses.reduce(self:collect(), function(r, e)
     if e[1] == key then r[#r+1] = e[2] end
     return r
@@ -379,6 +391,7 @@ function RDD:map(f)
 end
 
 function RDD:mapPartitions(iter)
+  local moses = require 'moses'
   local t = moses.reduce(self.partitions, function(r,p)
     for e in iter(p:_toLocalIterator()) do
       r[#r+1] = e
@@ -390,6 +403,7 @@ end
 
 function RDD:mapPartitionsWithIndex(iter)
   local index = 0
+  local moses = require 'moses'
   local t = moses.reduce(self.partitions, function(r,p)
     for e in iter(index, p:_toLocalIterator()) do
       r[#r+1] = e
@@ -401,6 +415,7 @@ function RDD:mapPartitionsWithIndex(iter)
 end
 
 function RDD:mapValues(f)
+  local moses = require 'moses'
   local t = moses.map(self:collect(), function(e) return {e[1], f(e[2])} end)
   return self.context:parallelize(t)
 end
@@ -436,10 +451,12 @@ function RDD:popVariance()
 end
 
 function RDD:reduce(f)
+  local moses = require 'moses'
   return moses.reduce(self:collect(), f)
 end
 
 function RDD:reduceByKey(f)
+  local moses = require 'moses'
   return self:groupByKey():mapValues(function(e) return moses.reduce(e, f) end)
 end
 
@@ -448,6 +465,7 @@ function RDD:repartition(numPartitions)
 end
 
 function RDD:rightOuterJoin(other)
+  local moses = require 'moses'
   local t = moses.reduce(other:collect(), function(r, e)
       local left = {}
       moses.forEach(self:collect(), function(y)
@@ -470,6 +488,7 @@ function RDD:sample(_, fraction, seed)
   local t = self:collect()
   local n = math.max(1, #t * fraction)
   if n > #t then return {} end
+  local moses = require 'moses'
   local r = moses.sample(self:collect(), n, seed)
   return self.context:parallelize(r)
 end
@@ -487,6 +506,7 @@ function RDD:setName(name)
 end
 
 function RDD:sortBy(f, ascending, numPartitions)
+  local moses = require 'moses'
   if not moses.isBoolean(ascending) then ascending = true end
   local t = self:collect()
   local comp
@@ -500,6 +520,7 @@ function RDD:sortBy(f, ascending, numPartitions)
 end
 
 function RDD:sortByKey(ascending, numPartitions)
+  local moses = require 'moses'
   if not moses.isBoolean(ascending) then ascending = true end
   if not moses.isNumber(numPartitions) then numPartitions = #self.partitions end
   local f = function(a,b)
@@ -518,6 +539,7 @@ function RDD:stats()
   local x = self:collect()
 
   -- calculate mean
+  local moses = require 'moses'
   local r = moses.reduce(x, function(r, v)
     r.count = r.count + 1
     r.sum = r.sum + v
@@ -555,6 +577,7 @@ end
 RDD.stdev = RDD.popStdev
 
 function RDD:subtract(other)
+  local moses = require 'moses'
   local t = moses.without(self:collect(), other:collect())
   return self.context:parallelize(t, #self.partitions)
 end
@@ -562,6 +585,7 @@ end
 function RDD:subtractByKey(other)
   local selfKeys = self:keys():collect()
   local otherKeys = other:keys():collect()
+  local moses = require 'moses'
   local keys = moses.without(selfKeys, otherKeys)
   local t = moses.reduce(self:collect(), function(r, e)
     if moses.detect(keys, e[1]) ~= nil then r[#r+1] = e end
@@ -571,6 +595,7 @@ function RDD:subtractByKey(other)
 end
 
 function RDD:sum()
+  local moses = require 'moses'
   return moses.reduce(self:collect(), function(r, v) return r+v end, 0)
 end
 
@@ -616,12 +641,14 @@ function RDD:takeSample(withReplacement, num, seed)
     samples = self:sample(withReplacement, fraction, math.random(32000)):collect()
     numIters = numIters + 1
   end
+  local moses = require 'moses'
   return moses.first(randomizeInPlace(samples), num)
 end
 
 function RDD:toLocalIterator()
   local pIndex = 1
   local i = 0
+  local moses = require 'moses'
   return function()
     if pIndex > #self.partitions then return nil end
     local partitionData = self.partitions[pIndex].data
@@ -641,6 +668,7 @@ function RDD:toLocalIterator()
 end
 
 function RDD:top(num)
+  local moses = require 'moses'
   local t = moses.sort(self:collect(), function(a,b) return a>b end)
   return moses.slice(t, 1, num)
 end
@@ -650,8 +678,10 @@ function RDD:toString()
 end
 
 function RDD:treeAggregate(zeroValue, seqOp, combOp)
+  local clone = require 'stuart.util'.clone
+  local moses = require 'moses'
   local partiallyAggregated = moses.map(self.partitions, function(p)
-    return moses.reduce(p.data, seqOp, cloneZeroValue(zeroValue))
+    return moses.reduce(p.data, seqOp, clone(zeroValue))
   end)
   return moses.reduce(partiallyAggregated, combOp)
 end
@@ -659,11 +689,13 @@ end
 RDD.treeReduce = RDD.reduce
 
 function RDD:union(other)
+  local moses = require 'moses'
   local t = moses.append(self:collect(), other:collect())
   return self.context:parallelize(t)
 end
 
 function RDD:values()
+  local moses = require 'moses'
   local t = moses.map(self:collect(), function(e) return e[2] end)
   return self.context:parallelize(t)
 end
@@ -671,11 +703,13 @@ end
 RDD.variance = RDD.popVariance
 
 function RDD:zip(other)
+  local moses = require 'moses'
   local t = moses.zip(self:collect(), other:collect())
   return self.context:parallelize(t)
 end
 
 function RDD:zipWithIndex()
+  local moses = require 'moses'
   local t = moses.map(self:collect(), function(x,i)
     return {x,i-1}
   end)
