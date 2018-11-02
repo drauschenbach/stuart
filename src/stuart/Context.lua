@@ -1,5 +1,4 @@
 local class = require 'middleclass'
-local logging = require 'stuart.internal.logging'
 local moses = require 'moses'
 
 local Context = class('Context')
@@ -19,6 +18,7 @@ function Context:initialize(arg1, arg2, arg3, arg4)
   self.defaultParallelism = 1
   self.lastRddId = 0
   self.stopped = false
+  local logging = require 'stuart.internal.logging'
   logging.logInfo('Running Stuart (Embedded Spark ' .. Context.SPARK_VERSION .. ')')
 end
 
@@ -102,6 +102,7 @@ function Context:parallelize(x, numPartitions)
 end
 
 function Context:setLogLevel(level)
+  local logging = require 'stuart.internal.logging'
   logging.log:setLevel(level)
 end
 
