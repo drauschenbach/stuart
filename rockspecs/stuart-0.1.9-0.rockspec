@@ -36,8 +36,7 @@ build = {
       
       ["stuart.hadoop.Path"] = "src/stuart/hadoop/Path.lua",
       
-      ["stuart.interface.clock"] = "src/stuart/interface/clock.lua",
-      ["stuart.interface.sleep"] = "src/stuart/interface/sleep.lua",
+      ["stuart.interface"] = "src/stuart/interface.lua",
       
       ["stuart.internal.Logger"] = "src/stuart/internal/Logger.lua",
       ["stuart.internal.logging"] = "src/stuart/internal/logging.lua",

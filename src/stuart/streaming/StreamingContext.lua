@@ -1,8 +1,8 @@
 local class = require 'middleclass'
-local clock = require 'stuart.interface.clock'
 local isInstanceOf = require 'stuart.util'.isInstanceOf
 local moses = require 'moses'
-local sleep = require 'stuart.interface.sleep'
+local now = require 'stuart.interface'.now
+local sleep = require 'stuart.interface'.sleep
 
 local RDD = require 'stuart.RDD'
 local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
@@ -31,13 +31,13 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
   
   
   -- run loop
-  local startTime = clock.now()
+  local startTime = now()
   local loopDurationGoal = self.batchDuration
   local individualDStreamDurationBudget = loopDurationGoal / #self.dstreams
   while self.state == 'active' do
   
     -- Decide whether to timeout
-    local now = clock.now()
+    local now = now()
     if timeout > 0 then
       local elapsed = now - startTime
       if elapsed > timeout then break end

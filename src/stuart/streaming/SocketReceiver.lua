@@ -1,6 +1,6 @@
 local class = require 'middleclass'
-local clock = require 'stuart.interface.clock'
 local log = require 'stuart.internal.logging'.log
+local now = require 'stuart.interface'.now
 local has_luasocket, socket = pcall(require, 'socket')
 local Receiver = require 'stuart.streaming.Receiver'
 
@@ -28,11 +28,11 @@ function SocketReceiver:onStop()
 end
 
 function SocketReceiver:poll(durationBudget)
-  local startTime = clock.now()
+  local startTime = now()
   local data = {}
   local minWait = 0.01
   while true do
-    local elapsed = clock.now() - startTime
+    local elapsed = now() - startTime
     if elapsed > durationBudget then break end
     
     self.conn:settimeout(math.max(minWait, durationBudget - elapsed))
