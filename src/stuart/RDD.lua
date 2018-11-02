@@ -598,7 +598,7 @@ function RDD:takeSample(withReplacement, num, seed)
 
   if seed ~= nil then math.randomseed(seed) end
 
-  local randomizeInPlace = require 'stuart.util.spark.randomizeInPlace'
+  local randomizeInPlace = require 'stuart.util.spark'.randomizeInPlace
   if not withReplacement and num >= initialCount then
     return randomizeInPlace(self:collect())
   end

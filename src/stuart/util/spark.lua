@@ -1,4 +1,6 @@
-local randomizeInPlace = function(arr)
+local M = {}
+
+M.randomizeInPlace = function(arr)
   for i = #arr-1, 1, -1 do
     local j = math.random(i+1)
     local tmp = arr[j]
@@ -8,4 +10,4 @@ local randomizeInPlace = function(arr)
   return arr
 end
   
-return randomizeInPlace
+return M

@@ -53,7 +53,7 @@ build = {
       ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua",
       
       ["stuart.util"] = "src/stuart/util.lua",
-      ["stuart.util.spark.randomizeInPlace"] = "src/stuart/util/spark/randomizeInPlace.lua",
+      ["stuart.util.spark"] = "src/stuart/util/spark.lua",
       ["stuart.util.spark.samplingUtils"] = "src/stuart/util/spark/samplingUtils.lua"
    }
 }
