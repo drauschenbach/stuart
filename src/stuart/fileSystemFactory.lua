@@ -1,20 +1,18 @@
-local moses = require 'moses'
-local netUrl = require 'net.url'
-local split = require 'stuart.util'.split
-
-local FileSystemFactory = {}
+local M = {}
 
 -- ============================================================================
 -- createForOpenPath(path)
 -- ============================================================================
-FileSystemFactory.createForOpenPath = function(path)
-
+M.createForOpenPath = function(path)
+  local moses = require 'moses'
+  local netUrl = require 'net.url'
   local parsedUri = netUrl.parse(path)
   
   -- --------------------------------------------------------------------------
   -- URI support
   -- --------------------------------------------------------------------------
   
+  local split = require 'stuart.util'.split
   local segments = split(parsedUri.path, '/')
   if parsedUri.scheme == 'webhdfs' or parsedUri.scheme == 'swebhdfs' then
     local constructorUri, openPath
@@ -59,4 +57,4 @@ FileSystemFactory.createForOpenPath = function(path)
   
 end
 
-return FileSystemFactory
+return M
