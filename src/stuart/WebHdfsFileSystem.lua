@@ -1,6 +1,6 @@
 local class = require 'middleclass'
 local has_luasocket, http = pcall(require, 'socket.http')
-local jsonutil = require 'stuart.util.json'
+local jsonDecode = require 'stuart.util'.jsonDecode
 local moses = require 'moses'
 local _, socketUrl = pcall(require, 'socket.url')
 
@@ -20,7 +20,7 @@ function WebHdfsFileSystem:getFileStatus(path)
   urlSegments.query = 'op=GETFILESTATUS'
   local uri = socketUrl.build(urlSegments)
   local json, status, headers = http.request(uri)
-  local obj = jsonutil.decode(json)
+  local obj = jsonDecode(json)
   if obj.RemoteException then error(obj.RemoteException.message) end
   return obj.FileStatus, status, headers
 end
@@ -36,7 +36,7 @@ function WebHdfsFileSystem:listStatus(path)
   urlSegments.query = 'op=LISTSTATUS'
   local uri = socketUrl.build(urlSegments)
   local json, status, headers = http.request(uri)
-  local obj = jsonutil.decode(json)
+  local obj = jsonDecode(json)
   if obj.RemoteException then error(obj.RemoteException.message) end
   return obj.FileStatuses.FileStatus, status, headers
 end
@@ -47,7 +47,7 @@ function WebHdfsFileSystem:mkdirs(path)
   urlSegments.query = 'op=MKDIRS'
   local uri = socketUrl.build(urlSegments)
   local json, status, headers = http.request(uri)
-  local obj = jsonutil.decode(json)
+  local obj = jsonDecode(json)
   if obj.RemoteException then error(obj.RemoteException.message) end
   return obj.boolean, status, headers
 end

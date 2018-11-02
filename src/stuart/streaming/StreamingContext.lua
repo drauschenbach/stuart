@@ -1,6 +1,6 @@
 local class = require 'middleclass'
 local clock = require 'stuart.interface.clock'
-local isInstanceOf = require 'stuart.util.isInstanceOf'
+local isInstanceOf = require 'stuart.util'.isInstanceOf
 local moses = require 'moses'
 local sleep = require 'stuart.interface.sleep'
 

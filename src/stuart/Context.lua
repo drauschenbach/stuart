@@ -6,7 +6,7 @@ local Context = class('Context')
 Context.SPARK_VERSION = '2.2.0'
 
 function Context:initialize(arg1, arg2, arg3, arg4)
-  local isInstanceOf = require 'stuart.util.isInstanceOf'
+  local isInstanceOf = require 'stuart.util'.isInstanceOf
   local SparkConf = require 'stuart.SparkConf'
   if arg1 == nil and arg2 == nil then
     self.conf = SparkConf:new()
