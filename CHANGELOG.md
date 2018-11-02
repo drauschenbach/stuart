@@ -1,6 +1,7 @@
 ## [Unreleased]
 ### Changed
 - [#89](https://github.com/BixData/stuart/issues/89) Removed all use of coroutines, allowing transpiling of Spark Streaming to C (eLua interop)
+- [#92](https://github.com/BixData/stuart/issues/92) Remove all use of module upvalues, so that modules can be more easily transpiled to C then burned into ROM and chipsets (eLua [LTR](http://www.eluaproject.net/doc/v0.9/en_arch_ltr.html) interop)
 
 ## [0.1.8] - 2018-10-14
 ### Added
