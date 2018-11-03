@@ -1,8 +1,8 @@
 package = "stuart"
-version = "0.1.9-1"
+version = "0.2.0-0"
 source = {
-   url = "https://github.com/BixData/stuart/archive/0.1.9-1.tar.gz",
-   dir = "stuart-0.1.9-1"
+   url = "https://github.com/BixData/stuart/archive/0.2.0-0.tar.gz",
+   dir = "stuart-0.2.0-0"
 }
 description = {
    summary = "An Apache Spark runtime for embedding and edge computing",

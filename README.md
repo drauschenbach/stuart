@@ -41,7 +41,7 @@ To load into a web page:
 <html>
   <body>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.2/dist/fengari-web.js"></script>
-    <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@0.1.7-2/stuart.lua"></script>
+    <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@0.2.0-0/stuart.lua"></script>
   
     <script type="application/lua">
       local stuart = require 'stuart'
