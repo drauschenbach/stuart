@@ -1,8 +1,8 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 
 local Receiver = class('Receiver')
 
-function Receiver:initialize(ssc)
+function Receiver:__init(ssc)
   self.ssc = ssc
 end
 

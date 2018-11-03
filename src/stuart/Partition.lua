@@ -1,9 +1,9 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local moses = require 'moses'
 
 local Partition = class('Partition')
 
-function Partition:initialize(data, index)
+function Partition:__init(data, index)
   self.data = data or {}
   self.index = index or 0
 end

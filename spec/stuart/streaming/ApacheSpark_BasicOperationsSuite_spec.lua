@@ -1,4 +1,4 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local DStream = require 'stuart.streaming.DStream'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
@@ -10,10 +10,10 @@ registerAsserts(assert)
 -- TestInputStream
 -------------------------------------------------------------------------------
 
-local TestInputStream = class('TestInputStream', DStream)
+local TestInputStream, parent = class('TestInputStream', class.type(DStream))
 
-function TestInputStream:initialize(ctx, input, numPartitions)
-  DStream.initialize(self, ctx)
+function TestInputStream:__init(ctx, input, numPartitions)
+  parent.__init(self, ctx)
   self.input = input
   self.numPartitions = numPartitions
 end

@@ -1,8 +1,8 @@
 package = "stuart"
-version = "0.1.9-0"
+version = "0.1.9-1"
 source = {
-   url = "https://github.com/BixData/stuart/archive/0.1.9-0.tar.gz",
-   dir = "stuart-0.1.9-0"
+   url = "https://github.com/BixData/stuart/archive/0.1.9-1.tar.gz",
+   dir = "stuart-0.1.9-1"
 }
 description = {
    summary = "An Apache Spark runtime for embedding and edge computing",
@@ -17,7 +17,6 @@ description = {
 dependencies = {
    "lua >= 5.1",
    "lunajson ~> 1.2",
-   "middleclass ~> 4.1",
    "moses ~> 2.1.0",
    "net-url ~> 0.9"
 }
@@ -52,6 +51,7 @@ build = {
       ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua",
       
       ["stuart.util"] = "src/stuart/util.lua",
+      ["stuart.util.class"] = "src/stuart/util/class.lua",
       ["stuart.util.spark"] = "src/stuart/util/spark.lua",
       ["stuart.util.spark.samplingUtils"] = "src/stuart/util/spark/samplingUtils.lua"
    }

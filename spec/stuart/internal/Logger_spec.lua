@@ -2,7 +2,7 @@ local Logger = require 'stuart.internal.Logger'
 
 describe('internal.Logger', function()
 
-  local logger = Logger:new()
+  local logger = Logger.new()
   
   it('can log', function()
     logger:error('Harmless test of error logging')

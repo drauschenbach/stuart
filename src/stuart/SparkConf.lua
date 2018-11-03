@@ -1,11 +1,10 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local moses = require 'moses'
 
 local SparkConf = class('SparkConf')
 
-function SparkConf:initialize()
+function SparkConf:__init()
   self.settings = {}
-  getmetatable(self).getOption = self.get
 end
 
 function SparkConf:appName()
@@ -13,7 +12,7 @@ function SparkConf:appName()
 end
 
 function SparkConf:clone()
-  local cloned = SparkConf:new()
+  local cloned = SparkConf.new()
   cloned.settings = moses.clone(self.settings)
   return cloned
 end
@@ -25,6 +24,8 @@ end
 function SparkConf:get(key, defaultValue)
   return self.settings[key] or defaultValue
 end
+
+SparkConf.getOption = SparkConf.get
 
 function SparkConf:getAppId()
   return self:get('spark.app.id')

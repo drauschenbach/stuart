@@ -1,4 +1,5 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
+local isInstanceOf = require 'stuart.util'.isInstanceOf
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -10,15 +11,15 @@ describe('RDD', function()
   
   it('takeSample() works when RDDs contain Vector classes', function()
     local DenseVector = class('DenseVector')
-    function DenseVector:initialize(data)
+    function DenseVector:__init(data)
       self.data = data
     end
-    local vector1 = DenseVector:new({1,2,3})
-    local vector2 = DenseVector:new({4,5,6})
+    local vector1 = DenseVector.new({1,2,3})
+    local vector2 = DenseVector.new({4,5,6})
     local rdd = sc:parallelize({vector1, vector2})
     local sample = rdd:takeSample(false, 1)
     assert.equal(1, #sample)
-    assert.is_true(sample[1]:isInstanceOf(DenseVector))
+    assert.is_true(isInstanceOf(sample[1], DenseVector))
   end)
 
 end)

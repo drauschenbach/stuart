@@ -1,9 +1,9 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 
 -- Hadoop FileSystem adapter
 local FileSystem = class('FileSystem')
 
-function FileSystem:initialize(uri)
+function FileSystem:__init(uri)
   self.uri = uri
 end
 
