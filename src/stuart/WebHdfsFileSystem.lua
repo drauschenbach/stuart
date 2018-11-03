@@ -1,12 +1,12 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local FileSystem = require 'stuart.FileSystem'
 
-local WebHdfsFileSystem = class('WebHdfsFileSystem', FileSystem)
+local WebHdfsFileSystem, parent = class('WebHdfsFileSystem', class.type(FileSystem))
 
-function WebHdfsFileSystem:initialize(uri)
+function WebHdfsFileSystem:__init(uri)
   local has_luasocketHttp, _ = pcall(require, 'socket.http')
   assert(has_luasocketHttp)
-  FileSystem.initialize(self, uri)
+  parent.__init(self, uri)
   local has_luasocketUrl, socketUrl = pcall(require, 'socket.url')
   assert(has_luasocketUrl)
   self.parsedUri = socketUrl.parse(uri)

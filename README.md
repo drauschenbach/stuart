@@ -133,7 +133,7 @@ abc
 This custom receiver acts like a `SocketInputDStream`, and reads lines of text from a socket.
 
 ```lua
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local now = require 'stuart.interface'.now
 local socket = require 'socket'
 local stuart = require 'stuart'
@@ -141,10 +141,10 @@ local Receiver = require 'stuart.streaming.Receiver'
 
 -- MyReceiver ------------------------------
 
-local MyReceiver = class('MyReceiver', Receiver)
+local MyReceiver, parent = class('MyReceiver', class.type(Receiver))
 
-function MyReceiver:initialize(ssc, hostname, port)
-  Receiver.initialize(self, ssc)
+function MyReceiver:__init(ssc, hostname, port)
+  parent.__init(self, ssc)
   self.hostname = hostname
   self.port = port or 0
 end
@@ -178,7 +178,7 @@ end
 sc = stuart.NewContext()
 ssc = stuart.NewStreamingContext(sc, 0.5)
 
-local receiver = MyReceiver:new(ssc, 'localhost', 9999)
+local receiver = MyReceiver.new(ssc, 'localhost', 9999)
 local dstream = ssc:receiverStream(receiver)
 dstream:foreachRDD(function(rdd)
   print('Received RDD: ' .. rdd:collect())

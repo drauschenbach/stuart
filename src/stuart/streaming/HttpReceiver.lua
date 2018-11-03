@@ -1,12 +1,11 @@
-local class = require 'middleclass'
-
+local class = require 'stuart.util.class'
 local Receiver = require 'stuart.streaming.Receiver'
 
 -- Receiver capable of tailing an http chunked stream
-local HttpReceiver = class('HttpReceiver', Receiver)
+local HttpReceiver, parent = class('HttpReceiver', class.type(Receiver))
 
-function HttpReceiver:initialize(ssc, url, mode, requestHeaders)
-  Receiver.initialize(self, ssc)
+function HttpReceiver:__init(ssc, url, mode, requestHeaders)
+  parent.__init(self, ssc)
   self.url = url
   self.mode = mode or 'text' -- 'text' or 'binary'
   self.requestHeaders = requestHeaders or {}

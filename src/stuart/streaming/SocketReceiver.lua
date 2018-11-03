@@ -1,12 +1,12 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local Receiver = require 'stuart.streaming.Receiver'
 
-local SocketReceiver = class('SocketReceiver', Receiver)
+local SocketReceiver, parent = class('SocketReceiver', class.type(Receiver))
 
-function SocketReceiver:initialize(ssc, hostname, port)
+function SocketReceiver:__init(ssc, hostname, port)
   local has_luasocket, _ = pcall(require, 'socket')
   assert(has_luasocket)
-  Receiver.initialize(self, ssc)
+  parent.__init(self, ssc)
   self.hostname = hostname
   self.port = port or 0
 end

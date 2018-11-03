@@ -1,4 +1,4 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 
 -- log4j, roughly
 local FATAL = 50000
@@ -19,7 +19,7 @@ local levelName = {
 
 local Logger = class('Logger')
 
-function Logger:initialize()
+function Logger:__init()
   self.level = INFO
 end
 

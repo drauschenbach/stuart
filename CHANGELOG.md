@@ -1,3 +1,7 @@
+## [Unreleased]
+### Changed
+- [#94](https://github.com/BixData/stuart/issues/94) Replace use of middleclass with a Torch-compatible equivalent that is easier to represent in an eLua LTR ROM-based module table (eLua interop)
+
 ## [0.1.9] - 2018-11-02
 ### Changed
 - [#89](https://github.com/BixData/stuart/issues/89) Removed all use of coroutines, allowing transpiling of Spark Streaming to C (eLua interop)

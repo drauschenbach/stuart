@@ -8,14 +8,23 @@ M.clone = function(zeroValue)
   if type(zeroValue.clone) == 'function' then
     return zeroValue:clone()
   end
+  if zeroValue.__typename ~= nil then
+    error('Cannot clone a Stuart- or Torch-style class; you must provide it a clone() function')
+  end
   if zeroValue.class ~= nil then
     error('Cannot clone a middleclass class; you must provide it a clone() function')
   end
   return moses.clone(zeroValue)
 end
 
-M.isInstanceOf = function(obj, class)
-  return type(obj) == 'table' and obj.isInstanceOf and obj:isInstanceOf(class)
+M.isInstanceOf = function(obj, klass)
+  if type(obj) ~= 'table' then return false end
+  if obj.isInstanceOf then return obj:isInstanceOf(klass) end -- middleclass
+  if klass and klass.isInstanceOf then return false end -- middleclass ~= Torch class
+  local class = require 'stuart.util.class'
+  local objType = class.type(obj)
+  local x = objType == klass or objType == class.type(klass) -- Torch class
+  return x
 end
 
 M.jsonDecode = function(s)

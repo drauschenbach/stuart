@@ -1,4 +1,4 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 local isInstanceOf = require 'stuart.util'.isInstanceOf
 local netUrl = require 'net.url'
 
@@ -12,15 +12,15 @@ end
 
 local Path = class('Path')
 
-function Path:initialize(arg1, arg2)
+function Path:__init(arg1, arg2)
   if arg2 == nil then -- arg1=pathString
     self:_checkPathArg(arg1)
     self.uri = netUrl.parse(arg1)
     self:normalize()
   else -- arg1=parent, arg2=child
     local parent, child = arg1, arg2
-    if not isInstanceOf(parent, Path) then parent = Path:new(parent) end
-    if not isInstanceOf(child, Path) then child = Path:new(child) end
+    if not isInstanceOf(parent, Path) then parent = Path.new(parent) end
+    if not isInstanceOf(child, Path) then child = Path.new(child) end
     -- resolve a child path against a parent path
     parent.uri.path = parent.uri.path .. '/'
     self.uri = netUrl.resolve(parent.uri, child.uri)
@@ -55,7 +55,7 @@ end
     if lastSlash == start then end_ = start else end_ = lastSlash-1 end
     parent = path:sub(1, end_)
   end
-  local p = Path:new(parent)
+  local p = Path.new(parent)
   p.uri.authority = self.uri.authority
   p.uri.scheme = self.uri.scheme
   return p

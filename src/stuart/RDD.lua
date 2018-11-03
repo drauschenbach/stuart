@@ -1,8 +1,8 @@
-local class = require 'middleclass'
+local class = require 'stuart.util.class'
 
 local RDD = class('RDD')
 
-function RDD:initialize(context, partitions)
+function RDD:__init(context, partitions)
   self.context = context
   self.id = context:getNextId()
   getmetatable(self).sparkContext = context
