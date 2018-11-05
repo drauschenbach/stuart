@@ -207,6 +207,8 @@ To embed Stuart into a Go app, use:
 * [gluabit32](https://github.com/BixData/gluabit32)
 * [gluasocket](https://github.com/BixData/gluasocket)
 
+To embed Stuart into an eLua image, see [stuart-elua](https://github.com/BixData/stuart-elua).
+
 See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
 
 ## Libraries for Stuart
