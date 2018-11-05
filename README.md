@@ -192,6 +192,15 @@ ssc:stop()
 
 The `stuart.interface` module provide interfaces to hardware or a host OS, designed to make it easy for you to preload your own custom module that is specific to your host application or device.
 
+To embed Stuart into a Go app, use:
+
+* [gluabit32](https://github.com/BixData/gluabit32)
+* [gluasocket](https://github.com/BixData/gluasocket)
+
+To embed Stuart into an eLua image, see [stuart-elua](https://github.com/BixData/stuart-elua).
+
+See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
+
 ## Compatibility
 
 Stuart is compatible with:
@@ -202,15 +211,6 @@ Stuart is compatible with:
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
 
-To embed Stuart into a Go app, use:
-
-* [gluabit32](https://github.com/BixData/gluabit32)
-* [gluasocket](https://github.com/BixData/gluasocket)
-
-To embed Stuart into an eLua image, see [stuart-elua](https://github.com/BixData/stuart-elua).
-
-See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
-
 ## Libraries for Stuart
 
 * [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
@@ -218,8 +218,9 @@ See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project fo
 
 ## Roadmap
 
-* Support a Redis scheduler that partitions RDDs across Redis servers, and sends Lua closures into Redis for execution.
-* Support [OpenCL](https://en.wikipedia.org/wiki/OpenCL) or [CUDA](https://en.wikipedia.org/wiki/CUDA) schedulers that send Lua closures into a GPU for execution.
+* Improve streaming support and test coverage
+* Build out Stuart ML to support more models
+* Build out Stuart SQL to support DataFrames
 
 ## Design
 
