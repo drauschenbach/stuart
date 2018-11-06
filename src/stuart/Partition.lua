@@ -1,6 +1,6 @@
 local class = require 'stuart.util.class'
 
-local Partition = class('Partition')
+local Partition = class.new('Partition')
 
 function Partition:__init(data, index)
   self.data = data or {}

@@ -10,7 +10,7 @@ registerAsserts(assert)
 -- TestInputStream
 -------------------------------------------------------------------------------
 
-local TestInputStream, parent = class('TestInputStream', class.type(DStream))
+local TestInputStream, parent = class.new('TestInputStream', class.type(DStream))
 
 function TestInputStream:__init(ctx, input, numPartitions)
   parent.__init(self, ctx)

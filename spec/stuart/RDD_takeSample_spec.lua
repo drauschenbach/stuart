@@ -10,7 +10,7 @@ describe('RDD', function()
   local sc = stuart.NewContext()
   
   it('takeSample() works when RDDs contain Vector classes', function()
-    local DenseVector = class('DenseVector')
+    local DenseVector = class.new('DenseVector')
     function DenseVector:__init(data)
       self.data = data
     end

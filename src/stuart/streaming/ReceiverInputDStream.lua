@@ -1,7 +1,7 @@
 local class = require 'stuart.util.class'
 local DStream = require 'stuart.streaming.DStream'
 
-local ReceiverInputDStream, parent = class('ReceiverInputDStream', class.type(DStream))
+local ReceiverInputDStream, parent = class.new('ReceiverInputDStream', class.type(DStream))
 
 function ReceiverInputDStream:initialize(ssc, receiver)
   parent.__init(self, ssc)

@@ -118,7 +118,4 @@ function M.istype(obj, typename)
   end
 end
 
--- allow class() instead of class.new()
-setmetatable(M, {__call=function(self, ...) return self.new(...) end})
-
 return M

@@ -1,6 +1,6 @@
 local class = require 'stuart.util.class'
 
-local RDD = class('RDD')
+local RDD = class.new('RDD')
 
 function RDD:__init(context, partitions)
   self.context = context

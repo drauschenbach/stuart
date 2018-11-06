@@ -1,6 +1,6 @@
 local class = require 'stuart.util.class'
 
-local Receiver = class('Receiver')
+local Receiver = class.new('Receiver')
 
 function Receiver:__init(ssc)
   self.ssc = ssc

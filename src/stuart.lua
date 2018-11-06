@@ -2,7 +2,7 @@ local M = {}
 
 function M.class(name, parentName)
   local class = require 'stuart.util.class'
-  return class(name, parentName)
+  return class.new(name, parentName)
 end
 
 function M.NewContext(master, appName)
