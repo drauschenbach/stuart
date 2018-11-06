@@ -1,3 +1,7 @@
+## [Unreleased]
+### Added
+- [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
+
 ## [0.2.0] - 2018-11-03
 ### Changed
 - [#94](https://github.com/BixData/stuart/issues/94) Replace use of middleclass with a Torch-compatible equivalent that is easier to represent in an eLua LTR ROM-based module table (eLua interop)
