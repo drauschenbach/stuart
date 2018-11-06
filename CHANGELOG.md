@@ -1,6 +1,8 @@
 ## [Unreleased]
 ### Added
 - [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
+### Fixed
+- [#98](https://github.com/BixData/stuart/issues/98) Trace and Warn logging fails trying to call a nil function
 
 ## [0.2.0] - 2018-11-03
 ### Changed
