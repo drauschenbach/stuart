@@ -10,8 +10,7 @@ local function constructortbl(metatable)
   setmetatable(ct, {
     __index=metatable,
     __newindex=metatable,
-    __metatable=metatable,
-    __call=function(self, ...) return self.new(...) end
+    __metatable=metatable
   })
   return ct
 end
