@@ -19,6 +19,13 @@ local levelName = {
 
 local Logger = class('Logger')
 
+Logger.FATAL = FATAL
+Logger.ERROR = ERROR
+Logger.WARN = WARN
+Logger.INFO = INFO
+Logger.DEBUG = DEBUG
+Logger.TRACE = TRACE
+
 function Logger:__init()
   self.level = INFO
 end
