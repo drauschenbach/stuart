@@ -63,13 +63,13 @@ end
 
 function Logger:trace(msg)
   if self.level <= TRACE then
-    self:log{level='TRACE', message=msg}
+    self:log{level=TRACE, message=msg}
   end
 end
 
 function Logger:warn(msg)
   if self.level <= WARN then
-    self:log{level='WARN', message=msg}
+    self:log{level=WARN, message=msg}
   end
 end
 
