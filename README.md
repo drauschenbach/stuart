@@ -141,7 +141,7 @@ local Receiver = require 'stuart.streaming.Receiver'
 
 -- MyReceiver ------------------------------
 
-local MyReceiver, parent = class('MyReceiver', class.type(Receiver))
+local MyReceiver, parent = class.new('MyReceiver', class.type(Receiver))
 
 function MyReceiver:__init(ssc, hostname, port)
   parent.__init(self, ssc)
@@ -230,7 +230,7 @@ Stuart is designed for real-time and embedding, and so it follows some rules:
 * It uses pure Lua and does not include native C code. This maximizes portability and opportunity to be cross-compiled. Any potential C code optimizations are externally sourced through the module loader. For example, Stuart links to `lunajson`, but it also detects and uses `cjson` when that native module is present.
 * It does not execute programs (like `ls` or `dir` to list files), because there may not even be an OS.
 * It does not make use of coroutines, in order to ensure easy transpiling to C.
-* It does not use upvalues in module export scripts, so that module tables can be burned into ROM and chipsets (see [eLua LTR](http://www.eluaproject.net/doc/v0.9/en_arch_ltr.html))
+* It does not use upvalues or metatables in module scripts, so that module tables can be burned into ROM and chipsets (see [eLua LTR](http://www.eluaproject.net/doc/v0.9/en_arch_ltr.html))
 * It should be able to eventually do everything that [Apache Spark](https://spark.apache.org) does.
 
 ### Why Spark?

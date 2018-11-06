@@ -10,7 +10,7 @@ local function lastIndexOf(haystack, needle)
   return last_index
 end
 
-local Path = class('Path')
+local Path = class.new('Path')
 
 function Path:__init(arg1, arg2)
   if arg2 == nil then -- arg1=pathString

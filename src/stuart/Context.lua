@@ -1,6 +1,6 @@
 local class = require 'stuart.util.class'
 
-local Context = class('Context')
+local Context = class.new('Context')
 Context.SPARK_VERSION = '2.2.0'
 
 function Context:__init(arg1, arg2, arg3, arg4)

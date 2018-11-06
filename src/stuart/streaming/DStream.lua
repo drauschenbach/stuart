@@ -1,6 +1,6 @@
 local class = require 'stuart.util.class'
 
-local DStream = class('DStream')
+local DStream = class.new('DStream')
 
 function DStream:__init(ssc)
   self.ssc = ssc

@@ -1,6 +1,6 @@
 local class = require 'stuart.util.class'
 
-local StreamingContext = class('StreamingContext')
+local StreamingContext = class.new('StreamingContext')
 
 function StreamingContext:__init(sc, batchDuration)
   self.sc = sc
