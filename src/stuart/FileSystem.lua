@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 
 -- Hadoop FileSystem adapter
 local FileSystem = class.new('FileSystem')

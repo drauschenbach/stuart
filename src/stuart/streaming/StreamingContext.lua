@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 
 local StreamingContext = class.new('StreamingContext')
 
@@ -57,10 +57,8 @@ end
 function StreamingContext:queueStream(rdds, oneAtATime)
   local moses = require 'moses'
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
-  local isInstanceOf = require 'stuart.util'.isInstanceOf
-  local RDD = require 'stuart.RDD'
   rdds = moses.map(rdds, function(rdd)
-    if not isInstanceOf(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
+    if not class.istype(rdd, 'RDD') then rdd = self.sc:makeRDD(rdd) end
     return rdd
   end)
   local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'

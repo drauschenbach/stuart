@@ -1,8 +1,13 @@
 local M = {}
 
 function M.class(name, parentName)
-  local class = require 'stuart.util.class'
+  local class = require 'stuart.class'
   return class.new(name, parentName)
+end
+
+function M.istype(obj, typename)
+  local class = require 'stuart.class'
+  return class.istype(obj, typename)
 end
 
 function M.NewContext(master, appName)
@@ -18,9 +23,8 @@ function M.NewStreamingContext(arg1, arg2, arg3, arg4)
     local sc = Context.new(arg1, arg2, arg4)
     return StreamingContext.new(sc, arg3)
   end
-  local isInstanceOf = require 'stuart.util'.isInstanceOf
-  local SparkConf = require 'stuart.SparkConf'
-  if (moses.isString(arg1) or isInstanceOf(arg1, SparkConf)) and moses.isNumber(arg2) and arg3 == nil then
+  local istype = require 'stuart.class'.istype
+  if (moses.isString(arg1) or istype(arg1, 'SparkConf')) and moses.isNumber(arg2) and arg3 == nil then
     local sc = Context.new(arg1)
     return StreamingContext.new(sc, arg2)
   end
@@ -36,7 +40,7 @@ function M.NewStreamingContext(arg1, arg2, arg3, arg4)
 end
 
 function M.typename(obj)
-  local class = require 'stuart.util.class'
+  local class = require 'stuart.class'
   return class.type(obj)
 end
 

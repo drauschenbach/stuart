@@ -1,5 +1,4 @@
-local class = require 'stuart.util.class'
-local isInstanceOf = require 'stuart.util'.isInstanceOf
+local class = require 'stuart.class'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
 
@@ -19,7 +18,7 @@ describe('RDD', function()
     local rdd = sc:parallelize({vector1, vector2})
     local sample = rdd:takeSample(false, 1)
     assert.equal(1, #sample)
-    assert.is_true(isInstanceOf(sample[1], DenseVector))
+    assert.is_true(class.istype(sample[1], 'DenseVector'))
   end)
 
 end)

@@ -133,7 +133,7 @@ abc
 This custom receiver acts like a `SocketInputDStream`, and reads lines of text from a socket.
 
 ```lua
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local now = require 'stuart.interface'.now
 local socket = require 'socket'
 local stuart = require 'stuart'

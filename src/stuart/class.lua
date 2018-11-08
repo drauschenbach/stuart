@@ -1,3 +1,5 @@
+-- adapted from https://github.com/torch/class
+
 local classes = {}
 local isofclass = {}
 local ctypes = {}
@@ -79,17 +81,11 @@ function M.type(obj)
    --  objname = ctypes[tonumber(ffi.typeof(obj))]
    -- elseif
    if tname == 'userdata' or tname == 'table' then
-      local mt = getmetatable(obj)
-      if mt then
-         objname = rawget(mt, '__typename')
-      end
+    local moses = require 'moses'
+    objname = moses.result(obj, '__typename')
    end
 
-   if objname then
-      return objname
-   else
-      return tname
-   end
+   return objname or tname
 end
 
 function M.istype(obj, typename)
@@ -99,10 +95,8 @@ function M.istype(obj, typename)
   --  objname = ctypes[tonumber(ffi.typeof(obj))]
   --elseif
   if tname == 'userdata' or tname == 'table' then
-    local mt = getmetatable(obj)
-    if mt then
-      objname = rawget(mt, '__typename')
-    end
+    local moses = require 'moses'
+    objname = moses.result(obj, '__typename')
   end
 
   if objname then -- we are now sure it is one of our object

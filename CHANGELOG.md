@@ -2,9 +2,13 @@
 ### Added
 - [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
 
+### Changed
+- The `stuart.util.class` module has been renamed to `stuart.class`, which is more 1-1 with Torch
+- The `stuart.util.isInstanceOf()` function has been retired, replaced by `stuart.class.istype()` or `stuart.istype()`
+
 ### Fixed
 - [#98](https://github.com/BixData/stuart/issues/98) Trace and Warn logging fails trying to call a nil function
-- [#100](https://github.com/BixData/stuart/issues/100) Replace use of class() class.new() because metatables are not available in LTR Romtables (eLua interop)
+- [#100](https://github.com/BixData/stuart/issues/100) Replace use of class() with class.new() because use of metatables within LTR Romtables is unknown (eLua interop)
 
 ## [0.2.0] - 2018-11-03
 ### Changed

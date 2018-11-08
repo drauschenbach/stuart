@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 
 -- log4j, roughly
 local FATAL = 50000

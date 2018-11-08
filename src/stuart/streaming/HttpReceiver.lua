@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local Receiver = require 'stuart.streaming.Receiver'
 
 -- Receiver capable of tailing an http chunked stream

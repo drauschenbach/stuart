@@ -17,16 +17,6 @@ M.clone = function(zeroValue)
   return moses.clone(zeroValue)
 end
 
-M.isInstanceOf = function(obj, klass)
-  if type(obj) ~= 'table' then return false end
-  if obj.isInstanceOf then return obj:isInstanceOf(klass) end -- middleclass
-  if klass and klass.isInstanceOf then return false end -- middleclass ~= Torch class
-  local class = require 'stuart.util.class'
-  local objType = class.type(obj)
-  local x = objType == klass or objType == class.type(klass) -- Torch class
-  return x
-end
-
 M.jsonDecode = function(s)
   local has_cjson, cjson = pcall(require, 'cjson')
   if has_cjson then
