@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.0] - 2018-11-8
 ### Added
 - [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
 
