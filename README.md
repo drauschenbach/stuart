@@ -137,11 +137,10 @@ local class = require 'stuart.class'
 local now = require 'stuart.interface'.now
 local socket = require 'socket'
 local stuart = require 'stuart'
-local Receiver = require 'stuart.streaming.Receiver'
 
 -- MyReceiver ------------------------------
 
-local MyReceiver, parent = class.new('MyReceiver', class.type(Receiver))
+local MyReceiver, parent = class.new('MyReceiver', 'Receiver')
 
 function MyReceiver:__init(ssc, hostname, port)
   parent.__init(self, ssc)
@@ -178,7 +177,7 @@ end
 sc = stuart.NewContext()
 ssc = stuart.NewStreamingContext(sc, 0.5)
 
-local receiver = MyReceiver.new(ssc, 'localhost', 9999)
+local receiver = MyReceiver:new(ssc, 'localhost', 9999)
 local dstream = ssc:receiverStream(receiver)
 dstream:foreachRDD(function(rdd)
   print('Received RDD: ' .. rdd:collect())
