@@ -5,7 +5,7 @@ local RDD = class.new('RDD')
 function RDD:__init(context, partitions)
   self.context = context
   self.id = context:getNextId()
-  getmetatable(self).sparkContext = context
+  self.sparkContext = context
   self.partitions = partitions
 end
 
@@ -674,7 +674,7 @@ function RDD:top(num)
 end
 
 function RDD:toString()
-  return tostring(self)
+  return self:__tostring()
 end
 
 function RDD:treeAggregate(zeroValue, seqOp, combOp)

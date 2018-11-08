@@ -271,7 +271,7 @@ $ luarocks intall moses
 $ busted -v --defer-print
 17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0
 ...
-141 successes / 0 failures / 0 errors / 0 pending : 12.026833 seconds
+177 successes / 0 failures / 0 errors / 0 pending : 8.026833 seconds
 ```
 
 Testing with `lunajson`:
@@ -281,7 +281,7 @@ $ luarocks remove lua-cjson
 $ busted -v --defer-print
 17/11/12 08:46:51 INFO Running Stuart (Embedded Spark) version 2.2.0
 ...
-139 successes / 0 failures / 0 errors / 2 pending : 12.026833 seconds
+175 successes / 0 failures / 0 errors / 2 pending : 8.026833 seconds
 
 Pending → ...
 util.json can decode a scalar using cjson
@@ -310,5 +310,5 @@ Various Dockerfiles are made available in the root directory to provide a specif
 $ docker build -f Test-Lua5.3.Dockerfile -t test .
 $ docker run -it test busted -v --defer-print
 ●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●●
-159 successes / 0 failures / 0 errors / 5 pending : 10.246418 seconds
+172 successes / 0 failures / 0 errors / 5 pending : 10.246418 seconds
 ```
