@@ -5,6 +5,7 @@
 ### Changed
 - The `stuart.util.class` module has been renamed to `stuart.class`, which is more 1-1 with Torch
 - The `stuart.util.isInstanceOf()` function has been retired, replaced by `stuart.class.istype()` or `stuart.istype()`
+- Reinstated middleclass class framework to fix indexing in Stuart ML, while retaining most of the Torch-style function calls
 
 ### Fixed
 - [#98](https://github.com/BixData/stuart/issues/98) Trace and Warn logging fails trying to call a nil function

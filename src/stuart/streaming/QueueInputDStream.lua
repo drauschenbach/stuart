@@ -1,7 +1,7 @@
 local class = require 'stuart.class'
-local DStream = require 'stuart.streaming.DStream'
+require 'stuart.streaming.DStream'
 
-local QueueInputDStream, parent = class.new('QueueInputDStream', class.type(DStream))
+local QueueInputDStream, parent = class.new('QueueInputDStream', 'DStream')
 
 function QueueInputDStream:__init(ssc, rdds, oneAtATime)
   parent.__init(self, ssc)

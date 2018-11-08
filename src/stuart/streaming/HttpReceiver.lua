@@ -1,8 +1,8 @@
 local class = require 'stuart.class'
-local Receiver = require 'stuart.streaming.Receiver'
+require 'stuart.streaming.Receiver'
 
 -- Receiver capable of tailing an http chunked stream
-local HttpReceiver, parent = class.new('HttpReceiver', class.type(Receiver))
+local HttpReceiver, parent = class.new('HttpReceiver', 'Receiver')
 
 function HttpReceiver:__init(ssc, url, mode, requestHeaders)
   parent.__init(self, ssc)

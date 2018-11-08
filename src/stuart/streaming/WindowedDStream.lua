@@ -1,7 +1,7 @@
 local class = require 'stuart.class'
-local DStream = require 'stuart.streaming.DStream'
+require 'stuart.streaming.DStream'
 
-local WindowedDStream, parent = class.new('WindowedDStream', class.type(DStream))
+local WindowedDStream, parent = class.new('WindowedDStream', 'DStream')
 
 function WindowedDStream:__init(ssc, windowDuration)
   parent.__init(self, ssc)

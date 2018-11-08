@@ -12,7 +12,7 @@ function SparkConf:appName()
 end
 
 function SparkConf:clone()
-  local cloned = SparkConf.new()
+  local cloned = SparkConf:new()
   cloned.settings = moses.clone(self.settings)
   return cloned
 end
