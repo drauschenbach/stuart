@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local DStream = require 'stuart.streaming.DStream'
 
 local TransformedDStream, parent = class.new('TransformedDStream', class.type(DStream))

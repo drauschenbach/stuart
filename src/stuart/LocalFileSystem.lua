@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local FileSystem = require 'stuart.FileSystem'
 
 local LocalFileSystem, parent = class.new('LocalFileSystem', class.type(FileSystem))

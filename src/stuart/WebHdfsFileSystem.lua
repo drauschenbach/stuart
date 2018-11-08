@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local FileSystem = require 'stuart.FileSystem'
 
 local WebHdfsFileSystem, parent = class.new('WebHdfsFileSystem', class.type(FileSystem))

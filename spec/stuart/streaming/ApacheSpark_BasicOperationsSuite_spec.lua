@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local DStream = require 'stuart.streaming.DStream'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'

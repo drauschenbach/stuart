@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
 local SocketReceiver = require 'stuart.streaming.SocketReceiver'
 

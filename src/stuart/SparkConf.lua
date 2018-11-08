@@ -1,4 +1,4 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 local moses = require 'moses'
 
 local SparkConf = class.new('SparkConf')

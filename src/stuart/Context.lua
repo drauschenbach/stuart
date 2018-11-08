@@ -1,14 +1,13 @@
-local class = require 'stuart.util.class'
+local class = require 'stuart.class'
 
 local Context = class.new('Context')
 Context.SPARK_VERSION = '2.2.0'
 
 function Context:__init(arg1, arg2, arg3, arg4)
-  local isInstanceOf = require 'stuart.util'.isInstanceOf
   local SparkConf = require 'stuart.SparkConf'
   if arg1 == nil and arg2 == nil then
     self.conf = SparkConf.new()
-  elseif isInstanceOf(arg1, SparkConf) then
+  elseif class.istype(arg1, 'SparkConf') then
     self.conf = arg1
   else
     self.conf = Context._updatedConf(SparkConf.new(), arg1, arg2, arg3, arg4)

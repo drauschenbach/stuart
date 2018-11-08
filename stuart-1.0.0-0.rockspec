@@ -1,8 +1,8 @@
 package = "stuart"
-version = "0.2.0-1"
+version = "1.0.0-0"
 source = {
-   url = "https://github.com/BixData/stuart/archive/0.2.0-1.tar.gz",
-   dir = "stuart-0.2.0-1"
+   url = "https://github.com/BixData/stuart/archive/1.0.0-0.tar.gz",
+   dir = "stuart-1.0.0-0"
 }
 description = {
    summary = "An Apache Spark runtime for embedding and edge computing",
@@ -24,6 +24,7 @@ build = {
    type = "builtin",
    modules = {
       stuart = "src/stuart.lua",
+      ["stuart.class"] = "src/stuart/class.lua",
       ["stuart.Context"] = "src/stuart/Context.lua",
       ["stuart.FileSystem"] = "src/stuart/FileSystem.lua",
       ["stuart.fileSystemFactory"] = "src/stuart/fileSystemFactory.lua",
@@ -51,7 +52,6 @@ build = {
       ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua",
       
       ["stuart.util"] = "src/stuart/util.lua",
-      ["stuart.util.class"] = "src/stuart/util/class.lua",
       ["stuart.util.spark"] = "src/stuart/util/spark.lua",
       ["stuart.util.spark.samplingUtils"] = "src/stuart/util/spark/samplingUtils.lua"
    }
