@@ -1,7 +1,6 @@
 local class = require 'stuart.class'
 
 local Context = class.new('Context')
-Context.SPARK_VERSION = '2.2.0'
 
 function Context:__init(arg1, arg2, arg3, arg4)
   local SparkConf = require 'stuart.SparkConf'
@@ -17,7 +16,7 @@ function Context:__init(arg1, arg2, arg3, arg4)
   self.lastRddId = 0
   self.stopped = false
   local logging = require 'stuart.internal.logging'
-  logging.logInfo('Running Stuart (Embedded Spark ' .. Context.SPARK_VERSION .. ')')
+  logging.logInfo('Running Stuart (Embedded Spark 2.2.0)')
 end
 
 function Context:appName()
