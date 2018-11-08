@@ -33,7 +33,7 @@ M.createForOpenPath = function(path)
       openPath = table.concat(segments, '/')
     end
     local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'
-    local fs = WebHdfsFileSystem.new(constructorUri)
+    local fs = WebHdfsFileSystem:new(constructorUri)
     return fs, openPath
   elseif parsedUri.scheme ~= nil then
     error('Unsupported URI scheme: ' .. parsedUri.scheme)
@@ -52,7 +52,7 @@ M.createForOpenPath = function(path)
     openPath = segments[#segments]
   end
   local LocalFileSystem = require 'stuart.LocalFileSystem'
-  local fs = LocalFileSystem.new(constructorUri)
+  local fs = LocalFileSystem:new(constructorUri)
   return fs, openPath
   
 end

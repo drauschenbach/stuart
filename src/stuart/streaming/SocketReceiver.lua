@@ -1,7 +1,7 @@
 local class = require 'stuart.class'
-local Receiver = require 'stuart.streaming.Receiver'
+require 'stuart.streaming.Receiver'
 
-local SocketReceiver, parent = class.new('SocketReceiver', class.type(Receiver))
+local SocketReceiver, parent = class.new('SocketReceiver', 'Receiver')
 
 function SocketReceiver:__init(ssc, hostname, port)
   local has_luasocket, _ = pcall(require, 'socket')

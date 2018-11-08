@@ -18,8 +18,8 @@ function Path:__init(arg1, arg2)
     self:normalize()
   else -- arg1=parent, arg2=child
     local parent, child = arg1, arg2
-    if not class.istype(parent, 'Path') then parent = Path.new(parent) end
-    if not class.istype(child, 'Path') then child = Path.new(child) end
+    if not class.istype(parent, 'Path') then parent = Path:new(parent) end
+    if not class.istype(child, 'Path') then child = Path:new(child) end
     -- resolve a child path against a parent path
     parent.uri.path = parent.uri.path .. '/'
     self.uri = netUrl.resolve(parent.uri, child.uri)
@@ -54,7 +54,7 @@ end
     if lastSlash == start then end_ = start else end_ = lastSlash-1 end
     parent = path:sub(1, end_)
   end
-  local p = Path.new(parent)
+  local p = Path:new(parent)
   p.uri.authority = self.uri.authority
   p.uri.scheme = self.uri.scheme
   return p

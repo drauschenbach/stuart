@@ -62,21 +62,21 @@ function StreamingContext:queueStream(rdds, oneAtATime)
     return rdd
   end)
   local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
-  local dstream = QueueInputDStream.new(self, rdds, oneAtATime)
+  local dstream = QueueInputDStream:new(self, rdds, oneAtATime)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:receiverStream(receiver)
   local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
-  local dstream = ReceiverInputDStream.new(self, receiver)
+  local dstream = ReceiverInputDStream:new(self, receiver)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:socketTextStream(hostname, port)
   local SocketInputDStream = require 'stuart.streaming.SocketInputDStream'
-  local dstream = SocketInputDStream.new(self, hostname, port)
+  local dstream = SocketInputDStream:new(self, hostname, port)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end

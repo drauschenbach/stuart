@@ -5,22 +5,22 @@ local moses = require 'moses'
 describe('LocalFileSystem', function()
 
   it('isDirectory() positive match', function()
-    local fs = LocalFileSystem.new('spec-fixtures')
+    local fs = LocalFileSystem:new('spec-fixtures')
     assert.is_true(fs:isDirectory(''))
     
-    fs = LocalFileSystem.new('./')
+    fs = LocalFileSystem:new('./')
     assert.is_true(fs:isDirectory('spec-fixtures'))
   end)
 
   it('isDirectory() negative match', function()
-    local fs = LocalFileSystem.new('spec-fixtures/')
+    local fs = LocalFileSystem:new('spec-fixtures/')
     assert.is_false(fs:isDirectory('aristotle1.txt'))
   end)
 
   it('listStatus() a directory', function()
     if not has_lfs then return pending('lfs not installed') end
     
-    local fs = LocalFileSystem.new('spec-fixtures')
+    local fs = LocalFileSystem:new('spec-fixtures')
     local fileStatuses = fs:listStatus()
     assert.is_true(#fileStatuses > 0)
     

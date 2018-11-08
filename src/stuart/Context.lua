@@ -5,11 +5,11 @@ local Context = class.new('Context')
 function Context:__init(arg1, arg2, arg3, arg4)
   local SparkConf = require 'stuart.SparkConf'
   if arg1 == nil and arg2 == nil then
-    self.conf = SparkConf.new()
+    self.conf = SparkConf:new()
   elseif class.istype(arg1, 'SparkConf') then
     self.conf = arg1
   else
-    self.conf = Context._updatedConf(SparkConf.new(), arg1, arg2, arg3, arg4)
+    self.conf = Context._updatedConf(SparkConf:new(), arg1, arg2, arg3, arg4)
   end
   
   self.defaultParallelism = 1
@@ -83,8 +83,8 @@ function Context:parallelize(x, numPartitions)
   local Partition = require 'stuart.Partition'
   local RDD = require 'stuart.RDD'
   if numPartitions == 1 then
-    local p = Partition.new(x, 0)
-    return RDD.new(self, {p})
+    local p = Partition:new(x, 0)
+    return RDD:new(self, {p})
   end
   
   local chunks = {}
@@ -94,9 +94,9 @@ function Context:parallelize(x, numPartitions)
   end
   while #chunks < numPartitions do chunks[#chunks+1] = {} end -- pad-right empty partitions
   local partitions = moses.map(chunks, function(chunk, i)
-    return Partition.new(chunk, i)
+    return Partition:new(chunk, i)
   end)
-  return RDD.new(self, partitions)
+  return RDD:new(self, partitions)
 end
 
 function Context:setLogLevel(level)

@@ -1,5 +1,5 @@
 local class = require 'stuart.class'
-local DStream = require 'stuart.streaming.DStream'
+require 'stuart.streaming.DStream'
 local moses = require 'moses'
 local registerAsserts = require 'registerAsserts'
 local stuart = require 'stuart'
@@ -10,7 +10,7 @@ registerAsserts(assert)
 -- TestInputStream
 -------------------------------------------------------------------------------
 
-local TestInputStream, parent = class.new('TestInputStream', class.type(DStream))
+local TestInputStream, parent = class.new('TestInputStream', 'DStream')
 
 function TestInputStream:__init(ctx, input, numPartitions)
   parent.__init(self, ctx)

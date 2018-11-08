@@ -26,8 +26,8 @@ describe('Apache Spark 2.2.0 StreamingContextSuite', function()
   end)
 
   it('from existing SparkContext', function()
-    local sc = Context.new(master, appName)
-    local ssc = StreamingContext.new(sc, batchDuration)
+    local sc = Context:new(master, appName)
+    local ssc = StreamingContext:new(sc, batchDuration)
     assert.not_nil(ssc)
   end)
 
@@ -73,7 +73,7 @@ describe('Apache Spark 2.2.0 StreamingContextSuite', function()
   end)
   
   it('stop only streaming context', function()
-    local conf = SparkConf.new():setMaster(master):setAppName(appName)
+    local conf = SparkConf:new():setMaster(master):setAppName(appName)
     
     -- Explicitly do not stop SparkContext
     local ssc = stuart.NewStreamingContext(conf, batchDuration)

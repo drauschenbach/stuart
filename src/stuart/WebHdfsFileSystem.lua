@@ -1,7 +1,7 @@
 local class = require 'stuart.class'
-local FileSystem = require 'stuart.FileSystem'
+require 'stuart.FileSystem'
 
-local WebHdfsFileSystem, parent = class.new('WebHdfsFileSystem', class.type(FileSystem))
+local WebHdfsFileSystem, parent = class.new('WebHdfsFileSystem', 'FileSystem')
 
 function WebHdfsFileSystem:__init(uri)
   local has_luasocketHttp, _ = pcall(require, 'socket.http')
