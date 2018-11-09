@@ -124,7 +124,8 @@ function M._declareInstanceMethod(aClass, name, f)
 end
 
 function M._includeMixin(aClass, mixin)
-  assert(type(mixin) == 'table', "mixin must be a table")
+  local moses = require 'moses'
+  assert(moses.isTable(mixin), "mixin must be a table")
 
   for name,method in pairs(mixin) do
     if name ~= "included" and name ~= "static" then aClass[name] = method end
