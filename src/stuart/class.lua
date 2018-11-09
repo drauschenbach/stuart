@@ -1,10 +1,10 @@
 local classes = {}
 
-local function _call(self, ...) return self:new(...) end
-
 local M = {}
 
-local DefaultMixin = {
+function M._call(self, ...) return self:new(...) end
+
+M.DefaultMixin = {
   __tostring = function(self) return "instance of " .. tostring(self.class) end,
 
   __init = function() end,
@@ -88,10 +88,10 @@ function M._createClass(name, super)
   else
     setmetatable(aClass.static, { __index = function(_,k) return rawget(dict,k) end })
   end
-
+  
   setmetatable(aClass, {
     __index = aClass.static,
-    __call = _call,
+    __call = M._call,
     __newindex = M._declareInstanceMethod
   })
 
@@ -124,7 +124,8 @@ function M._declareInstanceMethod(aClass, name, f)
 end
 
 function M._includeMixin(aClass, mixin)
-  assert(type(mixin) == 'table', "mixin must be a table")
+  local moses = require 'moses'
+  assert(moses.isTable(mixin), "mixin must be a table")
 
   for name,method in pairs(mixin) do
     if name ~= "included" and name ~= "static" then aClass[name] = method end
@@ -159,17 +160,17 @@ end
 function M.new(typename, supername)
   assert(type(typename) == 'string', "A name (string) is needed for the new class")
   assert(classes[typename] == nil, string.format('The class <%s> is already registered', typename))
-  local super, class
+  local super, klass
   if supername ~= nil then
     super = classes[supername]
     assert(super ~= nil, string.format('Parent class <%s> does not exist', supername))
-    class = super:subclass(typename)
+    klass = super:subclass(typename)
   else
-    class = M._createClass(typename)
-    M._includeMixin(class, DefaultMixin)
+    klass = M._createClass(typename)
+    M._includeMixin(klass, M.DefaultMixin)
   end
-  classes[typename] = class
-  return class, super
+  classes[typename] = klass
+  return klass, super
 end
 
 function M.type(obj)
