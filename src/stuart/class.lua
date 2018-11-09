@@ -10,39 +10,45 @@ M.DefaultMixin = {
   __init = function() end,
 
   isInstanceOf = function(self, aClass)
-    return type(aClass) == 'table'
-       and type(self) == 'table'
+    local moses = require 'moses'
+    return moses.isTable(aClass)
+       and moses.isTable(self)
        and (self.class == aClass
-            or type(self.class) == 'table'
-            and type(self.class.isSubclassOf) == 'function'
+            or moses.isTable(self.class)
+            and moses.isFunction(self.class.isSubclassOf)
             and self.class:isSubclassOf(aClass))
   end,
 
   static = {
     allocate = function(self)
-      assert(type(self) == 'table', "Make sure that you are using 'Class:allocate' instead of 'Class.allocate'")
+      local moses = require 'moses'
+      assert(moses.isTable(self), "Make sure that you are using 'Class:allocate' instead of 'Class.allocate'")
       return setmetatable({class=self}, self.__instanceDict)
     end,
 
     new = function(self, ...)
-      assert(type(self) == 'table', 'Make sure that you are using Class:new instead of Class.new')
+      local moses = require 'moses'
+      assert(moses.isTable(self), 'Make sure that you are using Class:new instead of Class.new')
       local instance = self:allocate()
       instance:__init(...)
       return instance
     end,
 
     subclass = function(self, name)
-      assert(type(self) == 'table', string.format('Make sure that you are using %s:subclass instead of %s.subclass', name, name))
-      assert(type(name) == "string", "You must provide a name(string) for your class")
+      local moses = require 'moses'
+      assert(moses.isTable(self), string.format('Make sure that you are using %s:subclass instead of %s.subclass', name, name))
+      assert(type(name) == 'string', 'You must provide a name(string) for your class')
 
       local subclass = M._createClass(name, self)
 
       for methodName, f in pairs(self.__instanceDict) do
         M._propagateInstanceMethod(subclass, methodName, f)
       end
-      subclass.__init = function(instance, ...) return self.__init(instance, ...) end
+      subclass.__init = self.__init
 
-      self.subclasses[subclass] = true
+      if type(self) ~= 'romtable' then
+        self.subclasses[subclass] = true
+      end
       self:subclassed(subclass)
 
       return subclass
@@ -51,12 +57,14 @@ M.DefaultMixin = {
     subclassed = function() end,
 
     isSubclassOf = function(self, other)
-      return type(other) == 'table' and type(self.super) == 'table' and
+      local moses = require 'moses'
+      return moses.isTable(other) and moses.isTable(self.super) and
              ( self.super == other or self.super:isSubclassOf(other) )
     end,
 
     include = function(self, ...)
-      assert(type(self) == 'table', "Make sure you that you are using 'Class:include' instead of 'Class.include'")
+      local moses = require 'moses'
+      assert(moses.isTable(self), "Make sure you that you are using 'Class:include' instead of 'Class.include'")
       for _,mixin in ipairs({...}) do M._includeMixin(self, mixin) end
       return self
     end
@@ -157,13 +165,16 @@ function M.istype(obj, typename)
   return false
 end
 
-function M.new(typename, supername)
+function M.new(typename, super)
   assert(type(typename) == 'string', "A name (string) is needed for the new class")
   assert(classes[typename] == nil, string.format('The class <%s> is already registered', typename))
-  local super, klass
-  if supername ~= nil then
-    super = classes[supername]
-    assert(super ~= nil, string.format('Parent class <%s> does not exist', supername))
+  local klass
+  if super ~= nil then
+    if type(super) == 'string' then
+      local supername = super
+      super = classes[supername]
+      assert(super ~= nil, string.format('Parent class <%s> does not exist', supername))
+    end
     klass = super:subclass(typename)
   else
     klass = M._createClass(typename)
