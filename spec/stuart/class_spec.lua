@@ -2,19 +2,13 @@ local class = require 'stuart.class'
 
 describe('class', function()
 
-  it('registration works', function()
+  it('class creation works', function()
     class.new()
   end)
   
---  insulate('duplicate registration fails', function()
---    class.new('Bird')
---    assert.has_error(function() class.new('Bird') end)
---  end)
---  
   it('can create a new instance', function()
     local Cat = class.new()
-    local cat = Cat.new()
---    assert.equals('Cat', class.type(cat))
+    Cat.new()
   end)
   
   it('constructor params work', function()
