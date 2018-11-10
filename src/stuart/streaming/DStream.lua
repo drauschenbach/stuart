@@ -1,6 +1,6 @@
 local class = require 'stuart.class'
 
-local DStream = class.new('DStream')
+local DStream = class.new()
 
 function DStream:__init(ssc)
   self.ssc = ssc
@@ -30,7 +30,7 @@ end
 
 function DStream:foreachRDD(foreachFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
-  local dstream = TransformedDStream:new(self.ssc, foreachFunc)
+  local dstream = TransformedDStream.new(self.ssc, foreachFunc)
   self.outputs[#self.outputs+1] = dstream
 end
 
@@ -73,14 +73,14 @@ end
 
 function DStream:transform(transformFunc)
   local TransformedDStream = require 'stuart.streaming.TransformedDStream'
-  local dstream = TransformedDStream:new(self.ssc, transformFunc)
+  local dstream = TransformedDStream.new(self.ssc, transformFunc)
   self.inputs[#self.inputs+1] = dstream
   return dstream
 end
 
 function DStream:window(windowDuration)
   local WindowedDStream = require 'stuart.streaming.WindowedDStream'
-  local dstream = WindowedDStream:new(self.ssc, windowDuration)
+  local dstream = WindowedDStream.new(self.ssc, windowDuration)
   self.inputs[#self.inputs+1] = dstream
   return dstream
 end

@@ -1,6 +1,6 @@
 local class = require 'stuart.class'
 
-local RDD = class.new('RDD')
+local RDD = class.new()
 
 function RDD:__init(context, partitions)
   self.context = context
@@ -673,9 +673,7 @@ function RDD:top(num)
   return moses.slice(t, 1, num)
 end
 
-function RDD:toString()
-  return self:__tostring()
-end
+RDD.toString = RDD.__tostring
 
 function RDD:treeAggregate(zeroValue, seqOp, combOp)
   local clone = require 'stuart.util'.clone

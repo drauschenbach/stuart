@@ -1,6 +1,6 @@
 local class = require 'stuart.class'
 
-local StreamingContext = class.new('StreamingContext')
+local StreamingContext = class.new()
 
 function StreamingContext:__init(sc, batchDuration)
   self.sc = sc
@@ -57,26 +57,27 @@ end
 function StreamingContext:queueStream(rdds, oneAtATime)
   local moses = require 'moses'
   if not moses.isBoolean(oneAtATime) then oneAtATime = true end
+  local RDD = require 'stuart.RDD'
   rdds = moses.map(rdds, function(rdd)
-    if not class.istype(rdd, 'RDD') then rdd = self.sc:makeRDD(rdd) end
+    if not class.istype(rdd, RDD) then rdd = self.sc:makeRDD(rdd) end
     return rdd
   end)
   local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
-  local dstream = QueueInputDStream:new(self, rdds, oneAtATime)
+  local dstream = QueueInputDStream.new(self, rdds, oneAtATime)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:receiverStream(receiver)
   local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
-  local dstream = ReceiverInputDStream:new(self, receiver)
+  local dstream = ReceiverInputDStream.new(self, receiver)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end
 
 function StreamingContext:socketTextStream(hostname, port)
   local SocketInputDStream = require 'stuart.streaming.SocketInputDStream'
-  local dstream = SocketInputDStream:new(self, hostname, port)
+  local dstream = SocketInputDStream.new(self, hostname, port)
   self.dstreams[#self.dstreams+1] = dstream
   return dstream
 end

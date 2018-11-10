@@ -1,10 +1,10 @@
 local class = require 'stuart.class'
-require 'stuart.FileSystem'
+local FileSystem = require 'stuart.FileSystem'
 
-local LocalFileSystem, parent = class.new('LocalFileSystem', 'FileSystem')
+local LocalFileSystem = class.new(FileSystem)
 
 function LocalFileSystem:__init(uri)
-  parent.__init(self, uri)
+  self:super(uri)
 end
 
 function LocalFileSystem:isDirectory(path)

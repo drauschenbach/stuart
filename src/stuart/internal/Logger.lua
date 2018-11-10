@@ -17,7 +17,7 @@ local levelName = {
   [TRACE] = 'TRACE'
 }
 
-local Logger = class.new('Logger')
+local Logger = class.new()
 
 Logger.FATAL = FATAL
 Logger.ERROR = ERROR

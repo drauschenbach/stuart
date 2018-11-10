@@ -39,7 +39,7 @@ describe('Apache Spark 2.2.0 SparkConfSuite', function()
 --  }
 
   it('named set methods', function()
-    local conf = SparkConf:new(false)
+    local conf = SparkConf.new(false)
 
     conf:setMaster('local[3]')
     conf:setAppName('My app')
@@ -58,7 +58,7 @@ describe('Apache Spark 2.2.0 SparkConfSuite', function()
   end)
 
   it('basic get and set', function()
-    local conf = SparkConf:new(false)
+    local conf = SparkConf.new(false)
     assert.same({}, conf:getAll())
     conf:set('k1', 'v1')
     conf:setAll({{'k2','v2'}, {'k3','v3'}})
@@ -86,7 +86,7 @@ describe('Apache Spark 2.2.0 SparkConfSuite', function()
   end)
 
 --  it('creating SparkContext without master and app name', function()
---    local conf = SparkConf:new(false)
+--    local conf = SparkConf.new(false)
 --    intercept[SparkException] { sc = new SparkContext(conf) }
 --  end)
 
@@ -101,8 +101,8 @@ describe('Apache Spark 2.2.0 SparkConfSuite', function()
 --  }
 
   it('creating SparkContext with both master and app name', function()
-    local conf = SparkConf:new(false):setMaster('local'):setAppName('My app')
-    local sc = SparkContext:new(conf)
+    local conf = SparkConf.new(false):setMaster('local'):setAppName('My app')
+    local sc = SparkContext.new(conf)
     assert.equal('local', sc:master())
     assert('My app', sc:appName())
   end)
