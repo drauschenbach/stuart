@@ -1,7 +1,6 @@
 local class = require 'stuart.class'
-local moses = require 'moses'
 
-local SparkConf = class.new('SparkConf')
+local SparkConf = class.new()
 
 function SparkConf:__init()
   self.settings = {}
@@ -12,7 +11,8 @@ function SparkConf:appName()
 end
 
 function SparkConf:clone()
-  local cloned = SparkConf:new()
+  local cloned = SparkConf.new()
+  local moses = require 'moses'
   cloned.settings = moses.clone(self.settings)
   return cloned
 end

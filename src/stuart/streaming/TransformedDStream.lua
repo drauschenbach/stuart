@@ -1,10 +1,10 @@
 local class = require 'stuart.class'
-require 'stuart.streaming.DStream'
+local DStream = require 'stuart.streaming.DStream'
 
-local TransformedDStream, parent = class.new('TransformedDStream', 'DStream')
+local TransformedDStream = class.new(DStream)
 
 function TransformedDStream:__init(ssc, transformFunc)
-  parent.__init(self, ssc)
+  self:super(ssc)
   self.transformFunc = transformFunc
 end
 

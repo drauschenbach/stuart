@@ -1,6 +1,6 @@
 ## [Unreleased]
 ### Changed
-- Class framework now supports ROMtable based mixins, by using Moses isTable() which now takes romtable types into account
+- Class framework drastically simplified by adopting Microlight
 
 ## [1.0.0] - 2018-11-8
 ### Added

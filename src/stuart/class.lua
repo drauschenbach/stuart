@@ -1,196 +1,45 @@
-local classes = {}
+-- adapted from https://github.com/stevedonovan/Microlight#classes (MIT License)
+-- external API adapted roughly to https://github.com/torch/class
 
 local M = {}
 
-function M._call(self, ...) return self:new(...) end
+function M.istype(obj, super)
+  return super.classof(obj)
+end
 
-M.DefaultMixin = {
-  __tostring = function(self) return "instance of " .. tostring(self.class) end,
-
-  __init = function() end,
-
-  isInstanceOf = function(self, aClass)
-    local moses = require 'moses'
-    return moses.isTable(aClass)
-       and moses.isTable(self)
-       and (self.class == aClass
-            or moses.isTable(self.class)
-            and moses.isFunction(self.class.isSubclassOf)
-            and self.class:isSubclassOf(aClass))
-  end,
-
-  static = {
-    allocate = function(self)
-      local moses = require 'moses'
-      assert(moses.isTable(self), "Make sure that you are using 'Class:allocate' instead of 'Class.allocate'")
-      return setmetatable({class=self}, self.__instanceDict)
-    end,
-
-    new = function(self, ...)
-      local moses = require 'moses'
-      assert(moses.isTable(self), 'Make sure that you are using Class:new instead of Class.new')
-      local instance = self:allocate()
-      instance:__init(...)
-      return instance
-    end,
-
-    subclass = function(self, name)
-      local moses = require 'moses'
-      assert(moses.isTable(self), string.format('Make sure that you are using %s:subclass instead of %s.subclass', name, name))
-      assert(type(name) == 'string', 'You must provide a name(string) for your class')
-
-      local subclass = M._createClass(name, self)
-
-      for methodName, f in pairs(self.__instanceDict) do
-        M._propagateInstanceMethod(subclass, methodName, f)
-      end
-      subclass.__init = self.__init
-
-      if type(self) ~= 'romtable' then
-        self.subclasses[subclass] = true
-      end
-      self:subclassed(subclass)
-
-      return subclass
-    end,
-
-    subclassed = function() end,
-
-    isSubclassOf = function(self, other)
-      local moses = require 'moses'
-      return moses.isTable(other) and moses.isTable(self.super) and
-             ( self.super == other or self.super:isSubclassOf(other) )
-    end,
-
-    include = function(self, ...)
-      local moses = require 'moses'
-      assert(moses.isTable(self), "Make sure you that you are using 'Class:include' instead of 'Class.include'")
-      for _,mixin in ipairs({...}) do M._includeMixin(self, mixin) end
-      return self
+function M.new(base)
+  local klass, base_ctor = {}
+  if base then
+    for k,v in pairs(base) do klass[k]=v end
+    klass._base = base
+    base_ctor = rawget(base,'__init')
+  end
+  klass.__index = klass
+  klass._class = klass
+  klass.classof = function(obj)
+    local m = getmetatable(obj) -- an object created by class() ?
+    if not m or not m._class then return false end
+    while m do -- follow the inheritance chain --
+      if m == klass then return true end
+      m = rawget(m,'_base')
     end
-  }
-}
-
-function M._createClass(name, super)
-  local dict = {}
-  dict.__index = dict
-
-  local aClass = {
-    __typename=name,
-    super=super,
-    static = {},
-    __instanceDict = dict, __declaredMethods = {},
-    subclasses = setmetatable({}, {__mode='k'})
-  }
-
-  if super then
-    setmetatable(aClass.static, {
-      __index = function(_,k)
-        local result = rawget(dict,k)
-        if result == nil then
-          return super.static[k]
-        end
-        return result
+    return false
+  end
+  klass.new = function(...)
+    local obj = setmetatable({},klass)
+    if rawget(klass,'__init') then
+      klass.super = base_ctor
+      local res = klass.__init(obj,...) -- call our constructor
+      if res then -- which can return a new self..
+        obj = setmetatable(res,klass)
       end
-    })
-  else
-    setmetatable(aClass.static, { __index = function(_,k) return rawget(dict,k) end })
-  end
-  
-  setmetatable(aClass, {
-    __index = aClass.static,
-    __call = M._call,
-    __newindex = M._declareInstanceMethod
-  })
-
-  return aClass
-end
-
-function M._createIndexWrapper(aClass, f)
-  if f == nil then
-    return aClass.__instanceDict
-  else
-    return function(self, name)
-      local value = aClass.__instanceDict[name]
-      if value ~= nil then
-        return value
-      elseif type(f) == "function" then
-        return (f(self, name))
-      else
-        return f[name]
-      end
+    elseif base_ctor then -- call base ctor automatically
+        base_ctor(obj,...)
     end
+    return obj
   end
-end
-
-function M._declareInstanceMethod(aClass, name, f)
-  aClass.__declaredMethods[name] = f
-  if f == nil and aClass.super then
-    f = aClass.super.__instanceDict[name]
-  end
-  M._propagateInstanceMethod(aClass, name, f)
-end
-
-function M._includeMixin(aClass, mixin)
-  local moses = require 'moses'
-  assert(moses.isTable(mixin), "mixin must be a table")
-
-  for name,method in pairs(mixin) do
-    if name ~= "included" and name ~= "static" then aClass[name] = method end
-  end
-
-  for name,method in pairs(mixin.static or {}) do
-    aClass.static[name] = method
-  end
-
-  if type(mixin.included)=="function" then mixin:included(aClass) end
-  return aClass
-end
-
-function M._propagateInstanceMethod(aClass, name, f)
-  f = name == "__index" and M._createIndexWrapper(aClass, f) or f
-  aClass.__instanceDict[name] = f
-  for subclass in pairs(aClass.subclasses) do
-    if rawget(subclass.__declaredMethods, name) == nil then
-      M._propagateInstanceMethod(subclass, name, f)
-    end
-  end
-end
-
-function M.istype(obj, typename)
-  local moses = require 'moses'
-  if moses.isTable(obj) and obj.isInstanceOf ~= nil then
-    return obj:isInstanceOf(classes[typename])
-  end
-  return false
-end
-
-function M.new(typename, super)
-  assert(type(typename) == 'string', "A name (string) is needed for the new class")
-  assert(classes[typename] == nil, string.format('The class <%s> is already registered', typename))
-  local klass
-  if super ~= nil then
-    if type(super) == 'string' then
-      local supername = super
-      super = classes[supername]
-      assert(super ~= nil, string.format('Parent class <%s> does not exist', supername))
-    end
-    klass = super:subclass(typename)
-  else
-    klass = M._createClass(typename)
-    M._includeMixin(klass, M.DefaultMixin)
-  end
-  classes[typename] = klass
-  return klass, super
-end
-
-function M.type(obj)
-  local moses = require 'moses'
-  local res
-  if obj.class ~= nil then
-    res = moses.result(obj.class, '__typename')
-  end
-  return res or type(obj)
+  --setmetatable(klass, {__call=klass.new})
+  return klass
 end
 
 return M

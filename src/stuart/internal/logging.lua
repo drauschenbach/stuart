@@ -1,6 +1,6 @@
 local Logger = require 'stuart.internal.Logger'
 
-local M = {log=Logger:new()}
+local M = {log=Logger.new()}
 
 function M.logInfo(msg)
   M.log:info(msg)

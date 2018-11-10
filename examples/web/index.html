@@ -45,7 +45,7 @@
 local moses = require 'moses'
 local SparkContext = require 'stuart.Context'
 
-local sc = SparkContext:new('local[1]', 'Spark Pi')
+local sc = SparkContext.new('local[1]', 'Spark Pi')
 local slices = 2
 if arg ~= nil and #arg > 0 then slices = arg[1] end
 

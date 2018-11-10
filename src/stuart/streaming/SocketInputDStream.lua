@@ -1,12 +1,12 @@
 local class = require 'stuart.class'
-require 'stuart.streaming.DStream'
-local SocketReceiver = require 'stuart.streaming.SocketReceiver'
+local ReceiverInputDStream = require 'stuart.streaming.ReceiverInputDStream'
 
-local SocketInputDStream, parent = class.new('SocketInputDStream', 'ReceiverInputDStream')
+local SocketInputDStream = class.new(ReceiverInputDStream)
 
-function SocketInputDStream:initialize(ssc, hostname, port)
-  local receiver = SocketReceiver:new(ssc, hostname, port)
-  parent.__init(self, ssc, receiver)
+function SocketInputDStream:__init(ssc, hostname, port)
+  local SocketReceiver = require 'stuart.streaming.SocketReceiver'
+  local receiver = SocketReceiver.new(ssc, hostname, port)
+  self:super(ssc, receiver)
 end
 
 return SocketInputDStream
