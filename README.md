@@ -213,13 +213,14 @@ Stuart is compatible with:
 ## Libraries for Stuart
 
 * [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
-* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html) (NOTE: this module, and many of its dependencies such as Parquet and Thrift, do not yet support Lua 5.3)
+* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html)
 
 ## Roadmap
 
 * Improve streaming support and test coverage
 * Build out Stuart ML to support more models
 * Build out Stuart SQL to support DataFrames
+* Improve Stuart SQL's Parquet interop with Lua 5.3 support and more codecs
 
 ## Design
 
