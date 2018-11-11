@@ -3,9 +3,12 @@
 - Class framework drastically simplified by adopting Microlight
 
 ### Fixed
+- [#111](https://github.com/BixData/stuart/issues/111) Subclass cannot call superclass constructor if not explicitly provided
+
+### Fixed
 - [#107](https://github.com/BixData/stuart/issues/107) WindowedDStream was left out of the LuaRocks packaging
 
-## [1.0.0] - 2018-11-8
+## [1.0.0] - 2018-11-08
 ### Added
 - [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
 

@@ -12,14 +12,14 @@ function M.new(base)
   if base then
     for k,v in pairs(base) do klass[k]=v end
     klass._base = base
-    base_ctor = rawget(base,'_init')
+    base_ctor = rawget(base,'_init') or function() end
   end
   klass.__index = klass
   klass._class = klass
   klass.classof = function(obj)
     local m = getmetatable(obj) -- an object created by class() ?
     if not m or not m._class then return false end
-    while m do -- follow the inheritance chain --
+    while m do -- follow the inheritance chain
       if m == klass then return true end
       m = rawget(m,'_base')
     end
