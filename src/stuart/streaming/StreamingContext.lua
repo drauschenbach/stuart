@@ -4,11 +4,11 @@ local StreamingContext = class.new()
 
 function StreamingContext:__init(sc, batchDuration)
   self.sc = sc
+  self.sparkContext = sc
   self.batchDuration = batchDuration or 1
   self.dstreams={}
   self.state='initialized'
-  getmetatable(self).conf = sc.conf
-  getmetatable(self).sparkContext = sc
+  self.conf = sc.conf
 end
 
 function StreamingContext:awaitTermination()
