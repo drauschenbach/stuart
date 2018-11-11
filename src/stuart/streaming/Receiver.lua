@@ -2,7 +2,7 @@ local class = require 'stuart.class'
 
 local Receiver = class.new()
 
-function Receiver:__init(ssc)
+function Receiver:_init(ssc)
   self.ssc = ssc
 end
 

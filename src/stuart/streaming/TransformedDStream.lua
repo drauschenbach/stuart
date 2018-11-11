@@ -3,7 +3,7 @@ local DStream = require 'stuart.streaming.DStream'
 
 local TransformedDStream = class.new(DStream)
 
-function TransformedDStream:__init(ssc, transformFunc)
+function TransformedDStream:_init(ssc, transformFunc)
   self:super(ssc)
   self.transformFunc = transformFunc
 end

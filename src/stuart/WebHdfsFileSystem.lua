@@ -3,7 +3,7 @@ local FileSystem = require 'stuart.FileSystem'
 
 local WebHdfsFileSystem = class.new(FileSystem)
 
-function WebHdfsFileSystem:__init(uri)
+function WebHdfsFileSystem:_init(uri)
   local has_luasocketHttp, _ = pcall(require, 'socket.http')
   assert(has_luasocketHttp)
   self:super(uri)

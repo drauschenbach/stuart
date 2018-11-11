@@ -3,7 +3,7 @@ local Receiver = require 'stuart.streaming.Receiver'
 
 local SocketReceiver = class.new(Receiver)
 
-function SocketReceiver:__init(ssc, hostname, port)
+function SocketReceiver:_init(ssc, hostname, port)
   local has_luasocket, _ = pcall(require, 'socket')
   assert(has_luasocket)
   self:super(ssc)

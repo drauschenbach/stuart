@@ -4,7 +4,7 @@ local Receiver = require 'stuart.streaming.Receiver'
 -- Receiver capable of tailing an http chunked stream
 local HttpReceiver = class.new(Receiver)
 
-function HttpReceiver:__init(ssc, url, mode, requestHeaders)
+function HttpReceiver:_init(ssc, url, mode, requestHeaders)
   self:super(ssc)
   self.url = url
   self.mode = mode or 'text' -- 'text' or 'binary'

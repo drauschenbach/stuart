@@ -2,7 +2,7 @@ local class = require 'stuart.class'
 
 local Context = class.new()
 
-function Context:__init(arg1, arg2, arg3, arg4)
+function Context:_init(arg1, arg2, arg3, arg4)
   local SparkConf = require 'stuart.SparkConf'
   if arg1 == nil and arg2 == nil then
     self.conf = SparkConf.new()

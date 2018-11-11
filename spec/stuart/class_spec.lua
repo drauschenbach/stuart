@@ -13,14 +13,14 @@ describe('class', function()
   
   it('constructor params work', function()
     local Giraffe = class.new()
-    function Giraffe:__init(age) self.age = age end
+    function Giraffe:_init(age) self.age = age end
     local giraffe = Giraffe.new(7)
     assert.equals(7, giraffe.age)
   end)
   
   it('class functions are accessible to instance', function()
     local Frog = class.new()
-    function Frog:__init(age) self.age = age end
+    function Frog:_init(age) self.age = age end
     function Frog:isHungry() return true end
     local frog = Frog.new(7)
     assert.equals(true, frog:isHungry())
@@ -38,12 +38,12 @@ describe('class', function()
   it('subclassing works', function()
     local Animal = class.new()
     function Animal:name() return 'generic animal' end
-    function Animal:__init(age) self.age = age end
+    function Animal:_init(age) self.age = age end
     local animal = Animal.new(7)
     assert.equals('generic animal', animal:name())
     
     local Fish = class.new(Animal)
-    function Fish:__init(age) self:super(age+1) end
+    function Fish:_init(age) self:super(age+1) end
     function Fish:name() return 'I am a fish' end
     assert.is_not_nil(Fish)
     local fish = Fish.new(9)

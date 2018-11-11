@@ -2,7 +2,7 @@ local class = require 'stuart.class'
 
 local DStream = class.new()
 
-function DStream:__init(ssc)
+function DStream:_init(ssc)
   self.ssc = ssc
   self.inputs = {}
   self.outputs = {}

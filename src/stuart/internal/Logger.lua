@@ -26,7 +26,7 @@ Logger.INFO = INFO
 Logger.DEBUG = DEBUG
 Logger.TRACE = TRACE
 
-function Logger:__init()
+function Logger:_init()
   self.level = INFO
 end
 
