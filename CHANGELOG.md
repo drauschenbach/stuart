@@ -2,6 +2,9 @@
 ### Changed
 - Class framework drastically simplified by adopting Microlight
 
+### Fixed
+- [#107](https://github.com/BixData/stuart/issues/107) WindowedDStream was left out of the LuaRocks packaging
+
 ## [1.0.0] - 2018-11-8
 ### Added
 - [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()

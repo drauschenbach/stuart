@@ -50,6 +50,7 @@ build = {
       ["stuart.streaming.SocketReceiver"] = "src/stuart/streaming/SocketReceiver.lua",
       ["stuart.streaming.StreamingContext"] = "src/stuart/streaming/StreamingContext.lua",
       ["stuart.streaming.TransformedDStream"] = "src/stuart/streaming/TransformedDStream.lua",
+      ["stuart.streaming.WindowedDStream"] = "src/stuart/streaming/WindowedDStream.lua",
       
       ["stuart.util"] = "src/stuart/util.lua",
       ["stuart.util.spark"] = "src/stuart/util/spark.lua",
