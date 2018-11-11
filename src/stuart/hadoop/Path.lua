@@ -11,7 +11,7 @@ end
 
 local Path = class.new()
 
-function Path:__init(arg1, arg2)
+function Path:_init(arg1, arg2)
   if arg2 == nil then -- arg1=pathString
     self:_checkPathArg(arg1)
     self.uri = netUrl.parse(arg1)

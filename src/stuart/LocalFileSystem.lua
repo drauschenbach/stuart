@@ -3,7 +3,7 @@ local FileSystem = require 'stuart.FileSystem'
 
 local LocalFileSystem = class.new(FileSystem)
 
-function LocalFileSystem:__init(uri)
+function LocalFileSystem:_init(uri)
   self:super(uri)
 end
 

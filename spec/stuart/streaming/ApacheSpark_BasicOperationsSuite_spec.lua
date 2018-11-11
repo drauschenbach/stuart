@@ -11,7 +11,7 @@ registerAsserts(assert)
 
 local TestInputStream = stuart.class(DStream)
 
-function TestInputStream:__init(ctx, input, numPartitions)
+function TestInputStream:_init(ctx, input, numPartitions)
   self:super(ctx)
   self.input = input
   self.numPartitions = numPartitions

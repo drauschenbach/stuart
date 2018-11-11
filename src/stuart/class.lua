@@ -12,7 +12,7 @@ function M.new(base)
   if base then
     for k,v in pairs(base) do klass[k]=v end
     klass._base = base
-    base_ctor = rawget(base,'__init')
+    base_ctor = rawget(base,'_init')
   end
   klass.__index = klass
   klass._class = klass
@@ -27,9 +27,9 @@ function M.new(base)
   end
   klass.new = function(...)
     local obj = setmetatable({},klass)
-    if rawget(klass,'__init') then
+    if rawget(klass,'_init') then
       klass.super = base_ctor
-      local res = klass.__init(obj,...) -- call our constructor
+      local res = klass._init(obj,...) -- call our constructor
       if res then -- which can return a new self..
         obj = setmetatable(res,klass)
       end

@@ -2,7 +2,7 @@ local class = require 'stuart.class'
 
 local SparkConf = class.new()
 
-function SparkConf:__init()
+function SparkConf:_init()
   self.settings = {}
 end
 

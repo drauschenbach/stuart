@@ -2,7 +2,7 @@ local class = require 'stuart.class'
 
 local RDD = class.new()
 
-function RDD:__init(context, partitions)
+function RDD:_init(context, partitions)
   self.context = context
   self.id = context:getNextId()
   self.sparkContext = context

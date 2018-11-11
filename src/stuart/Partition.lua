@@ -2,7 +2,7 @@ local class = require 'stuart.class'
 
 local Partition = class.new()
 
-function Partition:__init(data, index)
+function Partition:_init(data, index)
   self.data = data or {}
   self.index = index or 0
 end
