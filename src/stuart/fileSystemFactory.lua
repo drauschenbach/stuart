@@ -5,8 +5,9 @@ local M = {}
 -- ============================================================================
 M.createForOpenPath = function(path)
   local moses = require 'moses'
-  local netUrl = require 'net.url'
-  local parsedUri = netUrl.parse(path)
+  local urlParse = require 'stuart.util'.urlParse
+  
+  local parsedUri = urlParse(path)
   
   -- --------------------------------------------------------------------------
   -- URI support
@@ -19,17 +20,15 @@ M.createForOpenPath = function(path)
     local uriSegments = moses.clone(parsedUri)
     if #segments > 2 and segments[1] == 'webhdfs' and segments[2] == 'v1' then
       -- split /webhdfs/v1/path/file into constructorUri=/webhdfs/v1/ and openPath=path/file
-      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
-        .. '/' .. segments[1] .. '/' .. segments[2] .. '/'
+      constructorUri = string.format('%s://%s/%s/%s/', uriSegments.scheme, uriSegments.host, segments[1], segments[2])
       openPath = table.concat(moses.rest(segments, 3), '/')
     elseif #segments > 1 and segments[1] == 'v1' then
       -- split /v1/path/file into constructorUri=/v1/ and openPath=path/file
-      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority
-        .. '/' .. segments[1] .. '/'
+      constructorUri = string.format('%s://%s/%s/', uriSegments.scheme, uriSegments.host, segments[1])
       openPath = table.concat(moses.rest(segments, 2), '/')
     else
       -- provide /webhdfs when absent
-      constructorUri = uriSegments.scheme .. '://' .. uriSegments.authority .. '/webhdfs/'
+      constructorUri = string.format('%s://%s/webhdfs/', uriSegments.scheme, uriSegments.host)
       openPath = table.concat(segments, '/')
     end
     local WebHdfsFileSystem = require 'stuart.WebHdfsFileSystem'

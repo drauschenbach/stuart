@@ -1,4 +1,7 @@
 ## [Unreleased]
+### Added
+- [#113](https://github.com/BixData/stuart/issues/113) Use the 'url' native module when present
+
 ### Changed
 - Class framework drastically simplified by adopting Microlight
 
