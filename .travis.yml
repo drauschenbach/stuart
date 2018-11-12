@@ -2,6 +2,10 @@ language: python
 sudo: false
 
 env:
+  # Using all optional native module dependencies
+  - LUA="lua=5.1" URL="1" CJSON="1"
+  
+  # Using all pure Lua module dependencies
   - LUA="lua=5.1"
   - LUA="lua=5.2"
   - LUA="lua=5.3"
@@ -21,6 +25,8 @@ install:
   - luarocks install lunajson 1.2
   - luarocks install moses 2.1.0
   - luarocks install net-url 0.9
+  - if [[ "$CJSON"    == "1" ]]; then luarocks install lua-cjson 2.1.0; fi
+  - if [[ "$URL"      == "1" ]]; then luarocks install url 1.2.1      ; fi
 
 script:
   - luacheck --std max+busted --codes src spec --no-self --ignore 213 311 611 631

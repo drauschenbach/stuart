@@ -132,4 +132,36 @@ M.split = function(str, sep)
   return fields
 end
 
+--[[
+Url parse which returns these string fields that conform to the optimized 'url' native module:
+ - scheme   'http', 'webhdfs'
+ - user     'joe' or nil
+ - userinfo 'joe:password' or nil
+ - host     '127.0.0.1:50070'
+ - hostname '127.0.0.1'
+ - port     '50070' or nil
+ - path     '/a/b/foo.txt' or nil
+ - query    '?op=OPEN' or nil
+ - fragment 'chapter1' or nil
+--]]
+M.urlParse = function(s)
+  local has_url, url = pcall(require, 'url')
+  if has_url then
+    return url.parse(s)
+  end
+  
+  local netUrl = require 'net.url'
+  local r = netUrl.parse(s)
+  r.hostname = r.host
+  if r.port then
+    r.port = tostring(r.port)
+    r.host = r.hostname .. ':' .. r.port
+  end
+  if r.query then
+    r.query = '?' .. tostring(r.query)
+  end
+  r.authority = nil
+  return r
+end
+
 return M
