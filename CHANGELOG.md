@@ -1,4 +1,4 @@
-## [Unreleased]
+## [1.0.1] - 2018-11-17
 ### Added
 - [#113](https://github.com/BixData/stuart/issues/113) Use the 'url' native module when present
 
@@ -6,10 +6,8 @@
 - Class framework drastically simplified by adopting Microlight
 
 ### Fixed
-- [#111](https://github.com/BixData/stuart/issues/111) Subclass cannot call superclass constructor if not explicitly provided
-
-### Fixed
 - [#107](https://github.com/BixData/stuart/issues/107) WindowedDStream was left out of the LuaRocks packaging
+- [#111](https://github.com/BixData/stuart/issues/111) Subclass cannot call a superclass constructor that was not explicitly provided
 
 ## [1.0.0] - 2018-11-08
 ### Added
