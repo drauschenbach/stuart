@@ -126,10 +126,18 @@ end
 
 
 M.split = function(str, sep)
-  local fields = {}
-  local pattern = string.format('([^%s]+)', sep)
-  str:gsub(pattern, function(c) fields[#fields+1] = c end)
-  return fields
+  if string.find(str, sep) == nil then return {str} end
+  local result = {}
+  local pattern = '(.-)' .. sep .. '()'
+  local nb = 0
+  local lastPos
+  for part, pos in string.gmatch(str, pattern) do
+    nb = nb + 1
+    result[nb] = part
+    lastPos = pos
+  end
+  result[nb+1] = string.sub(str, lastPos)
+  return result
 end
 
 --[[

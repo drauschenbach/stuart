@@ -10,7 +10,7 @@ end
 function LocalFileSystem:isDirectory(path)
   local has_lfs, lfs = pcall(require, 'lfs')
   if has_lfs then
-    local attr, err = lfs.attributes(self.uri .. (path or ''))
+    local attr, err = lfs.attributes(self.uri .. '/' .. (path or ''))
     if err then error(err) end
     return attr.mode == 'directory'
   end
@@ -25,8 +25,8 @@ function LocalFileSystem:listStatus(path)
   local has_lfs, lfs = pcall(require, 'lfs')
   if has_lfs then
     local fileStatuses = {}
-    for file in lfs.dir(self.uri .. (path or '')) do
-      local attr, err = lfs.attributes(self.uri .. (path or '') .. '/' .. file)
+    for file in lfs.dir(self.uri .. '/' .. (path or '')) do
+      local attr, err = lfs.attributes(self.uri .. '/' .. (path or '') .. '/' .. file)
       if err then error(err) end
       fileStatuses[#fileStatuses+1] = {
         type= attr.mode:upper(),
@@ -41,7 +41,7 @@ function LocalFileSystem:listStatus(path)
 end
 
 function LocalFileSystem:open(path)
-  local f = assert(io.open(self.uri .. path, 'r'))
+  local f = assert(io.open(self.uri .. '/' .. path, 'r'))
   local data = f:read '*all'
   return data
 end

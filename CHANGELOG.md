@@ -1,3 +1,10 @@
+## [Unreleased]
+### Changed
+- `stuart.util` split() now returns an empty string as a first result element for strings that start with the separator char, making it usable for path joining
+
+### Fixed
+- [#115](https://github.com/BixData/stuart/issues/115) Cannot specify an absolute path using Hadoop FileSystem abstraction
+
 ## [1.0.1] - 2018-11-17
 ### Added
 - [#113](https://github.com/BixData/stuart/issues/113) Use the 'url' native module when present
