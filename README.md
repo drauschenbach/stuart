@@ -1,4 +1,4 @@
-<img align="right" src="http://downloadicons.net/sites/default/files/mouse-icon-86497.png" width="70">
+<img align="right" src="stuart.png" width="70">
 
 ## Stuart
 
