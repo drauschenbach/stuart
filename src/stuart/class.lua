@@ -8,7 +8,7 @@ function M.istype(obj, super)
 end
 
 function M.new(base)
-  local klass, base_ctor = {}
+  local klass, base_ctor = {}, nil
   if base then
     for k,v in pairs(base) do klass[k]=v end
     klass._base = base
