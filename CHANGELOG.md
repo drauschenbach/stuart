@@ -1,4 +1,7 @@
 ## [Unreleased]
+### Added
+- [#117](https://github.com/BixData/stuart/issues/117) Demonstrate how to use Stuart in Redis
+
 ### Changed
 - `stuart.util` split() now returns an empty string as a first result element for strings that start with the separator char, making it usable for path joining
 
