@@ -6,8 +6,7 @@
 
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 [![License](http://img.shields.io/badge/Licence-Apache%202.0-blue.svg)](LICENSE)
-[![](https://data.jsdelivr.com/v1/package/npm/lua-stuart/badge?style=rounded)](https://www.jsdelivr.com/package/npm/lua-stuart)
-[![Lua](https://img.shields.io/badge/Lua-5.1%20|%205.2%20|%205.3%20|%20JIT%202.0%20|%20JIT%202.1%20|%20Fengari%20|%20GopherLua|%20eLua-blue.svg)]()
+[![Lua](https://img.shields.io/badge/Lua-5.1%20|%205.2%20|%205.3%20|%20JIT%202.0%20|%20JIT%202.1%20|%20eLua%20|%20Fengari%20|%20GopherLua%20|%20Redis-blue.svg)]()
 
 ### Contents
 
@@ -51,6 +50,13 @@ To load into a web page:
     
   </body>
 </html>
+```
+
+To use in Redis, see [examples/redis](./examples/redis/):
+
+```
+$ redis-cli --eval SparkPi-with-dependencies.lua 0,0
+"Pi is roughly 3.1332956664783"
 ```
 
 ## Usage
@@ -209,6 +215,7 @@ Stuart is compatible with:
 * [GopherLua](https://github.com/yuin/gopher-lua) (a Go-based Lua 5.1 VM)
 * [Lua](https://www.lua.org) 5.1, 5.2, 5.3
 * [LuaJIT](https://www.lua.org) 2.0, 2.1
+* [Redis](https://redis.io/commands/eval) 2.6+ (a Lua 5.1 VM)
 
 ## Libraries for Stuart
 
