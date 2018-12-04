@@ -2,7 +2,7 @@
 
 ## Stuart
 
-(He's little). A pure Lua rewrite of [Apache Spark 2.2.0](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
+(He's little). A pure Lua rewrite of [Apache Spark 2.2](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
 
 ![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
 [![License](http://img.shields.io/badge/Licence-Apache%202.0-blue.svg)](LICENSE)
