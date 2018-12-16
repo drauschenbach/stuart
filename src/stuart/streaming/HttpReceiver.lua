@@ -91,7 +91,8 @@ function HttpReceiver:poll(durationBudget)
       error('binary mode not implemented yet')
     end
   end
-  return self.ssc.sc:makeRDD(data)
+  if #data == 0 then return nil end
+  return {self.ssc.sc:makeRDD(data)}
 end
 
 function HttpReceiver:transform(data)
