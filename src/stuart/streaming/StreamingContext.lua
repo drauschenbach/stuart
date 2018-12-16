@@ -38,8 +38,6 @@ function StreamingContext:awaitTerminationOrTimeout(timeout)
     -- Run each dstream poll() function, until it returns
     for _, dstream in ipairs(self.dstreams) do
       local rdds = dstream:poll(individualDStreamDurationBudget)
-      for _, rdd in ipairs(rdds) do
-      end
       if rdds ~= nil and #rdds > 0 then
         for _, rdd in ipairs(rdds) do dstream:_notify(currentTime, rdd) end
       end
