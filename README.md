@@ -115,11 +115,11 @@ Start a Spark Streaming job to read from the network service:
 ```lua
 local stuart = require 'stuart'
 local sc = stuart.NewContext()
-local ssc = stuart.NewStreamingContext(sc, 0.5)
+local ssc = stuart.NewStreamingContext(sc, 1.5)
 
 local dstream = ssc:socketTextStream('localhost', 9999)
 dstream:foreachRDD(function(rdd)
-  print('Received RDD: ' .. rdd:collect())
+  print('Received:', string.format('%s {%s}', tostring(rdd), table.concat(rdd:collect(),',')))
 end)
 
 ssc:start()
@@ -131,7 +131,17 @@ Then type some input into netcat:
 
 ```
 abc
+def
 123
+```
+
+The output shows lines received within the 1.5 second batch interval:
+
+```
+INFO Running Stuart (Embedded Spark 2.2.0)
+INFO Connected to localhost:9999
+Received RDD:	RDD[1] {abc}
+Received RDD:	RDD[2] {def,123}
 ```
 
 ### Streaming with a custom receiver

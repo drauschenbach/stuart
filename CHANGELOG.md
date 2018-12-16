@@ -8,6 +8,7 @@
 ### Fixed
 - [#115](https://github.com/BixData/stuart/issues/115) Cannot specify an absolute path using Hadoop FileSystem abstraction
 - [#119](https://github.com/BixData/stuart/issues/119) Three levels of inheritance causes infinite loop in constructor
+- [#121](https://github.com/BixData/stuart/issues/121) SocketReceiver returns no data
 
 ## [1.0.1] - 2018-11-17
 ### Added

@@ -13,7 +13,7 @@ end
 
 function SocketReceiver:onStart()
   local log = require 'stuart.internal.logging'.log
-  log:info(string.format('Connecting to %s:%d', self.hostname, self.port))
+  log:debug(string.format('Connecting to %s:%d', self.hostname, self.port))
   local socket = require 'socket'
   self.conn, self.err = socket.connect(self.hostname, self.port)
   if self.err then
@@ -40,9 +40,11 @@ function SocketReceiver:poll(durationBudget)
     local line, err = self.conn:receive('*l')
     if not err then
       data[#data+1] = line
+    --else TODO error handling
     end
   end
-  return self.ssc.sc:makeRDD(data)
+  if #data == 0 then return nil end
+  return {self.ssc.sc:makeRDD(data)}
 end
 
 return SocketReceiver
