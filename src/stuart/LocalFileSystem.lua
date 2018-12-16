@@ -4,7 +4,7 @@ local FileSystem = require 'stuart.FileSystem'
 local LocalFileSystem = class.new(FileSystem)
 
 function LocalFileSystem:_init(uri)
-  self:super(uri)
+  FileSystem._init(self, uri)
 end
 
 function LocalFileSystem:isDirectory(path)

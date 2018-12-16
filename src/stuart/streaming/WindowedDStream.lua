@@ -4,7 +4,7 @@ local DStream = require 'stuart.streaming.DStream'
 local WindowedDStream = class.new(DStream)
 
 function WindowedDStream:_init(ssc, windowDuration)
-  self:super(ssc)
+  DStream._init(self, ssc)
   self.windowDuration = windowDuration
   self.window = {}
 end

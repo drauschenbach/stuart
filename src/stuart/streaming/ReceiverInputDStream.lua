@@ -4,7 +4,7 @@ local DStream = require 'stuart.streaming.DStream'
 local ReceiverInputDStream = class.new(DStream)
 
 function ReceiverInputDStream:_init(ssc, receiver)
-  self:super(ssc)
+  DStream._init(self, ssc)
   self.receiver = receiver
 end
 

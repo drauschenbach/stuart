@@ -6,7 +6,7 @@ local SocketInputDStream = class.new(ReceiverInputDStream)
 function SocketInputDStream:_init(ssc, hostname, port)
   local SocketReceiver = require 'stuart.streaming.SocketReceiver'
   local receiver = SocketReceiver.new(ssc, hostname, port)
-  self:super(ssc, receiver)
+  ReceiverInputDStream._init(self, ssc, receiver)
 end
 
 return SocketInputDStream

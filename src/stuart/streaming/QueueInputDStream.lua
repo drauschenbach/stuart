@@ -4,7 +4,7 @@ local DStream = require 'stuart.streaming.DStream'
 local QueueInputDStream = class.new(DStream)
 
 function QueueInputDStream:_init(ssc, rdds, oneAtATime)
-  self:super(ssc)
+  DStream._init(self, ssc)
   self.queue = rdds
   self.oneAtATime = oneAtATime
 end

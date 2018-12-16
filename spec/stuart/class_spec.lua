@@ -46,26 +46,12 @@ describe('class', function()
     assert.equals('generic animal', animal:name())
     
     local Fish = class.new(Animal)
-    function Fish:_init(age) self:super(age+1) end
+    function Fish:_init(age) return Animal._init(self, age+1) end
     function Fish:name() return 'I am a fish' end
     local fish = Fish.new(9)
     assert.equals('I am a fish', fish:name())
     assert.is_true(class.istype(fish, Fish))
     assert.is_true(class.istype(fish, Animal))
-  end)
-  
-  it('subclassing can call self:super() with implicit parent _init (regression test #111)', function()
-    local Animal = class.new()
-    function Animal:name() return 'generic animal' end
-    local animal = Animal.new(7)
-    assert.equals('generic animal', animal:name())
-    
-    local Fish = class.new(Animal)
-    function Fish:_init(age)
-      self:super(age)
-      self.age = age
-    end
-    Fish.new(9)
   end)
   
   it('subclass __index metamethod works', function()
@@ -84,6 +70,23 @@ describe('class', function()
     assert.equals(5, zebra:age())
     assert.equals(23, zebra.category())
     assert.equals(25, zebra.foo)
+  end)
+  
+  it('Three levels of subclassing works (regression test #119)', function()
+    local ssc = {sc={}}
+    
+    local DStream = require 'stuart.streaming.DStream'
+    local dstream = DStream.new(ssc)
+    assert.is_not_nil(dstream.inputs)
+    
+    local SocketInputDStream = require 'stuart.streaming.SocketInputDStream'
+    local hostname = ''
+    local port = 5000
+    dstream = SocketInputDStream.new(ssc, hostname, port)
+
+    local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
+    dstream = QueueInputDStream.new(ssc, {}, true)
+    assert.is_not_nil(dstream.inputs)
   end)
   
 end)

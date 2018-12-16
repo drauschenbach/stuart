@@ -6,7 +6,7 @@ local SocketReceiver = class.new(Receiver)
 function SocketReceiver:_init(ssc, hostname, port)
   local has_luasocket, _ = pcall(require, 'socket')
   assert(has_luasocket)
-  self:super(ssc)
+  Receiver._init(self, ssc)
   self.hostname = hostname
   self.port = port or 0
 end
