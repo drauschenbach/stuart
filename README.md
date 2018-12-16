@@ -149,7 +149,7 @@ local stuart = require 'stuart'
 local MyReceiver = stuart.class(Receiver)
 
 function MyReceiver:_init(ssc, hostname, port)
-  self:super(ssc)
+  Receiver._init(self, ssc)
   self.hostname = hostname
   self.port = port or 0
 end

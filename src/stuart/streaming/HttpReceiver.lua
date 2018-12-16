@@ -5,7 +5,7 @@ local Receiver = require 'stuart.streaming.Receiver'
 local HttpReceiver = class.new(Receiver)
 
 function HttpReceiver:_init(ssc, url, mode, requestHeaders)
-  self:super(ssc)
+  Receiver._init(self, ssc)
   self.url = url
   self.mode = mode or 'text' -- 'text' or 'binary'
   self.requestHeaders = requestHeaders or {}

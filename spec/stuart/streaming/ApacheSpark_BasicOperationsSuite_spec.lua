@@ -12,7 +12,7 @@ registerAsserts(assert)
 local TestInputStream = stuart.class(DStream)
 
 function TestInputStream:_init(ctx, input, numPartitions)
-  self:super(ctx)
+  DStream._init(self, ctx)
   self.input = input
   self.numPartitions = numPartitions
 end

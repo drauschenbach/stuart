@@ -28,9 +28,8 @@ function M.new(base)
   klass.new = function(...)
     local obj = setmetatable({},klass)
     if rawget(klass,'_init') then
-      klass.super = base_ctor
       local res = klass._init(obj,...) -- call our constructor
-      if res then -- which can return a new self..
+      if res then -- which can return a new self
         obj = setmetatable(res,klass)
       end
     elseif base_ctor then -- call base ctor automatically
