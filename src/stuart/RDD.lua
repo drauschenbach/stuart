@@ -107,7 +107,6 @@ end
 function RDD:collectAsMap()
   local moses = require 'moses'
   local t = moses.tabulate(self:toLocalIterator())
-  -- now ensure keys are unique, since we are observing the Java Map (non-multimap) contract
   t = moses.reduce(t, function(r, v)
     r[v[1]] = v[2]
     return r
@@ -120,31 +119,56 @@ function RDD:combineByKey(createCombiner, mergeValue, mergeCombiners)
   assert(moses.isFunction(createCombiner))
   assert(moses.isFunction(mergeValue))
   assert(moses.isFunction(mergeCombiners))
-  local y = moses.map(self.partitions, function(p)
-    local keys = moses.uniq(moses.map(p.data, function(e) return e[1] end))
-    local z = moses.reduce(keys, function(r,key)
-      local valuesForKey = moses.reduce(p.data, function(r2,e)
-        if e[1] == key then r2[#r2+1] = e[2] end
-        return r2
-      end, {})
-      r[key] = moses.reduce(valuesForKey, mergeValue, {})
-      return r
-    end, {})
-    return z
-  end)
-
-  local keys = moses.uniq(moses.reduce(y, function(r,e) return moses.append(r, moses.keys(e)) end, {}))
-  local t = moses.reduce(keys, function(r,key)
-    local valuesForKey = moses.reduce(y, function(r2,e)
-      for k,v in pairs(e) do
-        if k == key then r2[#r2+1] = v end
+  
+  local combinersByKey = {}
+  for _, p in ipairs(self.partitions) do
+    
+    local valuesByKey = {}
+    for i, pair in ipairs(p.data) do
+      local key, value = pair[1], pair[2]
+      if valuesByKey[key] == nil then
+        valuesByKey[key] = {value}
+      else
+        local t = valuesByKey[key]
+        t[#t+1] = value
       end
-      return r2
-    end, {})
-    r[#r+1] = {key, moses.reduce(valuesForKey, mergeCombiners, {})}
-    return r
-  end, {})
-  return self.context:parallelize(t)
+    end
+    
+    local combiners = {}
+    for key, values in pairs(valuesByKey) do
+      local combiner
+      if #values > 0 then
+        combiner = createCombiner(values[1])
+      end
+      for i = 2, #values do
+        combiner = mergeValue(combiner, values[i])
+      end
+      combiners[key] = combiner
+    end
+    for key, combiner in pairs(combiners) do
+      if combinersByKey[key] == nil then
+        combinersByKey[key] = {combiner}
+      else
+        local t = combinersByKey[key]
+        t[#t+1] = combiner
+      end
+    end
+  
+  end
+
+  local res = {}
+  for key, combiners in pairs(combinersByKey) do
+    local combiner
+    if #combiners > 0 then
+      combiner = combiners[1]
+    end
+    for i = 2, #combiners do
+      combiner = mergeCombiners(combiner, combiners[i])
+    end
+    res[#res+1] = {key, combiner}
+  end
+
+  return self.context:parallelize(res)
 end
 
 function RDD:count()
