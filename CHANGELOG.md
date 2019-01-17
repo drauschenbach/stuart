@@ -1,3 +1,7 @@
+## [Unreleased]
+### Fixed
+- [#125](https://github.com/BixData/stuart/issues/125) RDD:combineByKey() ignores createCombiner argument
+
 ## [2.0.0] - 2018-12-16
 ### Added
 - [#117](https://github.com/BixData/stuart/issues/117) Demonstrate how to use Stuart in Redis
