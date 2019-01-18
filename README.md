@@ -231,6 +231,7 @@ Stuart is compatible with:
 
 * [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
 * [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html)
+* [stuart-redis](https://github.com/BixData/stuart-redis) : Extended Redis support
 
 ## Roadmap
 
