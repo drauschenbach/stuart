@@ -312,3 +312,10 @@ Begin test
 ✓ zip(...)
 End of test: 2 failures
 ```
+
+## Related
+
+* [moses-elua](https://github.com/BixData/moses-elua)
+* [stuart-elua](https://github.com/BixData/stuart-elua)
+* [stuart-ml](https://github.com/BixData/stuart-ml)
+* [stuart-ml-elua](https://github.com/BixData/stuart-ml-elua)
