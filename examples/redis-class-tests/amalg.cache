@@ -1,0 +1,3 @@
+return {
+  [ "stuart.class" ] = "L",
+}
