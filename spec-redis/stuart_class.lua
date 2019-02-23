@@ -104,6 +104,7 @@ end)
 it('Three levels of subclassing works', function()
   local Animal = class.new()
   local animal = Animal.new()
+  assertEquals(true, class.istype(animal, Animal))
   
   local Zebra = class.new(Animal)
   local zebra = Zebra.new()

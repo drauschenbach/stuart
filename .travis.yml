@@ -29,5 +29,5 @@ install:
   - if [[ "$URL"      == "1" ]]; then luarocks install url 1.2.1      ; fi
 
 script:
-  - luacheck --std max+busted --codes src spec --no-self --ignore 213 311 611 631
+  - luacheck --std max+busted --codes src spec spec-redis --no-self --ignore 213 311 611 631 --exclude-files "**/*-with-dependencies.lua"
   - busted --verbose --defer-print

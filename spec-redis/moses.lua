@@ -546,7 +546,7 @@ it('reverse()', function()
 end)
 
 it('same()', function()
-  local a = {'a','b','c','d'}      
+  local a = {'a','b','c','d'}
   local b = {'b','a','d','c'}
   assertEquals(true, moses.same(a,b))
   
