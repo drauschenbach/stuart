@@ -1,7 +1,7 @@
 ## [Unreleased]
 ### Changed
 - Published new [amalg-redis](https://luarocks.org/modules/drauschenbach/amalg-redis) module to streamline Redis amalgamation instructions at [examples/redis](./examples/redis/)
-- Document how to run a Stuart test suite within Redis at [examples/redis-class-tests](./examples/redis-class-tests/)
+- Document how to run Stuart test suites within Redis at [spec-redis](./spec-redis/)
 
 ### Fixed
 - [#125](https://github.com/BixData/stuart/issues/125) RDD:combineByKey() ignores createCombiner argument
