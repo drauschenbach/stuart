@@ -83,6 +83,9 @@ describe('class', function()
     local hostname = ''
     local port = 5000
     dstream = SocketInputDStream.new(ssc, hostname, port)
+    
+    assert.is_true(class.istype(dstream, DStream))
+    assert.is_true(class.istype(dstream, require 'stuart.streaming.ReceiverInputDStream'))
 
     local QueueInputDStream = require 'stuart.streaming.QueueInputDStream'
     dstream = QueueInputDStream.new(ssc, {}, true)

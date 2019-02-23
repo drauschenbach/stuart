@@ -101,6 +101,22 @@ it('subclass __index metamethod works', function()
   assertEquals(25, zebra.foo)
 end)
 
+it('Three levels of subclassing works', function()
+  local Animal = class.new()
+  local animal = Animal.new()
+  
+  local Zebra = class.new(Animal)
+  local zebra = Zebra.new()
+  assertEquals(true, class.istype(zebra, Animal))
+  assertEquals(true, class.istype(zebra, Zebra))
+  
+  local SpottedZebra = class.new(Zebra)
+  local spottedZebra = SpottedZebra.new()
+  assertEquals(true, class.istype(spottedZebra, Animal))
+  assertEquals(true, class.istype(spottedZebra, Zebra))
+  assertEquals(true, class.istype(spottedZebra, SpottedZebra))
+end)
+
 
 -- ============================================================================
 -- Mini test framework -- report results
