@@ -1,4 +1,7 @@
 ## [Unreleased]
+### Changed
+- Published new [amalg-redis](https://luarocks.org/modules/drauschenbach/amalg-redis) module to streamline Redis amalgamation instructions at [examples/redis](./examples/redis/).
+
 ### Fixed
 - [#125](https://github.com/BixData/stuart/issues/125) RDD:combineByKey() ignores createCombiner argument
 

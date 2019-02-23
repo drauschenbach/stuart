@@ -13,4 +13,6 @@ local count = sc:parallelize(moses.range(1,n), slices):map(function(_,i)
   local y = math.random() * 2 - 1
   if x*x + y*y <= 1 then return 1 else return 0 end
 end):reduce(function(r,x) return r+x end)
-print('Pi is roughly ' .. 4 * count / (n-1))
+local msg = string.format('Pi is roughly %.9f', 4*count/(n-1))
+print(msg) 
+return msg
