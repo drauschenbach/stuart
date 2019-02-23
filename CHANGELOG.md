@@ -1,4 +1,4 @@
-## [Unreleased]
+## [2.0.2] - 2019-02-23
 ### Changed
 - Published new [amalg-redis](https://luarocks.org/modules/drauschenbach/amalg-redis) module to streamline Redis amalgamation instructions at [examples/redis](./examples/redis/)
 - Document how to run Stuart test suites within Redis at [spec-redis](./spec-redis/)
