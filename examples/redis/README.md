@@ -1,35 +1,39 @@
 # Spark Pi in Redis!
 
-To run the Spark Pi example app, the "Hello World" of Spark, in Redis:
+To run Spark Pi, Apache Spark's "Hello World" example app, in Redis:
 
 ```sh
 $ redis-cli --eval SparkPi-with-dependencies.lua 0,0
-"Pi is roughly 3.1332956664783"
+"Pi is roughly 3.133295666"
 ```
 
 ## Developing
 
-The amalgamated SparkPi-with-dependencies.lua was produced as follows:
+The amalgamated `SparkPi-with-dependencies.lua` was produced as follows:
 
-### Step 1: Download Stuart
-
-Start with an amalgamated distribution of Stuart on npmjs.com, accessible via the jsDelivr CDN:
+### Step 1: Download Lua Amalgamator for Redis
 
 ```sh
-$ wget https://cdn.jsdelivr.net/npm/lua-stuart@1.0.1-0/stuart.lua
+$ luarocks install amalg-redis
 ```
 
-### Step 2: Amalgamate Stuart with your Spark job
+### Step 2: Generate `amalg.cache` file
 
-Concatenate the Spark job we want to run:
+Using your local OS and its Lua VM, perform a trial run of your Spark job, while allowing `amalg-redis` to capture the module dependencies that are used during execution.
 
 ```sh
-$ cat redis-support.lua stuart.lua SparkPi.lua > SparkPi-with-dependencies.lua
+$ lua -lamalg-redis SparkPi.lua
+INFO Running Stuart (Embedded Spark 2.2.0)
+Pi is roughly 3.141515707
 ```
 
-### Step 3: Manual Edits
+This produces an `amalg.cache` file in the current directory, which is required by the amalgamation process.
 
-In the last line of the script, change the print statement into a return value.
+### Step 3: Preparation of Spark job for Redis
+
+When Lua scripts run in Redis, print statements are not returned to `redis-cli`. So Spark jobs that produce output should do so with a `return` statement.
+
+In the last line of the `SparkPi.lua` script, add a return value with the result you want the CLI caller to see. Leave in print statements as well so that you can still test and debug your script using the local operating system.
 
 Instead of:
 
@@ -40,15 +44,13 @@ print('Pi is roughly ' .. 4 * count / (n-1))
 Use:
 
 ```lua
-return 'Pi is roughly ' .. 4 * count / (n-1)
+local msg = 'Pi is roughly ' .. 4 * count / (n-1)
+print(msg)
+return msg
 ```
 
-Remove all occurances of `local _ENV = _ENV` (something injected by [lua-amalg](https://github.com/siffiejoe/lua-amalg) that turns out to be operating system specific).
+### Step 4: Amalgamate your Spark job with its dependencies
 
-Remove all occurances of `local arg = _G.arg;` (something injected by [lua-amalg](https://github.com/siffiejoe/lua-amalg) that turns out to be operating system specific).
-
-Search for every instance of `io.`, which is a use of the io module (mostly by the Moses library), and put the following line of code before it so that it resolves when Redis is compiling the script: `local io = {}`
-
-## Going Further
-
-Also amalgamate [Stuart ML](https://www.jsdelivr.com/package/npm/lua-stuart-ml) to make use of statistics, Vectors, and K-means capabilities within Redis.
+```sh
+$ amalg-redis.lua -s SparkPi.lua -o SparkPi-with-dependencies.lua -c
+```

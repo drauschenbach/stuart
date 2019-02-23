@@ -1,0 +1,10 @@
+return {
+  [ "stuart.Context" ] = "L",
+  [ "stuart.internal.Logger" ] = "L",
+  [ "stuart.class" ] = "L",
+  [ "stuart.internal.logging" ] = "L",
+  [ "moses" ] = "L",
+  [ "stuart.Partition" ] = "L",
+  [ "stuart.RDD" ] = "L",
+  [ "stuart.SparkConf" ] = "L",
+}
