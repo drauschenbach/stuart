@@ -1,3 +1,7 @@
+## [Unreleased]
+### Added
+- [#129](https://github.com/BixData/stuart/issues/129) Support RDD:sortBy() lexicographic comparison for multiple fields
+
 ## [2.0.2] - 2019-02-23
 ### Changed
 - Published new [amalg-redis](https://luarocks.org/modules/drauschenbach/amalg-redis) module to streamline Redis amalgamation instructions at [examples/redis](./examples/redis/)

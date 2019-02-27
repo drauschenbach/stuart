@@ -530,16 +530,39 @@ function RDD:setName(name)
 end
 
 function RDD:sortBy(f, ascending, numPartitions)
-  local moses = require 'moses'
-  if not moses.isBoolean(ascending) then ascending = true end
+  if type(ascending) ~= 'boolean' then ascending = true end
   local t = self:collect()
-  local comp
-  if ascending then
-    comp = function(a,b) return a<b end
-  else
-    comp = function(a,b) return a>b end
-  end
-  t = moses.sortBy(t, f, comp)
+  table.sort(t, function(a,b)
+    a = f(a)
+    b = f(b)
+  
+    -- lexographical comparison of two tables
+    if type(a)=='table' and type(b)=='table' then
+      for i=1, math.min(#a, #b) do
+        if ascending then
+          if a[i] < b[i] then
+            return true
+          elseif a[i] ~= b[i] then
+            return false
+          end
+        else
+          if a[i] > b[i] then
+            return true
+          elseif a[i] ~= b[i] then
+            return false
+          end
+        end
+      end
+      return false
+    end
+    
+    -- simple comparison of two values
+    if ascending then
+      if a < b then return true end
+    else
+      if a > b then return true end
+    end
+  end)
   return self.context:parallelize(t, numPartitions)
 end
 
