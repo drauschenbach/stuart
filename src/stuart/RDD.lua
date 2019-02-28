@@ -84,9 +84,7 @@ function RDD:cartesian(other)
   return self.context:parallelize(t)
 end
 
-function RDD:coalesce(numPartitions, shuffle)
-  local moses = require 'moses'
-  if not moses.isBoolean(shuffle) then shuffle = false end
+function RDD:coalesce(numPartitions)
   return self.context:parallelize(self:collect(), numPartitions)
 end
 
