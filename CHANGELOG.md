@@ -1,4 +1,4 @@
-## [Unreleased]
+## [2.0.3] - 2019-03-08
 ### Added
 - [#129](https://github.com/BixData/stuart/issues/129) Support RDD:sortBy() lexicographic comparison for multiple fields
 
