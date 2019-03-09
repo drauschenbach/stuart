@@ -382,17 +382,17 @@ end
 function RDD:leftOuterJoin(other)
   local moses = require 'moses'
   local t = moses.reduce(self:collect(), function(r, e)
-      local right = {}
-      moses.forEach(other:collect(), function(y)
-        if y[1] == e[1] then right[#right+1] = y[2] end
+    local right = {}
+    moses.forEach(other:collect(), function(y)
+      if y[1] == e[1] then right[#right+1] = y[2] end
+    end)
+    if #right == 0 then
+      r[#r+1] = {e[1], {e[2], nil}}
+    else
+      moses.forEach(right, function(z)
+        r[#r+1] = {e[1], {e[2], z}}
       end)
-      if #right == 0 then
-        r[#r+1] = {e[1], {e[2], nil}}
-      else
-        moses.forEach(right, function(z)
-          r[#r+1] = {e[1], {e[2], z}}
-        end)
-      end
+    end
     return r
   end, {})
   return self.context:parallelize(t)
