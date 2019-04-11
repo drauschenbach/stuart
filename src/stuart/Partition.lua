@@ -34,7 +34,7 @@ function Partition:_flattenValues()
   return self
 end
 
-function Partition:_toLocalIterator()
+function Partition:iterator()
   local i = 0
   return function()
     i = i + 1
