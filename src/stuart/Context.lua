@@ -13,6 +13,7 @@ function Context:_init(arg1, arg2, arg3, arg4)
   end
   
   self.defaultParallelism = 1
+  self.defaultMinPartitions = 1
   self.lastRddId = 0
   self.stopped = false
   local logging = require 'stuart.internal.logging'

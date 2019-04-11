@@ -9,6 +9,10 @@ function RDD:_init(context, partitions)
   self.partitions = partitions
 end
 
+function RDD:__tostring()
+  return 'RDD[' .. self.id .. ']'
+end
+
 function RDD:_dict()
   local moses = require 'moses'
   return moses.reduce(self:collect(), function(r, e)
@@ -25,10 +29,6 @@ end
 function RDD:_flattenValues()
   for _, p in ipairs(self.partitions) do p:_flattenValues() end
   return self
-end
-
-function RDD:__tostring()
-  return 'RDD[' .. self.id .. ']'
 end
 
 function RDD:aggregate(zeroValue, seqOp, combOp)
@@ -351,6 +351,10 @@ function RDD:isEmpty()
   return self:count() <= 0
 end
 
+function RDD:iterator(partition)
+  return partition:iterator()
+end
+
 function RDD:join(other)
   local moses = require 'moses'
   local keys = moses.intersection(moses.keys(self:_dict()), moses.keys(other:_dict()))
@@ -417,7 +421,7 @@ end
 function RDD:mapPartitions(iter)
   local moses = require 'moses'
   local t = moses.reduce(self.partitions, function(r,p)
-    for e in iter(p:_toLocalIterator()) do
+    for e in iter(p:iterator()) do
       r[#r+1] = e
     end
     return r
@@ -429,7 +433,7 @@ function RDD:mapPartitionsWithIndex(iter)
   local index = 0
   local moses = require 'moses'
   local t = moses.reduce(self.partitions, function(r,p)
-    for e in iter(index, p:_toLocalIterator()) do
+    for e in iter(index, p:iterator()) do
       r[#r+1] = e
     end
     index = index + 1
