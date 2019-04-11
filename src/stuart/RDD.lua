@@ -225,7 +225,9 @@ function RDD:filterByRange(lower, upper)
 end
 
 function RDD:first()
-  return self.partitions[1].data[1]
+  local p = self.partitions[1]
+  assert(#p.data > 0)
+  return p.data[1]
 end
 
 function RDD:flatMap(f)

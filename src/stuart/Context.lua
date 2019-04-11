@@ -16,7 +16,7 @@ function Context:_init(arg1, arg2, arg3, arg4)
   self.lastRddId = 0
   self.stopped = false
   local logging = require 'stuart.internal.logging'
-  logging.logInfo('Running Stuart (Embedded Spark 2.2.0)')
+  logging.logInfo('Running Stuart (Embedded Spark 2.2)')
 end
 
 function Context:appName()
