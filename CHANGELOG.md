@@ -1,4 +1,4 @@
-## [Unreleased]
+## [2.0.4] - 2019-04-20
 ### Changed
 - Ensure RDD:first() raises error when RDD is empty; expected by Stuart ML RowMatrix:numCols()
 
