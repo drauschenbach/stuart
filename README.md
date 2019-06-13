@@ -40,7 +40,7 @@ To load into a web page:
 <html>
   <body>
     <script type="text/javascript" src="https://cdn.jsdelivr.net/npm/fengari-web@0.1.2/dist/fengari-web.js"></script>
-    <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@0.2.0-0/stuart.lua"></script>
+    <script type="application/lua" src="https://cdn.jsdelivr.net/npm/lua-stuart@2.0.4-0/stuart.lua"></script>
   
     <script type="application/lua">
       local stuart = require 'stuart'
@@ -69,9 +69,9 @@ Create a "Stuart Context", then count the number of lines in this README:
 $ lua
 Lua 5.2.4  Copyright (C) 1994-2015 Lua.org, PUC-Rio
 
-local stuart = require 'stuart'
-local sc = stuart.NewContext()
-local rdd = sc:textFile('README.md')
+stuart = require 'stuart'
+sc = stuart.NewContext()
+rdd = sc:textFile('README.md')
 print(rdd:count())
 151
 ```
