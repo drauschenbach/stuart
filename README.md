@@ -4,7 +4,7 @@
 
 (He's little). A pure Lua rewrite of [Apache Spark 2.2](https://spark.apache.org/docs/2.2.0/), designed for embedding and edge computing.
 
-![Build Status](https://api.travis-ci.org/BixData/stuart.svg?branch=master)
+![Build Status](https://api.travis-ci.org/nubix-io/stuart.svg?branch=master)
 [![License](http://img.shields.io/badge/Licence-Apache%202.0-blue.svg)](LICENSE)
 [![Lua](https://img.shields.io/badge/Lua-5.1%20|%205.2%20|%205.3%20|%20JIT%202.0%20|%20JIT%202.1%20|%20eLua%20|%20Fengari%20|%20GopherLua%20|%20Redis-blue.svg)]()
 
@@ -209,12 +209,12 @@ The `stuart.interface` module provide interfaces to hardware or a host OS, desig
 
 To embed Stuart into a Go app, use:
 
-* [gluabit32](https://github.com/BixData/gluabit32)
-* [gluasocket](https://github.com/BixData/gluasocket)
+* [gluabit32](https://github.com/nubix-io/gluabit32)
+* [gluasocket](https://github.com/nubix-io/gluasocket)
 
-To embed Stuart into an eLua image, see [stuart-elua](https://github.com/BixData/stuart-elua).
+To embed Stuart into an eLua image, see [stuart-elua](https://github.com/nubix-io/stuart-elua).
 
-See the [stuart-hardware](https://github.com/BixData/stuart-hardware) project for edge hardware specific integration guides.
+See the [stuart-hardware](https://github.com/nubix-io/stuart-hardware) project for edge hardware specific integration guides.
 
 ## Compatibility
 
@@ -229,9 +229,9 @@ Stuart is compatible with:
 
 ## Libraries for Stuart
 
-* [stuart-ml](https://github.com/BixData/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
-* [stuart-sql](https://github.com/BixData/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html)
-* [stuart-redis](https://github.com/BixData/stuart-redis) : Extended Redis support
+* [stuart-ml](https://github.com/nubix-io/stuart-ml) : A Lua port of [Spark MLlib](https://spark.apache.org/docs/2.2.0/ml-guide.html)
+* [stuart-sql](https://github.com/nubix-io/stuart-sql) : A Lua port of [Spark SQL](https://spark.apache.org/docs/2.2.0/sql-programming-guide.html)
+* [stuart-redis](https://github.com/nubix-io/stuart-redis) : Extended Redis support
 
 ## Roadmap
 

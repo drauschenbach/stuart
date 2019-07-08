@@ -1,7 +1,7 @@
 package = "stuart"
 version = "2.0.4-0"
 source = {
-   url = "https://github.com/BixData/stuart/archive/2.0.4-0.tar.gz",
+   url = "https://github.com/nubix-io/stuart/archive/2.0.4-0.tar.gz",
    dir = "stuart-2.0.4-0"
 }
 description = {
@@ -10,7 +10,7 @@ description = {
       A pure Lua rewrite of Apache Spark, designed for
       embedding and edge computing.
    ]],
-   homepage = "https://github.com/BixData/stuart",
+   homepage = "https://github.com/nubix-io/stuart",
    maintainer = "David Rauschenbach",
    license = "Apache 2.0"
 }

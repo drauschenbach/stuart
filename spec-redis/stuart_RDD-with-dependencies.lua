@@ -4089,7 +4089,7 @@ package.preload["stuart.util"] = function(...)
 end
 
 
--- Unit tests derived from https://github.com/BixData/stuart/blob/master/spec/LaTrobe_spec.lua
+-- Unit tests derived from https://github.com/nubix-io/stuart/blob/master/spec/LaTrobe_spec.lua
 print('Begin test')
 
 local sc = require 'stuart'.NewContext('local[1]', 'test-stuart_rdd.lua')

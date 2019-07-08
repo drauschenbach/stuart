@@ -4,7 +4,7 @@
 
 ## [2.0.3] - 2019-03-08
 ### Added
-- [#129](https://github.com/BixData/stuart/issues/129) Support RDD:sortBy() lexicographic comparison for multiple fields
+- [#129](https://github.com/nubix-io/stuart/issues/129) Support RDD:sortBy() lexicographic comparison for multiple fields
 
 ## [2.0.2] - 2019-02-23
 ### Changed
@@ -12,35 +12,35 @@
 - Document how to run Stuart test suites within Redis at [spec-redis](./spec-redis/)
 
 ### Fixed
-- [#125](https://github.com/BixData/stuart/issues/125) RDD:combineByKey() ignores createCombiner argument
+- [#125](https://github.com/nubix-io/stuart/issues/125) RDD:combineByKey() ignores createCombiner argument
 
 ## [2.0.0] - 2018-12-16
 ### Added
-- [#117](https://github.com/BixData/stuart/issues/117) Demonstrate how to use Stuart in Redis
+- [#117](https://github.com/nubix-io/stuart/issues/117) Demonstrate how to use Stuart in Redis
 
 ### Changed
 - `stuart.util` split() now returns an empty string as a first result element for strings that start with the separator char, making it usable for path joining
 
 ### Fixed
-- [#115](https://github.com/BixData/stuart/issues/115) Cannot specify an absolute path using Hadoop FileSystem abstraction
-- [#119](https://github.com/BixData/stuart/issues/119) Three levels of inheritance causes infinite loop in constructor
-- [#121](https://github.com/BixData/stuart/issues/121) SocketReceiver returns no data
-- [#123](https://github.com/BixData/stuart/issues/123) StreamingContext throws error when no data is received
+- [#115](https://github.com/nubix-io/stuart/issues/115) Cannot specify an absolute path using Hadoop FileSystem abstraction
+- [#119](https://github.com/nubix-io/stuart/issues/119) Three levels of inheritance causes infinite loop in constructor
+- [#121](https://github.com/nubix-io/stuart/issues/121) SocketReceiver returns no data
+- [#123](https://github.com/nubix-io/stuart/issues/123) StreamingContext throws error when no data is received
 
 ## [1.0.1] - 2018-11-17
 ### Added
-- [#113](https://github.com/BixData/stuart/issues/113) Use the 'url' native module when present
+- [#113](https://github.com/nubix-io/stuart/issues/113) Use the 'url' native module when present
 
 ### Changed
 - Class framework drastically simplified by adopting Microlight
 
 ### Fixed
-- [#107](https://github.com/BixData/stuart/issues/107) WindowedDStream was left out of the LuaRocks packaging
-- [#111](https://github.com/BixData/stuart/issues/111) Subclass cannot call a superclass constructor that was not explicitly provided
+- [#107](https://github.com/nubix-io/stuart/issues/107) WindowedDStream was left out of the LuaRocks packaging
+- [#111](https://github.com/nubix-io/stuart/issues/111) Subclass cannot call a superclass constructor that was not explicitly provided
 
 ## [1.0.0] - 2018-11-08
 ### Added
-- [#96](https://github.com/BixData/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
+- [#96](https://github.com/nubix-io/stuart/issues/96) Export Logger level consts for use in calls to setLevel()
 
 ### Changed
 - The `stuart.util.class` module has been renamed to `stuart.class`, which is more 1-1 with Torch
@@ -48,25 +48,25 @@
 - Reinstated middleclass class framework to fix indexing in Stuart ML, while retaining most of the Torch-style function calls
 
 ### Fixed
-- [#98](https://github.com/BixData/stuart/issues/98) Trace and Warn logging fails trying to call a nil function
-- [#100](https://github.com/BixData/stuart/issues/100) Replace use of class() with class.new() because use of metatables within LTR Romtables is unknown (eLua interop)
+- [#98](https://github.com/nubix-io/stuart/issues/98) Trace and Warn logging fails trying to call a nil function
+- [#100](https://github.com/nubix-io/stuart/issues/100) Replace use of class() with class.new() because use of metatables within LTR Romtables is unknown (eLua interop)
 
 ## [0.2.0] - 2018-11-03
 ### Changed
-- [#94](https://github.com/BixData/stuart/issues/94) Replace use of middleclass with a Torch-compatible equivalent that is easier to represent in an eLua LTR ROM-based module table (eLua interop)
+- [#94](https://github.com/nubix-io/stuart/issues/94) Replace use of middleclass with a Torch-compatible equivalent that is easier to represent in an eLua LTR ROM-based module table (eLua interop)
 
 ## [0.1.9] - 2018-11-02
 ### Changed
-- [#89](https://github.com/BixData/stuart/issues/89) Removed all use of coroutines, allowing transpiling of Spark Streaming to C (eLua interop)
-- [#92](https://github.com/BixData/stuart/issues/92) Remove all use of module upvalues, so that modules can be more easily transpiled to C then burned into ROM and chipsets (eLua [LTR](http://www.eluaproject.net/doc/v0.9/en_arch_ltr.html) interop)
+- [#89](https://github.com/nubix-io/stuart/issues/89) Removed all use of coroutines, allowing transpiling of Spark Streaming to C (eLua interop)
+- [#92](https://github.com/nubix-io/stuart/issues/92) Remove all use of module upvalues, so that modules can be more easily transpiled to C then burned into ROM and chipsets (eLua [LTR](http://www.eluaproject.net/doc/v0.9/en_arch_ltr.html) interop)
 
 ## [0.1.8] - 2018-10-14
 ### Added
 - Added Fengari to list of supported VMs
 - New examples/web demonstrates Spark Pi example running in a browser using the Fengari VM
-- [#15](https://github.com/BixData/stuart/issues/15) Support `DStream` countByWindow(), map(), reduce(), and window()
-- [#71](https://github.com/BixData/stuart/issues/71) Package and deploy releases to npmjs.com and jsDelivr as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
-- [#82](https://github.com/BixData/stuart/issues/82) Support `DStream` foreachRDD() timestamp 2nd argument
+- [#15](https://github.com/nubix-io/stuart/issues/15) Support `DStream` countByWindow(), map(), reduce(), and window()
+- [#71](https://github.com/nubix-io/stuart/issues/71) Package and deploy releases to npmjs.com and jsDelivr as [lua-stuart](https://www.npmjs.com/package/lua-stuart)
+- [#82](https://github.com/nubix-io/stuart/issues/82) Support `DStream` foreachRDD() timestamp 2nd argument
 - Support `RDD` treeAggregate() and treeReduce()
 
 ### Changed
@@ -74,27 +74,27 @@
 - `RDD` aggregate() and treeAggregate() now have the ability to clone a complex zeroValue by calling a clone() function when present
 
 ### Fixed
-- [#73](https://github.com/BixData/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
-- [#75](https://github.com/BixData/stuart/issues/75) Context\_spec.lua ignores WEBHDFS_URL
-- [#76](https://github.com/BixData/stuart/issues/76) RDD:foreach() modifies RDD
+- [#73](https://github.com/nubix-io/stuart/issues/73) github.com/fengari-lua/fengari-web interop fails because Stuart assumes an io module is always present for logging
+- [#75](https://github.com/nubix-io/stuart/issues/75) Context\_spec.lua ignores WEBHDFS_URL
+- [#76](https://github.com/nubix-io/stuart/issues/76) RDD:foreach() modifies RDD
 
 ## [0.1.7] - 2018-09-15
 ### Added
 - Dockerfiles provided for testing with specific versions of Lua 5.1, 5.2, 5.3
 
 ### Changed
-- [#68](https://github.com/BixData/stuart/issues/68) Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
+- [#68](https://github.com/nubix-io/stuart/issues/68) Upgrade to Moses 2.1.0 (from 1.6.1), which now has cleaner function chaining semantics that more closely resembles lodash/underscore
 - Moses is no longer embedded, and is now once again a LuaRocks dependency. Embedding a trimmed down version did not help with eLua support, which instead requires transpiling modules to C to remove memory pressure
 
 ### Fixed
-- [#66](https://github.com/BixData/stuart/issues/66) Travis CI builds fail due to new release of Moses 2.x
-- [#64](https://github.com/BixData/stuart/issues/64) `Context:hadoopFile()` error reading a directory containing a nested directory
-- [#2](https://github.com/BixData/stuart/issues/2) La Trobe Univ RDD `stdev()` unit test fails
+- [#66](https://github.com/nubix-io/stuart/issues/66) Travis CI builds fail due to new release of Moses 2.x
+- [#64](https://github.com/nubix-io/stuart/issues/64) `Context:hadoopFile()` error reading a directory containing a nested directory
+- [#2](https://github.com/nubix-io/stuart/issues/2) La Trobe Univ RDD `stdev()` unit test fails
 
 ## [0.1.6] - 2017-12-31
 ### Added
 - Support [eLua](http://www.eluaproject.net).
-- [#43](https://github.com/BixData/stuart/issues/43) Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
+- [#43](https://github.com/nubix-io/stuart/issues/43) Support for `Context:textFile()` on a directory. Makes use of `luafilesystem` module for local filesystem testing, when present. Supports `webhdfs:` URLs.
 - New `stuart.interface.sleep` module can be preloaded with a function that sleeps to prevent pegging the CPU in multithreaded environments. Defaults to LuaSocket sleep() when present.
 
 ### Changed
@@ -113,13 +113,13 @@
 - New Hadoop `Path` class, which introduces new [net-url](https://luarocks.org/modules/golgote/net-url) module dependency
 
 ### Fixed
-- [#40](https://github.com/BixData/stuart/issues/40) `util.isInstanceOf` fails for non-table arguments such as nil
+- [#40](https://github.com/nubix-io/stuart/issues/40) `util.isInstanceOf` fails for non-table arguments such as nil
 
 ## [0.1.4] - 2017-11-27
 ### Added
 - New `stuart.interface.clock` module that can be preloaded with a custom implementation that binds Stuart to a proprietary hardware clock, instead of always depending on LuaSocket for time which may be unavailable in microcontroller environments
 - Support `Context` `stop()` and `isStopped()`, and `StreamingContext` `stop(stopSparkContext)` param
-- [#9](https://github.com/BixData/stuart/issues/9) Support `SparkConf` class
+- [#9](https://github.com/nubix-io/stuart/issues/9) Support `SparkConf` class
 - Support `logging` module and `Logger` class, and add logging to RDD, Context, DStream, and Receiver classes. Connect/disconnect info now shown.
 
 ## [0.1.3] - 2017-11-11
@@ -140,7 +140,7 @@
 - Travis-based Luacheck source code static analysis now also applies to specs
 
 ### Fixed
-- [#26](https://github.com/BixData/stuart/issues/26) `RDD:takeSample()` fails to return any results when RDD contains middleclass classes
+- [#26](https://github.com/nubix-io/stuart/issues/26) `RDD:takeSample()` fails to return any results when RDD contains middleclass classes
 
 ### Changed
 - Support random seed 3rd argument to `RDD:takeSample()`
